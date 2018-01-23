@@ -7,24 +7,37 @@ option java_outer_classname = "ActionProto";
 
 service ActionService {
     rpc Arm(ArmRequest) returns(ActionResult) {}
-    rpc TakeOff(TakeOffRequest) returns(ActionResult) {}
+    rpc Disarm(DisarmRequest) returns(ActionResult) {}
+    rpc Takeoff(TakeoffRequest) returns(ActionResult) {}
     rpc Land(LandRequest) returns(ActionResult) {}
+    rpc Kill(KillRequest) returns(ActionResult) {}
+    rpc ReturnToLaunch(ReturnToLaunchRequest) returns(ActionResult) {}
+    rpc TransitionToFixedWings(TransitionToFixedWingsRequest) returns(ActionResult) {}
+    rpc TransitionToMulticopter(TransitionToMulticopterRequest) returns(ActionResult) {}
+    rpc GetTakeoffAltitude(GetTakeoffAltitudeRequest) returns(TakeoffAltitudeResult) {}
+    rpc SetTakeoffAltitude(SetTakeoffAltitudeRequest) returns(ActionResult) {}
+    rpc GetMaximumSpeed(GetMaximumSpeedRequest) returns(MaximumSpeedResult) {}
+    rpc SetMaximumSpeed(SetMaximumSpeedRequest) returns(ActionResult) {}
 }
 
-message UUID {
-    uint64 value = 1;
+message ArmRequest {}
+message DisarmRequest {}
+message TakeoffRequest {}
+message LandRequest {}
+message KillRequest {}
+message ReturnToLaunchRequest {}
+message TransitionToFixedWingsRequest {}
+message TransitionToMulticopterRequest {}
+message GetTakeoffAltitudeRequest {}
+
+message SetTakeoffAltitudeRequest {
+    float altitude_m = 1;
 }
 
-message ArmRequest {
-    UUID uuid = 1;
-}
+message GetMaximumSpeedRequest {}
 
-message TakeOffRequest {
-    UUID uuid = 1;
-}
-
-message LandRequest {
-    UUID uuid = 1;
+message SetMaximumSpeedRequest {
+    float speed_m_s = 1;
 }
 
 message ActionResult {
@@ -37,9 +50,19 @@ message ActionResult {
         COMMAND_DENIED_LANDED_STATE_UNKNOWN = 5;
         COMMAND_DENIED_NOT_LANDED = 6;
         TIMEOUT = 7;
-        UNKNOWN = 8;
+        VTOL_TRANSITION_SUPPORT_UNKNOWN = 8;
+        NO_VTOL_TRANSITION_SUPPORT = 9;
+        UNKNOWN = 1000;
     }
 
     Result result = 1;
     string result_str = 2;
+}
+
+message TakeoffAltitudeResult {
+    float altitude_m = 1;
+}
+
+message MaximumSpeedResult {
+    float speed_m_s = 1;
 }

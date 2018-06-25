@@ -19,8 +19,8 @@ service CameraService {
     rpc SubscribeVideoStreamInfo(SubscribeVideoStreamInfoRequest) returns(stream VideoStreamInfoResponse) {}
     rpc SubscribeCaptureInfo(SubscribeCaptureInfoRequest) returns(stream CaptureInfoResponse) {}
     rpc SubscribeCameraStatus(SubscribeCameraStatusRequest) returns(stream CameraStatusResponse) {}
-    rpc SubscribeCurrentSetting(SubscribeCurrentSettingRequest) returns(stream CurrentSettingResponse) {}
-    rpc SubscribePossibleSettings(SubscribePossibleSettingsRequest) returns(stream PossibleSettingsResponse) {}
+    rpc SubscribeCurrentSettings(SubscribeCurrentSettingsRequest) returns(stream CurrentSettingsResponse) {}
+    rpc SubscribePossibleSettingOptions(SubscribePossibleSettingOptionsRequest) returns(stream PossibleSettingOptionsResponse) {}
     rpc SetSetting(SetSettingRequest) returns(SetSettingResponse) {}
 }
 
@@ -93,16 +93,14 @@ message CameraStatusResponse {
     CameraStatus camera_status = 1;
 }
 
-message SubscribeCurrentSettingRequest {}
-message CurrentSettingResponse {
-    Setting current_setting = 1;
+message SubscribeCurrentSettingsRequest {}
+message CurrentSettingsResponse {
+    repeated Setting current_settings = 1;
 }
 
-message SubscribePossibleSettingsRequest {}
-message PossibleSettingsResponse {
-    string setting_id = 1;
-    string setting_description = 2;
-    repeated Option option = 3;
+message SubscribePossibleSettingOptionsRequest {}
+message PossibleSettingOptionsResponse {
+    repeated SettingOption setting_options = 1;
 }
 
 message SetSettingRequest {
@@ -193,10 +191,14 @@ message CameraStatus {
 
 message Setting {
     string setting_id = 1;
-    string option_id = 2;
+    Option option = 2;
 }
 
 message Option {
     string option_id = 1;
-    string option_description = 2;
+}
+
+message SettingOptions {
+    string setting_id = 1;
+    repeated Option options = 2;
 }

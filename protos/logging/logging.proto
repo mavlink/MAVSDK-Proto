@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package mavsdk.rpc.logging;
+
+option java_package = "io.mavsdk.logging";
+option java_outer_classname = "LoggingProto";
+
+service LoggingService {
+    // Send command to start streaming logging data over MAVLink
+    rpc StartLogging(StartLoggingRequest) returns(StartLoggingResponse) {}
+    // Send command to stop streaming logging data over MAVLink
+    rpc StopLogging(StopLoggingRequest) returns(StopLoggingResponse) {}
+    // Subscribe to logging messages
+    rpc SubscribeLoggingRaw(SubscribeLoggingRawRequest) returns(stream LoggingRawResponse) {}
+}
+
+message StartLoggingRequest {}
+message StartLoggingResponse {
+    LoggingResult logging_result = 1;
+}
+
+message StopLoggingRequest {}
+message StopLoggingResponse {
+    LoggingResult logging_result = 1;
+}
+
+message SubscribeLoggingRawRequest {}
+message LoggingRawResponse {
+    LoggingRaw logging_raw = 1; // A message containing logged data
+}
+
+message LoggingRaw {
+    uint32 first_message_offset = 1; // Offset into data where first message starts
+    bytes data = 2; // Logged data
+}
+
+// Result type.
+message LoggingResult {
+    // Possible results returned for logging requests
+    enum Result {
+        SUCCESS = 0; // Request succeeded
+        NO_SYSTEM = 1; // No system connected
+        CONNECTION_ERROR = 2; // Connection error
+        BUSY = 3; // System busy
+        COMMAND_DENIED = 4; // Command denied
+        TIMEOUT = 5; // Timeout
+        UNKNOWN = 6; // Unknown error
+    }
+
+    Result result = 1; // Result enum value
+    string result_str = 2; // Human-readable English string describing the result
+}

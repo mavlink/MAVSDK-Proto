@@ -5,10 +5,11 @@ package mavsdk.rpc.logging;
 option java_package = "io.mavsdk.logging";
 option java_outer_classname = "LoggingProto";
 
+// Provide logging data.
 service LoggingService {
-    // Send command to start streaming logging data over MAVLink
+    // Start streaming logging data.
     rpc StartLogging(StartLoggingRequest) returns(StartLoggingResponse) {}
-    // Send command to stop streaming logging data over MAVLink
+    // Stop streaming logging data.
     rpc StopLogging(StopLoggingRequest) returns(StopLoggingResponse) {}
     // Subscribe to logging messages
     rpc SubscribeLoggingRaw(SubscribeLoggingRawRequest) returns(stream LoggingRawResponse) {}
@@ -29,6 +30,7 @@ message LoggingRawResponse {
     LoggingRaw logging_raw = 1; // A message containing logged data
 }
 
+// Raw logging data type
 message LoggingRaw {
     uint32 first_message_offset = 1; // Offset into data where first message starts
     bytes data = 2; // Logged data

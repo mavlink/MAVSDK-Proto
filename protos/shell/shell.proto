@@ -39,5 +39,5 @@ message ShellResult {
 
     Result result = 1; // Result enum value
     string result_str = 2; // Human-readable English string describing the result
-    ShellMessage response_shell_message = 3; // Response message (if available)
+    string response_data = 3; // Response message (if available)
 }

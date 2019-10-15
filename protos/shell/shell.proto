@@ -22,7 +22,7 @@ message SetShellMessageResponse {
 
 message ShellMessage {
     bool need_response = 1; // Set if the sender wants the receiver to send a response.
-    uint32 timeout = 2; // Timeout (ms).
+    uint32 timeout_ms = 2; // Timeout (ms).
     string data = 3; // Serial data (70 symbols max).
 }
 

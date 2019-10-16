@@ -18,12 +18,13 @@ message SetShellMessageRequest {
 }
 message SetShellMessageResponse {
     ShellResult shell_result = 1;
+    string response_data = 2; // Response message data (if available)
 }
 
 message ShellMessage {
     bool need_response = 1; // Set if the sender wants the receiver to send a response.
     uint32 timeout_ms = 2; // Timeout (ms).
-    string data = 3; // Serial data (70 symbols max).
+    string data = 3; // Serial data.
 }
 
 message ShellResult {
@@ -33,11 +34,9 @@ message ShellResult {
         SUCCESS = 1; // Request succeeded
         NO_SYSTEM = 2; // No system is connected
         CONNECTION_ERROR = 3; // Connection error
-        DATA_TOO_LONG = 4; // Request Data too long
-        NO_RESPONSE = 5; // Response does not received
+        NO_RESPONSE = 4; // Response does not received
     }
 
     Result result = 1; // Result enum value
     string result_str = 2; // Human-readable English string describing the result
-    string response_data = 3; // Response message (if available)
 }

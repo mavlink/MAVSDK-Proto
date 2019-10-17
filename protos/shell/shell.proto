@@ -35,6 +35,7 @@ message ShellResult {
         NO_SYSTEM = 2; // No system is connected
         CONNECTION_ERROR = 3; // Connection error
         NO_RESPONSE = 4; // Response does not received
+        BUSY = 5; // Shell busy (transfer in progress)
     }
 
     Result result = 1; // Result enum value

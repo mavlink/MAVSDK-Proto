@@ -6,7 +6,7 @@ option java_package = "io.mavsdk.shell";
 option java_outer_classname = "ShellProto";
 
 /**
- * Shell Service allow to communicate with vehicle's system shell.
+ * Allow to communicate with the vehicle's system shell.
  */
 service ShellService {
     // Communicate with a vehicle's Shell.
@@ -34,7 +34,7 @@ message ShellResult {
         SUCCESS = 1; // Request succeeded
         NO_SYSTEM = 2; // No system is connected
         CONNECTION_ERROR = 3; // Connection error
-        NO_RESPONSE = 4; // Response does not received
+        NO_RESPONSE = 4; // Response was not received
         BUSY = 5; // Shell busy (transfer in progress)
     }
 

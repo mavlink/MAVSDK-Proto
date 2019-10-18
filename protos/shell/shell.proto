@@ -10,15 +10,15 @@ option java_outer_classname = "ShellProto";
  */
 service ShellService {
     // Communicate with a vehicle's Shell.
-    rpc SetShellMessage(SetShellMessageRequest) returns(SetShellMessageResponse) {}
+    rpc Send(SendRequest) returns(SendResponse) {}
 }
 
-message SetShellMessageRequest {
+message SendRequest {
     ShellMessage shell_message = 1;
 }
-message SetShellMessageResponse {
+message SendResponse {
     ShellResult shell_result = 1;
-    string response_data = 2; // Response message data (if available)
+    string response_message_data = 2; // Response message data (if available)
 }
 
 message ShellMessage {

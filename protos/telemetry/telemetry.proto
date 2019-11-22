@@ -289,11 +289,11 @@ message ActuatorOutputStatus {
 
 // Landed State enumeration
 enum LandedState{
-    LANDED_STATE_UNKNOWN = 0;
-    LANDED_STATE_ON_GROUND = 1;
-    LANDED_STATE_IN_AIR = 2;
-    LANDED_STATE_TAKING_OFF = 3;
-    LANDED_STATE_LANDING = 4;
+    UNKNOWN = 0;
+    ON_GROUND = 1;
+    IN_AIR = 2;
+    TAKING_OFF = 3;
+    LANDING = 4;
 }
 
 // Odometry message type.

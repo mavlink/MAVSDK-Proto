@@ -48,10 +48,10 @@ message Config {
     BEHIND = 4; // folow from behind
   }
   
-  float min_height_m = 1 [default = 8.0];
-  float follow_distance_m = 2 [default = 8.0];
-  FollowDirection follow_direction = 3 [default = BEHIND];
-  float responsiveness = 4 [default = 0.5];
+  float min_height_m = 1;
+  float follow_distance_m = 2;
+  FollowDirection follow_direction = 3;
+  float responsiveness = 4;
 }
 
 message TargetLocation {

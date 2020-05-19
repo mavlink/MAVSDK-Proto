@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package mavsdk.rpc.wifi;
+
+option java_package = "io.mavsdk.wifi";
+option java_outer_classname = "WifiProto";
+
+// Gives access to the onboard wifi configuration
+service WifiService {
+    // Get access point configuration 
+    rpc GetAccessPointConfiguration(GetAccessPointConfigurationRequest) returns(GetAccessPointConfigurationResponse) {}
+    // Set access point configuration
+    rpc SetAccessPointConfiguration(SetAccessPointConfigurationRequest) returns(SetAccessPointConfigurationResponse) {}
+}
+
+message GetAccessPointConfigurationRequest {}
+message GetAccessPointConfigurationResponse {
+    WifiResult wifi_result = 1;
+    AccessPointConfiguration configuration = 2;
+}
+
+message SetAccessPointConfigurationRequest {
+    AccessPointConfiguration configuration = 1;
+}
+message SetAccessPointConfigurationResponse {
+    WifiResult wifi_result = 1;
+}
+
+// Mode type.
+enum Mode {
+    MODE_UNDEFINED = 0;
+    MODE_ACCESS_POINT = 1;
+    MODE_STATION = 2;
+}
+
+// Access point configuration type.
+message AccessPointConfiguration {
+    string ssid = 1; // Name of wifi network (SSID). Blank to leave it unchanged when setting.
+    string password = 2; // Password of wifi network. Blank for open AP. MD5 hash when getting.
+    Mode mode = 3; // Wifi mode.
+}
+
+// Result type.
+message WifiResult {
+    // Possible results returned for wifi requests.
+    enum Result {
+        RESULT_UNKNOWN = 0; // Unknown result
+        RESULT_SUCCESS = 1; // Request was successful
+        RESULT_REJECTED = 2; // Changes rejected
+        RESULT_MODE_ERROR = 3; // Invalid mode
+        RESULT_SSID_ERROR = 4; // Invalid SSID
+        RESULT_PASSWORD_ERROR = 5; // Invalid password
+        RESULT_TIMEOUT = 6; // Request timed out
+    }
+
+    Result result = 1; // Result enum value
+    string result_str = 2; // Human-readable English string describing the result
+}

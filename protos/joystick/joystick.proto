@@ -5,7 +5,7 @@ package mavsdk.rpc.joystick;
 option java_package = "io.mavsdk.joystick";
 option java_outer_classname = "JoystickProto";
 
-service joystickService
+service JoystickService
 {
 
     rpc ConnectDrone (ConnectRequest)  returns (ConnectResponse) {}
@@ -89,7 +89,7 @@ message XmotionResponse{
 }
 
 message YmotionRequest {
-    sint32 Ymotion = 1 ;                    // value between -1000 to 1000. negative-> left, positive--> right
+    sint32 ymotion = 1 ;                    // value between -1000 to 1000. negative-> left, positive--> right
 }
 message YmotionResponse{
     JoystickResult joystick_result = 1 ;
@@ -97,7 +97,7 @@ message YmotionResponse{
 
 
 message ZmotionRequest {
-    sint32 Ymotion = 1 ;                    // value between -1000 to 1000. negative-> down ,positive--> up 
+    sint32 zmotion = 1 ;                    // value between -1000 to 1000. negative-> down ,positive--> up 
 }
 message ZmotionResponse{
     JoystickResult joystick_result = 1 ;
@@ -105,7 +105,7 @@ message ZmotionResponse{
 
 
 message RmotionRequest {
-    sint32 Revolve = 1 ;                    // value between -1000 to 1000. negative-> ccw ,positive- -> cw 
+    sint32 revolve = 1 ;                    // value between -1000 to 1000. negative-> ccw ,positive- -> cw 
 }
 message RmotionResponse{
     JoystickResult joystick_result = 1 ;

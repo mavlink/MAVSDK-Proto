@@ -5,7 +5,7 @@ package mavsdk.rpc.manual_control;
 option java_package = "io.mavsdk.manual_control";
 option java_outer_classname = "Manual_ControlProto";
 
-service Manual_ControlService
+service Manual_Control_Service
 {
 
     rpc ConnectDrone (ConnectRequest)  returns (ConnectResponse) {}
@@ -17,10 +17,10 @@ service Manual_ControlService
      * Needs to check if the drone is not currently flying or in mission if so drone needs to be paused first 
      */
     
-    rpc setPositionControl (PositionControlRequest)  returns(PositionControlResponse) {}
+    rpc SetPositionControl (PositionControlRequest)  returns(PositionControlResponse) {}
     
     
-    rpc setAltitudeControl (AltitudeControlRequest)  returns(AltitudeControlResponse) {}
+    rpc SetAltitudeControl (AltitudeControlRequest)  returns(AltitudeControlResponse) {}
     
 
 

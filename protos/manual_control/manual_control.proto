@@ -1,0 +1,112 @@
+syntax = "proto3";
+
+package mavsdk.rpc.manual_control;
+
+option java_package = "io.mavsdk.manual_control";
+option java_outer_classname = "Manual_ControlProto";
+
+service Manual_ControlService
+{
+
+    rpc ConnectDrone (ConnectRequest)  returns (ConnectResponse) {}
+    /*
+     * Send command to enable Joystick mode 
+     *
+     * Enabling Joystic mode causes to change into Position Control mode
+     * drone still needs to be armed
+     * Needs to check if the drone is not currently flying or in mission if so drone needs to be paused first 
+     */
+    
+    rpc setPositionControl (PositionControlRequest)  returns(PositionControlResponse) {}
+    
+    
+    rpc setAltitudeControl (AltitudeControlRequest)  returns(AltitudeControlResponse) {}
+    
+
+
+    rpc ArmDrone (ArmRequest) returns (ArmResponse) {}
+
+
+    rpc DisarmDrone (DisarmRequest) returns (DisarmResponse) {}
+
+      /*
+     * Send command to command to the drone to move forwards or backwards 
+     */
+    rpc axismotion (motionRequest) returns (motionResponse) {}
+
+     
+
+
+
+}
+
+message ConnectRequest{
+    int32 target =1 ;
+}
+
+message ConnectResponse{
+    Manual_Control_Result mc_response = 1;
+}
+
+message PositionControlRequest{}
+message PositionControlResponse{
+    Manual_Control_Result mc_response = 1;
+}
+
+message AltitudeControlRequest{}
+message AltitudeControlResponse{
+    Manual_Control_Result mc_response = 1;
+}
+
+message ArmRequest {
+    uint32 armedbutton =1; 
+}
+message ArmResponse {
+    Manual_Control_Result mc_response = 1;
+}
+
+message DisarmRequest {
+    uint32 disarmedbutton =1; 
+}
+message DisarmResponse {
+    Manual_Control_Result mc_response = 1;
+}
+
+
+message motionRequest {
+    sint32 xmotion = 1 ;                    // value between -1000 to 1000. negative-> backwards, positive-> forwards 
+    sint32 ymotion = 2 ;                    // value between -1000 to 1000. negative-> left, positive--> right
+    sint32 zmotion = 3 ;                    // value between -1000 to 1000. negative-> down ,positive--> up 
+    sint32 revolve = 4 ;                    // value between -1000 to 1000. negative-> ccw ,positive- -> cw  revolve aroun z-axis 
+}
+message motionResponse{
+    Manual_Control_Result  mc_response = 1  ;
+}
+
+
+
+
+message Manual_Control_Result {
+
+    enum Result {
+
+        RESULT_UNKNOWN = 0; // Unknown result
+        RESULT_SUCCESS = 1; // Request was successful
+        RESULT_NO_SYSTEM = 2; // No system is connected
+        RESULT_CONNECTION_ERROR = 3; // Connection error
+        RESULT_BUSY = 4; // Vehicle is busy
+        RESULT_COMMAND_DENIED = 5; // Command refused by vehicle
+        RESULT_TIMEOUT = 6; // Request timed out
+
+    } 
+
+    Result result = 1; // Result enum value
+    string result_str = 2; // Human-readable English string describing the result
+}
+
+
+
+
+
+
+

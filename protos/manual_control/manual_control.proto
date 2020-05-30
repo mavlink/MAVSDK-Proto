@@ -73,13 +73,13 @@ message DisarmResponse {
 }
 
 
-message motionRequest {
+message MotionRequest {
     sint32 xmotion = 1 ;                    // value between -1000 to 1000. negative-> backwards, positive-> forwards 
     sint32 ymotion = 2 ;                    // value between -1000 to 1000. negative-> left, positive--> right
     sint32 zmotion = 3 ;                    // value between -1000 to 1000. negative-> down ,positive--> up 
     sint32 revolve = 4 ;                    // value between -1000 to 1000. negative-> ccw ,positive- -> cw  revolve aroun z-axis 
 }
-message motionResponse{
+message MotionResponse{
     Manual_Control_Result  mc_response = 1  ;
 }
 

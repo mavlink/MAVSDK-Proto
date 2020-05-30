@@ -5,7 +5,7 @@ package mavsdk.rpc.manual_control;
 option java_package = "io.mavsdk.manual_control";
 option java_outer_classname = "Manual_ControlProto";
 
-service Manual_Control_Service
+service ManualControlService
 {
 
     rpc ConnectDrone (ConnectRequest)  returns (ConnectResponse) {}

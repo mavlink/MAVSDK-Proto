@@ -45,31 +45,31 @@ message ConnectRequest{
 }
 
 message ConnectResponse{
-    ManualControlResult mc_response = 1;
+    ManualControlResult manual_control_result = 1;
 }
 
 message PositionControlRequest{}
 message PositionControlResponse{
-    ManualControlResult mc_response = 1;
+    ManualControlResult manual_control_result = 1;
 }
 
 message AltitudeControlRequest{}
 message AltitudeControlResponse{
-    ManualControlResult mc_response = 1;
+    ManualControlResult manual_control_result = 1;
 }
 
 message ArmRequest {
     uint32 armedbutton =1; 
 }
 message ArmResponse {
-    ManualControlResult mc_response = 1;
+    ManualControlResult manual_control_result = 1;
 }
 
 message DisarmRequest {
     uint32 disarmedbutton =1; 
 }
 message DisarmResponse {
-    ManualControlResult mc_response = 1;
+    ManualControlResult manual_control_result = 1;
 }
 
 
@@ -80,7 +80,7 @@ message MotionRequest {
     sint32 revolve = 4 ;                    // value between -1000 to 1000. negative-> ccw ,positive- -> cw  revolve aroun z-axis 
 }
 message MotionResponse{
-    ManualControlResult  mc_response = 1  ;
+    ManualControlResult  manual_control_result = 1  ;
 }
 
 

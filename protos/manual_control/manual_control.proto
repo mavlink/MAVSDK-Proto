@@ -32,7 +32,7 @@ service ManualControlService
       /*
      * Send command to command to the drone to move forwards or backwards 
      */
-    rpc axismotion (MotionRequest) returns (MotionResponse) {}
+    rpc Axismotion (MotionRequest) returns (MotionResponse) {}
 
      
 

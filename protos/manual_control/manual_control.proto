@@ -8,7 +8,7 @@ option java_outer_classname = "Manual_ControlProto";
 service ManualControlService
 {
 
-    rpc ConnectDrone (ConnectRequest)  returns (ConnectResponse) {}
+    
     /*
      * Send command to enable Joystick mode 
      *
@@ -22,13 +22,6 @@ service ManualControlService
     
     rpc SetAltitudeControl (AltitudeControlRequest)  returns(AltitudeControlResponse) {}
     
-
-
-    rpc ArmDrone (ArmRequest) returns (ArmResponse) {}
-
-
-    rpc DisarmDrone (DisarmRequest) returns (DisarmResponse) {}
-
       /*
      * Send command to command to the drone to move forwards or backwards 
      */
@@ -40,13 +33,6 @@ service ManualControlService
 
 }
 
-message ConnectRequest{
-    int32 target =1 ;
-}
-
-message ConnectResponse{
-    ManualControlResult manual_control_result = 1;
-}
 
 message PositionControlRequest{}
 message PositionControlResponse{
@@ -58,19 +44,6 @@ message AltitudeControlResponse{
     ManualControlResult manual_control_result = 1;
 }
 
-message ArmRequest {
-    uint32 armedbutton =1; 
-}
-message ArmResponse {
-    ManualControlResult manual_control_result = 1;
-}
-
-message DisarmRequest {
-    uint32 disarmedbutton =1; 
-}
-message DisarmResponse {
-    ManualControlResult manual_control_result = 1;
-}
 
 
 message MotionRequest {

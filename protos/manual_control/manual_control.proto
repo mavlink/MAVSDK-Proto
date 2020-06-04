@@ -47,10 +47,10 @@ message AltitudeControlResponse{
 
 
 message MotionRequest {
-    sint32 xmotion = 1 ;                    // value between -1000 to 1000. negative-> backwards, positive-> forwards 
-    sint32 ymotion = 2 ;                    // value between -1000 to 1000. negative-> left, positive--> right
-    sint32 zmotion = 3 ;                    // value between -1000 to 1000. negative-> down ,positive--> up 
-    sint32 revolve = 4 ;                    // value between -1000 to 1000. negative-> ccw ,positive- -> cw  revolve aroun z-axis 
+    float x = 1 ;                    // value between -1. to 1. negative-> backwards, positive-> forwards 
+    float y = 2 ;                    // value between -1. to 1. negative-> left, positive--> right
+    float z = 3 ;                    // value between -1. to 1. negative-> down ,positive--> up 
+    float r = 4 ;                    // value between -1. to 1. negative-> ccw ,positive- -> cw  revolve aroun z-axis 
 }
 message MotionResponse{
     ManualControlResult  manual_control_result = 1  ;

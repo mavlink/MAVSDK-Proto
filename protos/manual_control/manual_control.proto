@@ -25,7 +25,7 @@ service ManualControlService
       /*
      * Send command to command to the drone to move forwards or backwards 
      */
-    rpc ManualControlInput (MotionRequest) returns (MotionResponse) {}
+    rpc ManualControlInput (ManualControlRequest) returns (ManualControlResponse) {}
 
      
 
@@ -76,7 +76,6 @@ message ManualControlResult {
     Result result = 1; // Result enum value
     string result_str = 2; // Human-readable English string describing the result
 }
-
 
 
 

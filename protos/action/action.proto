@@ -136,12 +136,16 @@ message LandResponse {
     ActionResult action_result = 1;
 }
 
-message RebootRequest {}
+message RebootRequest {
+    uint32 mav_component = 1;
+}
 message RebootResponse {
     ActionResult action_result = 1;
 }
 
-message ShutdownRequest {}
+message ShutdownRequest {
+    uint32 mav_component = 1;
+}
 message ShutdownResponse {
     ActionResult action_result = 1;
 }

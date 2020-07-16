@@ -37,6 +37,12 @@ service ActionService {
      */
     rpc Land(LandRequest) returns(LandResponse) {}
     /*
+     * Send command to land the fixed-wing drone at a specified position.
+     *
+     * This switches the drone to 'Land' flight mode.
+     */
+    rpc LandFixedWing(LandFixedWingRequest) returns (LandFixedWingResponse) {}
+    /*
      * Send command to reboot the drone components.
      *
      * This will reboot the autopilot, companion computer, camera and gimbal.
@@ -133,6 +139,18 @@ message TakeoffResponse {
 
 message LandRequest {}
 message LandResponse {
+    ActionResult action_result = 1;
+}
+
+message LandFixedWingRequest {
+    float loiter_alt = 40.0; // Loiter altitude (in meters)
+    float loiter_rad = 75.0; // Loiter radius (in meters)
+    bool loiter_cw = true; // Loiter clockwise
+    float land_heading = 0.0; // Landing heading (in degrees)
+    float land_alt = 0.0; // Landing altitude (in meters)
+    float glide_slope = 6.0; // Landing glide slope (in degrees)
+}
+message LandFixedWingResponse {
     ActionResult action_result = 1;
 }
 

@@ -143,14 +143,14 @@ message LandResponse {
 }
 
 message LandFixedWingRequest {
-    float loiter_alt = 40.0; // Loiter altitude (in meters)
-    float loiter_rad = 75.0; // Loiter radius (in meters)
-    bool loiter_cw = true; // Loiter clockwise
-    float land_heading = 0.0; // Landing heading (in degrees)
-    float land_alt = 0.0; // Landing altitude AMSL (in meters)
-    float glide_slope = 6.0; // Landing glide slope (in degrees)
-    double land_lat = 0.0; // Landing latitude (in degrees)
-    double land_lng = 0.0; // Landing longitude (in degrees)
+float loiter_alt = 1; // Loiter altitude (in meters)
+float loiter_rad = 2; // Loiter radius (in meters)
+bool loiter_cw = 3; // Loiter clockwise
+float land_heading = 4; // Landing heading (in degrees)
+float land_alt = 5; // Landing altitude AMSL (in meters)
+float glide_slope = 6; // Landing glide slope (in degrees)
+double land_lat = 7; // Landing latitude (in degrees)
+double land_lng = 8; // Landing longitude (in degrees)
 }
 message LandFixedWingResponse {
     ActionResult action_result = 1;

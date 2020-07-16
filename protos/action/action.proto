@@ -147,8 +147,10 @@ message LandFixedWingRequest {
     float loiter_rad = 75.0; // Loiter radius (in meters)
     bool loiter_cw = true; // Loiter clockwise
     float land_heading = 0.0; // Landing heading (in degrees)
-    float land_alt = 0.0; // Landing altitude (in meters)
+    float land_alt = 0.0; // Landing altitude AMSL (in meters)
     float glide_slope = 6.0; // Landing glide slope (in degrees)
+    double land_lat = 0.0; // Landing latitude (in degrees)
+    double land_lng = 0.0; // Landing longitude (in degrees)
 }
 message LandFixedWingResponse {
     ActionResult action_result = 1;

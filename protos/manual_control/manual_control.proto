@@ -7,32 +7,19 @@ option java_outer_classname = "ManualControlProto";
 
 service ManualControlService
 {
-
-    
-    /*
+     /*
      * Send command to enable Joystick mode 
-     *
      * Enabling Joystic mode causes to change into Position Control mode
      * drone still needs to be armed
      * Needs to check if the drone is not currently flying or in mission if so drone needs to be paused first 
      */
-    
     rpc StartPositionControl (PositionControlRequest)  returns(PositionControlResponse) {}
-    
-    
     rpc StartAltitudeControl (AltitudeControlRequest)  returns(AltitudeControlResponse) {}
-    
-      /*
+     /*
      * Send command to command to the drone to move forwards or backwards 
      */
     rpc ManualControlInput (ManualControlRequest) returns (ManualControlResponse) {}
-
-     
-
-
-
 }
-
 
 message PositionControlRequest{}
 message PositionControlResponse{
@@ -44,8 +31,6 @@ message AltitudeControlResponse{
     ManualControlResult manual_control_result = 1;
 }
 
-
-
 message ManualControlRequest {
     float x = 1 ;                    // value between -1. to 1. negative-> backwards, positive-> forwards 
     float y = 2 ;                    // value between -1. to 1. negative-> left, positive--> right
@@ -56,11 +41,7 @@ message ManualControlResponse{
     ManualControlResult  manual_control_result = 1  ;
 }
 
-
-
-
 message ManualControlResult {
-
     enum Result {
 
         RESULT_UNKNOWN = 0; // Unknown result
@@ -70,9 +51,7 @@ message ManualControlResult {
         RESULT_BUSY = 4; // Vehicle is busy
         RESULT_COMMAND_DENIED = 5; // Command refused by vehicle
         RESULT_TIMEOUT = 6; // Request timed out
-
     } 
-
     Result result = 1; // Result enum value
     string result_str = 2; // Human-readable English string describing the result
 }

@@ -8,10 +8,9 @@ option java_outer_classname = "ManualControlProto";
 service ManualControlService
 {
      /*
-     * Send command to enable Joystick mode 
-     * Enabling Joystic mode causes to change into Position Control mode
-     * drone still needs to be armed
-     * Needs to check if the drone is not currently flying or in mission if so drone needs to be paused first 
+     * Start position control using e.g. joystick input.
+     * 
+     * Requires a valid position using e.g. GPS, external vision, or optical flow.
      */
     rpc StartPositionControl (PositionControlRequest)  returns(PositionControlResponse) {}
     /*
@@ -60,7 +59,6 @@ message ManualControlResult {
     Result result = 1; // Result enum value
     string result_str = 2; // Human-readable English string describing the result
 }
-
 
 
 

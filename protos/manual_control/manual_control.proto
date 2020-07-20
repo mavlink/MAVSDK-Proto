@@ -14,6 +14,11 @@ service ManualControlService
      * Needs to check if the drone is not currently flying or in mission if so drone needs to be paused first 
      */
     rpc StartPositionControl (PositionControlRequest)  returns(PositionControlResponse) {}
+    /*
+     * Start altitude control 
+     *
+     * Does not require a  valid position e.g. GPS.
+     */
     rpc StartAltitudeControl (AltitudeControlRequest)  returns(AltitudeControlResponse) {}
      /*
      * Send command to command to the drone to move forwards or backwards 
@@ -55,7 +60,6 @@ message ManualControlResult {
     Result result = 1; // Result enum value
     string result_str = 2; // Human-readable English string describing the result
 }
-
 
 
 

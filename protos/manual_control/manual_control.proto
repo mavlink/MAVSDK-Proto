@@ -12,15 +12,17 @@ service ManualControlService
     /*
      * Start position control using e.g. joystick input.
      *
+     * Requires manual control input to be sent regularly already.
      * Requires a valid position using e.g. GPS, external vision, or optical flow.
      */
-    rpc StartPositionControl (PositionControlRequest)  returns(PositionControlResponse) {}
+    rpc StartPositionControl(StartPositionControlRequest)  returns(StartPositionControlResponse) {}
     /*
      * Start altitude control
      *
+     * Requires manual control input to be sent regularly already.
      * Does not require a  valid position e.g. GPS.
      */
-    rpc StartAltitudeControl (AltitudeControlRequest)  returns(AltitudeControlResponse) {}
+    rpc StartAltitudeControl(StartAltitudeControlRequest)  returns(StartAltitudeControlResponse) {}
     /*
      * Set manual control input
      *
@@ -30,13 +32,13 @@ service ManualControlService
     rpc SetManualControlInput(SetManualControlInputRequest) returns(SetManualControlInputResponse) { option (mavsdk.options.async_type) = SYNC; }
 }
 
-message PositionControlRequest{}
-message PositionControlResponse{
+message StartPositionControlRequest {}
+message StartPositionControlResponse {
     ManualControlResult manual_control_result = 1;
 }
 
-message AltitudeControlRequest{}
-message AltitudeControlResponse{
+message StartAltitudeControlRequest {}
+message StartAltitudeControlResponse {
     ManualControlResult manual_control_result = 1;
 }
 

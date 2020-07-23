@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package mavsdk.rpc.manual_control;
 
+import "mavsdk_options.proto";
+
 option java_package = "io.mavsdk.manual_control";
 option java_outer_classname = "ManualControlProto";
 
@@ -19,6 +21,13 @@ service ManualControlService
      * Does not require a  valid position e.g. GPS.
      */
     rpc StartAltitudeControl (AltitudeControlRequest)  returns(AltitudeControlResponse) {}
+    /*
+     * Set manual control input
+     *
+     * The manual control input needs to be sent at a rate high enough to prevent
+     * triggering of RC loss, a good minimum rate is 10 Hz.
+     */
+    rpc SetManualControlInput(SetManualControlInputRequest) returns(SetManualControlInputResponse) { option (mavsdk.options.async_type) = SYNC; }
 }
 
 message PositionControlRequest{}
@@ -31,13 +40,13 @@ message AltitudeControlResponse{
     ManualControlResult manual_control_result = 1;
 }
 
-message ManualControlRequest {
+message SetManualControlInputRequest {
     float x = 1; // value between -1. to 1. negative -> backwards, positive -> forwards
     float y = 2; // value between -1. to 1. negative -> left, positive -> right
     float z = 3; // value between -1. to 1. negative -> down, positive -> up
     float r = 4; // value between -1. to 1. negative -> turn anti-clockwise (towards the left), positive -> turn clockwise (towards the right)
 }
-message ManualControlResponse{
+message SetManualControlInputResponse {
     ManualControlResult  manual_control_result = 1;
 }
 

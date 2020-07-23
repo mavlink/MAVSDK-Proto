@@ -62,6 +62,7 @@ message ManualControlResult {
         RESULT_BUSY = 4; // Vehicle is busy
         RESULT_COMMAND_DENIED = 5; // Command refused by vehicle
         RESULT_TIMEOUT = 6; // Request timed out
+        RESULT_INPUT_OUT_OF_RANGE = 7; // Input out of range
     }
     Result result = 1; // Result enum value
     string result_str = 2; // Human-readable English string describing the result

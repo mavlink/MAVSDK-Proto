@@ -54,7 +54,6 @@ message SetManualControlInputResponse {
 
 message ManualControlResult {
     enum Result {
-
         RESULT_UNKNOWN = 0; // Unknown result
         RESULT_SUCCESS = 1; // Request was successful
         RESULT_NO_SYSTEM = 2; // No system is connected
@@ -64,6 +63,7 @@ message ManualControlResult {
         RESULT_TIMEOUT = 6; // Request timed out
         RESULT_INPUT_OUT_OF_RANGE = 7; // Input out of range
     }
+
     Result result = 1; // Result enum value
     string result_str = 2; // Human-readable English string describing the result
 }

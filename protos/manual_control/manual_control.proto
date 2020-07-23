@@ -7,20 +7,20 @@ option java_outer_classname = "ManualControlProto";
 
 service ManualControlService
 {
-     /*
+    /*
      * Start position control using e.g. joystick input.
-     * 
+     *
      * Requires a valid position using e.g. GPS, external vision, or optical flow.
      */
     rpc StartPositionControl (PositionControlRequest)  returns(PositionControlResponse) {}
     /*
-     * Start altitude control 
+     * Start altitude control
      *
      * Does not require a  valid position e.g. GPS.
      */
     rpc StartAltitudeControl (AltitudeControlRequest)  returns(AltitudeControlResponse) {}
      /*
-     * Send command to command to the drone to move forwards or backwards 
+     * Send command to command to the drone to move forwards or backwards
      */
     rpc ManualControlInput (ManualControlRequest) returns (ManualControlResponse) {}
 }
@@ -36,13 +36,13 @@ message AltitudeControlResponse{
 }
 
 message ManualControlRequest {
-    float x = 1 ;                    // value between -1. to 1. negative-> backwards, positive-> forwards 
-    float y = 2 ;                    // value between -1. to 1. negative-> left, positive--> right
-    float z = 3 ;                    // value between -1. to 1. negative-> down ,positive--> up 
-    float r = 4 ;                    // value between -1. to 1. negative-> ccw ,positive- -> cw  revolve aroun z-axis 
+    float x = 1; // value between -1. to 1. negative -> backwards, positive -> forwards
+    float y = 2; // value between -1. to 1. negative -> left, positive -> right
+    float z = 3; // value between -1. to 1. negative -> down, positive -> up
+    float r = 4; // value between -1. to 1. negative -> turn anti-clockwise (towards the left), positive -> turn clockwise (towards the right)
 }
 message ManualControlResponse{
-    ManualControlResult  manual_control_result = 1  ;
+    ManualControlResult  manual_control_result = 1;
 }
 
 message ManualControlResult {
@@ -55,11 +55,7 @@ message ManualControlResult {
         RESULT_BUSY = 4; // Vehicle is busy
         RESULT_COMMAND_DENIED = 5; // Command refused by vehicle
         RESULT_TIMEOUT = 6; // Request timed out
-    } 
+    }
     Result result = 1; // Result enum value
     string result_str = 2; // Human-readable English string describing the result
 }
-
-
-
-

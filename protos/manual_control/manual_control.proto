@@ -19,10 +19,6 @@ service ManualControlService
      * Does not require a  valid position e.g. GPS.
      */
     rpc StartAltitudeControl (AltitudeControlRequest)  returns(AltitudeControlResponse) {}
-     /*
-     * Send command to command to the drone to move forwards or backwards
-     */
-    rpc ManualControlInput (ManualControlRequest) returns (ManualControlResponse) {}
 }
 
 message PositionControlRequest{}

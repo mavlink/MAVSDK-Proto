@@ -75,6 +75,10 @@ service ActionService {
      */
     rpc GotoLocation(GotoLocationRequest) returns(GotoLocationResponse) {}
     /*
+     * Send command to set the value of an actuator.
+     */
+    rpc SetActuator(SetActuatorRequest) returns(SetActuatorResponse) {}
+    /*
      * Send command to transition the drone to fixedwing.
      *
      * The associated action will only be executed for VTOL vehicles (on other vehicle types the
@@ -163,6 +167,14 @@ message GotoLocationRequest {
     float yaw_deg = 4; // Yaw angle (in degrees, frame is NED, 0 is North, positive is clockwise)
 }
 message GotoLocationResponse {
+    ActionResult action_result = 1;
+}
+
+message SetActuatorRequest {
+    int32 index = 1; // Index of actuator (starting with 1)
+    float value = 2; // Value to set the actuator to (normalized from [-1..1])
+}
+message SetActuatorResponse {
     ActionResult action_result = 1;
 }
 

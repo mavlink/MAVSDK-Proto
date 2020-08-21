@@ -1,0 +1,88 @@
+syntax = "proto3";
+
+package mavsdk.rpc.avoidance;
+
+option java_package = "io.mavsdk.avoidance";
+option java_outer_classname = "AvoidanceProto";
+
+// An algorithm/implementation-agnostic avoidance API
+service AvoidanceService {
+    /*
+     * Subscribe to trajectory updates from the autopilot.
+     * 
+     * Currently, trajectory updates from the autopilot (PX4) are only in `Waypoint` format.
+     */
+    rpc SubscribeTrajectory(SubscribeTrajectoryRequest) returns(stream TrajectoryResponse) {}
+
+    /*
+     * Publish a trajectory made of `Waypoint`s to the autopilot.
+     *
+     * This is one of 2 ways to publish sanitized/modified trajectories back to the autopilot.
+     * See `PublishBezierTrajectory` for the other format. Note that not all autopilots
+     * may support both formats.
+     */
+    rpc PublishWaypointTrajectory(PublishWaypointTrajectoryRequest) returns (PublishWaypointTrajectoryResponse) {}
+
+    /*
+     * Publish a bezier trajectory to the autopilot.
+     *
+     * This is one of 2 ways to publish sanitized/modified trajectories back to the autopilot.
+     * See `PublishWaypointTrajectory` for the other format. Note that not all autopilots
+     * may support both formats.
+     */
+    rpc PublishBezierTrajectory(PublishBezierTrajectoryRequest) returns (PublishBezierTrajectoryResponse) {}
+}
+
+// Position of waypoint
+message Position {
+    float x_m = 1; // X component of position
+    float y_m = 2; // Y component of position
+    float z_m = 3; // Z component of position
+}
+
+// Velocity of waypoint
+message Velocity {
+    float x_m_s = 1; // X component of velocity
+    float y_m_s = 2; // Y component of velocity
+    float z_m_s = 3; // Z component of velocity
+}
+
+// Acceleration of waypoint
+message Acceleration {
+    float x_m_s2 = 1; // X component of acceleration
+    float y_m_s2 = 2; // Y component of acceleration
+    float z_m_s2 = 3; // Z component of acceleration
+}
+
+// Waypoint, makes up a trajectory
+message Waypoint {
+    int64 timestamp_us = 1; // Timestamp of waypoint
+    Position position = 2; // Position at waypoint
+    Velocity velocity = 3; // Velocity at waypoint
+    Acceleration acceleration = 4; // Acceleration at waypoint
+    float yaw_angle_rad = 5; // Yaw angle
+    float yaw_rate_rad_s = 6; // Yaw rate
+}
+
+// Bezier node, makes up a trajectory
+message Bezier {
+    int64 timestamp_us = 1; // Timestamp of bezier node
+    Position position = 2; // Position of bezier node
+    float delta_s = 3; // Bezier time horizon
+    float yaw_angle_rad = 4; // Yaw angle
+}
+
+message SubscribeTrajectoryRequest {}
+message TrajectoryResponse {
+    repeated Waypoint trajectory = 1; // Trajectory stream, waypoint format
+}
+
+message PublishWaypointTrajectoryRequest {
+    Waypoint trajectory = 1; // Waypoint trajectory to publish
+}
+message PublishWaypointTrajectoryResponse {}
+
+message PublishBezierTrajectoryRequest {
+    repeated Bezier trajectory = 1; // Bezier trajectory to publish
+}
+message PublishBezierTrajectoryResponse {}

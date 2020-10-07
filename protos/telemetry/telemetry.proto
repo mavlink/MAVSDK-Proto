@@ -653,7 +653,7 @@ message DistanceSensor {
 
     uint16_t min_distance; // Minimum distance the sensor can measure.
     uint16_t max_distance; //  Maximum distance the sensor can measure.
-    uint16_t current_distance; /.Current distance reading.
+    uint16_t current_distance; //Current distance reading.
 }
 
 // Result type.

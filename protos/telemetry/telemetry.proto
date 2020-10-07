@@ -588,9 +588,9 @@ message Odometry {
 // DistanceSensor message type.
 message DistanceSensor {
 
-    uint64 min_distance=1; // Minimum distance the sensor can measure.
-    uint64 max_distance=2; //  Maximum distance the sensor can measure.
-    uint64 current_distance=3; //Current distance reading.
+    float min_distance=1; // Minimum distance the sensor can measure.
+    float max_distance=2; //  Maximum distance the sensor can measure.
+    float current_distance=3; //Current distance reading.
 }
 
 // PositionNed message type.

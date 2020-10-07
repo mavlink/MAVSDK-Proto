@@ -585,6 +585,14 @@ message Odometry {
     Covariance velocity_covariance = 9; // Velocity cross-covariance matrix.
 }
 
+// DistanceSensor message type.
+message DistanceSensor {
+
+    uint64 min_distance=1; // Minimum distance the sensor can measure.
+    uint64 max_distance=2; //  Maximum distance the sensor can measure.
+    uint64 current_distance=3; //Current distance reading.
+}
+
 // PositionNed message type.
 message PositionNed {
     float north_m = 1 [(mavsdk.options.default_value)="NaN"]; // Position along north direction in metres
@@ -648,13 +656,7 @@ message Imu {
     float temperature_degc = 4 [(mavsdk.options.default_value)="NaN"]; // Temperature
 }
 
-// DistanceSensor message type.
-message DistanceSensor {
 
-    uint16 min_distance=1; // Minimum distance the sensor can measure.
-    uint16 max_distance=2; //  Maximum distance the sensor can measure.
-    uint16 current_distance=3; //Current distance reading.
-}
 
 // Result type.
 message TelemetryResult {

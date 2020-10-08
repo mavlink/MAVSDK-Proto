@@ -655,8 +655,6 @@ message Imu {
     float temperature_degc = 4 [(mavsdk.options.default_value)="NaN"]; // Temperature
 }
 
-
-
 // Result type.
 message TelemetryResult {
     // Possible results returned for telemetry requests.

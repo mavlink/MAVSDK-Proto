@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package mavsdk.rpc.custom_action;
+
+option java_package = "io.mavsdk.custom_action";
+option java_outer_classname = "CustomActionProto";
+
+// Allows to send a receive and process custom actions, which
+// description and parameters are defined by a metadata XML file
+service CustomActionService {
+    /*
+     * Send custom action command to the system.
+     */
+    rpc SetCustomAction(SetCustomActionRequest) returns(SetCustomActionResponse) {}
+
+    /*
+     * Receive and process custom action command.
+     */
+    rpc SubscribeCustomAction(SubscribeCustomActionRequest) returns(stream CustomActionResponse) {}
+}
+
+message SetCustomActionRequest {}
+message SetCustomActionResponse {
+    CustomActionResult custom_action_result = 1;
+}
+
+message SubscribeCustomActionRequest {}
+message CustomActionResponse {
+    CustomActionResult custom_action_result = 1;
+    ActionToExecute action = 2;
+}
+
+message ActionToExecute {
+    int32 action = 1;
+}
+
+// Result type.
+message CustomActionResult {
+    // Possible results returned for action requests.
+    enum Result {
+        RESULT_UNKNOWN = 0; // Unknown result
+        RESULT_SUCCESS = 1; // Command was accepted
+        RESULT_ERROR = 2; // Error occurred sending the command
+        RESULT_TIMEOUT = 3; // Command timed out
+        RESULT_UNSUPPORTED = 4; // Functionality not supported
+    }
+
+    Result result = 1; // Result enum value
+    string result_str = 2; // Human-readable English string describing the result
+}

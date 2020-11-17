@@ -16,7 +16,12 @@ service CustomActionService {
     /*
      * Receive and process custom action command.
      */
-    rpc SubscribeCustomAction(SubscribeCustomActionRequest) returns(stream CustomActionResponse) {}
+    rpc SubscribeCustomAction(SubscribeCustomActionRequest) returns(stream SubscribeCustomActionResponse) {}
+
+    /*
+     * Respond to the custom action command after completion.
+     */
+    rpc RespondCustomAction(RespondCustomActionRequest) returns(CustomActionResponse) {}
 }
 
 message SetCustomActionRequest {}
@@ -25,13 +30,22 @@ message SetCustomActionResponse {
 }
 
 message SubscribeCustomActionRequest {}
+message SubscribeCustomActionResponse {
+    ActionToExecute action = 1;
+}
+
+message RespondCustomActionRequest {
+    ActionToExecute action = 1;
+    CustomActionResult result = 2;
+}
 message CustomActionResponse {
-    CustomActionResult custom_action_result = 1;
-    ActionToExecute action = 2;
+    ActionToExecute action = 1;
+    CustomActionResult result = 2;
 }
 
 message ActionToExecute {
-    int32 action = 1;
+    int32 id = 1;
+    int32 timeout = 2;
 }
 
 // Result type.

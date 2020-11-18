@@ -24,7 +24,9 @@ service CustomActionService {
     rpc RespondCustomAction(RespondCustomActionRequest) returns(CustomActionResponse) {}
 }
 
-message SetCustomActionRequest {}
+message SetCustomActionRequest {
+    ActionToExecute action = 1;
+}
 message SetCustomActionResponse {
     CustomActionResult custom_action_result = 1;
 }

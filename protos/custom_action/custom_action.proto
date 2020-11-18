@@ -39,13 +39,13 @@ message RespondCustomActionRequest {
     CustomActionResult result = 2;
 }
 message CustomActionResponse {
-    ActionToExecute action = 1;
-    CustomActionResult result = 2;
+    CustomActionResult result = 1;
 }
 
 message ActionToExecute {
-    int32 id = 1;
-    int32 timeout = 2;
+    int32 id = 1; // ID of the action
+    int32 timeout = 2; // Action timeout / max execution time
+    int32 progress = 3; // Action progress
 }
 
 // Result type.
@@ -57,6 +57,7 @@ message CustomActionResult {
         RESULT_ERROR = 2; // Error occurred sending the command
         RESULT_TIMEOUT = 3; // Command timed out
         RESULT_UNSUPPORTED = 4; // Functionality not supported
+        RESULT_IN_PROGRESS = 5; // Command in progress
     }
 
     Result result = 1; // Result enum value

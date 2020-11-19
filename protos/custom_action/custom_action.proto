@@ -22,6 +22,11 @@ service CustomActionService {
      * Respond to the custom action command after completion.
      */
     rpc RespondCustomAction(RespondCustomActionRequest) returns(CustomActionResponse) {}
+
+    /*
+     * Request custom action metadata.
+     */
+    rpc CustomActionMetadata(CustomActionMetadataRequest) returns(CustomActionMetadataResponse) {}
 }
 
 message SetCustomActionRequest {
@@ -44,10 +49,53 @@ message CustomActionResponse {
     CustomActionResult result = 1;
 }
 
+message CustomActionMetadataRequest {
+    ActionToExecute action = 1; // The action to load the metadata about
+    string file_path = 2; // The metadata JSON file absolute path
+}
+message CustomActionMetadataResponse {
+    ActionMetadata action_config = 1;
+}
+
 message ActionToExecute {
     int32 id = 1; // ID of the action
     int32 timeout = 2; // Action timeout / max execution time
     int32 progress = 3; // Action progress
+}
+
+message Command {
+    // Command type enumeration
+    enum Type {
+        TYPE_LONG = 0; // Command long
+        TYPE_INT  = 1; // Command int
+    }
+
+    Type type = 1; // Type enum value
+    int32 target_system_id = 2; // Target system ID
+    int32 target_component_id = 3; // Target component ID. Should match the MAV_COMP
+    int32 command = 4; // Command to send to target system and component. Should match the MAV_CMD
+    float param1 = 5; // Command parameter 1
+    float param2 = 6; // Command parameter 2
+    float param3 = 7; // Command parameter 3
+    float param4 = 8; // Command parameter 3
+    float param5 = 9; // Command parameter 5
+    float param6 = 10; // Command parameter 6
+    float param7 = 11; // Command parameter 7
+}
+
+message Stage {
+    Command command = 1; // Command to run in the stage (if applicable)
+    string run_script = 2; // Script to run in that stage (if applicable). Should contain the full path.
+    int32 timestamp_start = 3; // Timestamp in usec when to start the stage
+    int32 timestamp_stop = 4; // Timestamp in usec when the stage should stop
+}
+
+message ActionMetadata {
+    int32 id = 1; // ID of the action
+    string name = 2; // Name of the action
+    string description = 3; // Description of the action
+    string run_general_script = 4; // Script to run for this specific action. Runs instead of the stages.
+    repeated Stage stages = 5; // Timestamped ordered stages. Runs instead of the general script.
 }
 
 // Result type.

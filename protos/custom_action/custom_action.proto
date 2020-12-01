@@ -55,6 +55,7 @@ message CustomActionMetadataRequest {
 }
 message CustomActionMetadataResponse {
     ActionMetadata action_config = 1;
+    CustomActionResult result = 2;
 }
 
 message ActionToExecute {

@@ -19,7 +19,7 @@ service CustomActionService {
     rpc SubscribeCustomAction(SubscribeCustomActionRequest) returns(stream SubscribeCustomActionResponse) {}
 
     /*
-     * Respond to the custom action command after completion.
+     * Respond to the custom action command with progress.
      */
     rpc RespondCustomAction(RespondCustomActionRequest) returns(CustomActionResponse) {}
 
@@ -27,6 +27,11 @@ service CustomActionService {
      * Request custom action metadata.
      */
     rpc CustomActionMetadata(CustomActionMetadataRequest) returns(CustomActionMetadataResponse) {}
+
+    /*
+     * Execute custom action stage.
+     */
+    rpc ExecuteCustomActionStage(ExecuteCustomActionStageRequest) returns(ExecuteCustomActionStageResponse) {}
 }
 
 message SetCustomActionRequest {
@@ -56,6 +61,13 @@ message CustomActionMetadataRequest {
 message CustomActionMetadataResponse {
     ActionMetadata action_config = 1;
     CustomActionResult result = 2;
+}
+
+message ExecuteCustomActionStageRequest {
+    Stage stage = 1; // The custom action stage to execute
+}
+message ExecuteCustomActionStageResponse {
+    CustomActionResult result = 1; // The result of execution of the stage
 }
 
 message ActionToExecute {

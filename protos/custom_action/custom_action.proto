@@ -71,9 +71,9 @@ message ExecuteCustomActionStageResponse {
 }
 
 message ActionToExecute {
-    int32 id = 1; // ID of the action
-    int32 timeout = 2; // Action timeout / max execution time
-    int32 progress = 3; // Action progress
+    uint32 id = 1; // ID of the action
+    double timeout = 2; // Action timeout / max execution time
+    double progress = 3; // Action progress
 }
 
 message Command {
@@ -83,28 +83,30 @@ message Command {
         TYPE_INT  = 1; // Command int
     }
 
-    Type type = 1; // Type enum value
-    int32 target_system_id = 2; // Target system ID
-    int32 target_component_id = 3; // Target component ID. Should match the MAV_COMP
-    int32 command = 4; // Command to send to target system and component. Should match the MAV_CMD
-    float param1 = 5; // Command parameter 1
-    float param2 = 6; // Command parameter 2
-    float param3 = 7; // Command parameter 3
-    float param4 = 8; // Command parameter 3
-    float param5 = 9; // Command parameter 5
-    float param6 = 10; // Command parameter 6
-    float param7 = 11; // Command parameter 7
+    Type type = 1; // Type enum value. LONG or INT
+    uint32 target_system_id = 2; // Target system ID
+    uint32 target_component_id = 3; // Target component ID. Should match the MAV_COMP
+    uint32 frame = 4; // The coordinate system of the COMMAND. Used in COMMAND_INT
+    uint32 command = 5; // Command to send to target system and component. Should match the MAV_CMD
+    double param1 = 6; // Command parameter 1
+    double param2 = 7; // Command parameter 2
+    double param3 = 8; // Command parameter 3
+    double param4 = 9; // Command parameter 4
+    double param5 = 10; // Command parameter 5. In COMMAND_INT: local x position or latitude. Casted to int32 before sending the command
+    double param6 = 11; // Command parameter 6. In COMMAND_INT: local y position or longitude. Casted to int32 before sending the command
+    double param7 = 12; // Command parameter 7. In COMMAND_INT: z position: global: altitude in meters (relative or absolute, depending on frame)
+    bool is_local = 13; // In COMMAND_INT: Set to true if x/y are local positions. Otherwise, these are lat/lon
 }
 
 message Stage {
     Command command = 1; // Command to run in the stage (if applicable)
     string run_script = 2; // Script to run in that stage (if applicable). Should contain the full path.
-    int32 timestamp_start = 3; // Timestamp in usec when to start the stage
-    int32 timestamp_stop = 4; // Timestamp in usec when the stage should stop
+    double timestamp_start = 3; // Timestamp in usec when to start the stage
+    double timestamp_stop = 4; // Timestamp in usec when the stage should stop
 }
 
 message ActionMetadata {
-    int32 id = 1; // ID of the action
+    uint32 id = 1; // ID of the action
     string name = 2; // Name of the action
     string description = 3; // Description of the action
     string run_general_script = 4; // Script to run for this specific action. Runs instead of the stages.

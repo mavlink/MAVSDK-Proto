@@ -19,6 +19,11 @@ service CustomActionService {
     rpc SubscribeCustomAction(SubscribeCustomActionRequest) returns(stream SubscribeCustomActionResponse) {}
 
     /*
+     * Receive and process custom action command cancellation.
+     */
+    rpc SubscribeCustomActionCancellation(SubscribeCustomActionCancellationRequest) returns(stream SubscribeCustomActionCancellationResponse) {}
+
+    /*
      * Respond to the custom action command with progress.
      */
     rpc RespondCustomAction(RespondCustomActionRequest) returns(CustomActionResponse) {}
@@ -44,6 +49,11 @@ message SetCustomActionResponse {
 message SubscribeCustomActionRequest {}
 message SubscribeCustomActionResponse {
     ActionToExecute action = 1;
+}
+
+message SubscribeCustomActionCancellationRequest {}
+message SubscribeCustomActionCancellationResponse {
+    bool cancel = 1;
 }
 
 message RespondCustomActionRequest {

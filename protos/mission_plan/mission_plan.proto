@@ -1,0 +1,130 @@
+syntax = "proto3";
+
+package mavsdk.rpc.mission_plan;
+
+import "mavsdk_options.proto";
+
+option java_package = "io.mavsdk.mission_plan";
+option java_outer_classname = "MissionPlanProto";
+
+// Enable mission from QGC .plan files.
+service MissionPlanService {
+    /*
+     * Upload a JSON .plan mission.
+     *
+     * The mission items are uploaded to a drone. Once uploaded the mission can be started and
+     * executed even if the connection is lost.
+     */
+    rpc UploadMissionPlan(UploadMissionPlanRequest) returns(UploadMissionPlanResponse) {}
+    /*
+     * Cancel an ongoing mission plan upload.
+     */
+    rpc CancelMissionPlanUpload(CancelMissionPlanUploadRequest) returns(CancelMissionPlanUploadResponse) { option (mavsdk.options.async_type) = SYNC; }
+    /*
+     * Clear the mission plan (including geofence and rally points) saved on the vehicle.
+     */
+    rpc ClearMissionPlan(ClearMissionPlanRequest) returns(ClearMissionPlanResponse) {}
+    /*
+     * Start the mission.
+     *
+     * A mission must be uploaded to the vehicle before this can be called.
+     */
+    rpc StartMission(StartMissionRequest) returns(StartMissionResponse) {}
+    /*
+     * Pause the mission.
+     *
+     * Pausing the mission puts the vehicle into
+     * [HOLD mode](https://docs.px4.io/en/flight_modes/hold.html).
+     * A multicopter should just hover at the spot while a fixedwing vehicle should loiter
+     * around the location where it paused.
+     */
+    rpc PauseMission(PauseMissionRequest) returns(PauseMissionResponse) {}
+    /*
+     * Sets the mission plan item index to go to.
+     *
+     * By setting the current index to 0, the mission is restarted from the beginning.
+     *
+     * Note that this is not necessarily true for general missions using MAVLink if loop counters
+     * are used.
+     */
+    rpc SetCurrentMissionItem(SetCurrentMissionItemRequest) returns(SetCurrentMissionItemResponse) {}
+    /*
+     * Check if the mission has been finished.
+     */
+    rpc IsMissionFinished(IsMissionFinishedRequest) returns(IsMissionFinishedResponse) { option (mavsdk.options.async_type) = SYNC; }
+    /*
+     * Subscribe to mission progress updates.
+     */
+    rpc SubscribeMissionProgress(SubscribeMissionProgressRequest) returns(stream MissionProgressResponse) {}
+}
+
+message UploadMissionPlanRequest {
+    string json_plan = 1; // The mission plan as a JSON string of the .plan file.
+}
+message UploadMissionPlanResponse {
+    MissionPlanResult mission_plan_result = 1;
+}
+
+message CancelMissionPlanUploadRequest {}
+message CancelMissionPlanUploadResponse {
+    MissionPlanResult mission_plan_result = 1;
+}
+
+message StartMissionRequest {}
+message StartMissionResponse {
+    MissionPlanResult mission_plan_result = 1;
+}
+
+message PauseMissionRequest {}
+message PauseMissionResponse {
+    MissionPlanResult mission_plan_result = 1;
+}
+
+message ClearMissionPlanRequest {}
+message ClearMissionPlanResponse {
+    MissionPlanResult mission_plan_result = 1;
+}
+
+message SetCurrentMissionItemRequest {
+    int32 index = 1; // Index of the mission item to be set as the next one (0-based)
+}
+message SetCurrentMissionItemResponse {
+    MissionPlanResult mission_plan_result = 1;
+}
+
+message IsMissionFinishedRequest {}
+message IsMissionFinishedResponse {
+    MissionPlanResult mission_plan_result = 1;
+    bool is_finished = 2; // True if the mission is finished and the last mission item has been reached
+}
+
+message SubscribeMissionProgressRequest {}
+message MissionProgressResponse {
+    MissionProgress mission_progress = 1; // Mission progress
+}
+
+// Mission progress type.
+message MissionProgress {
+    int32 current = 1; // Current mission item index (0-based)
+    int32 total = 2; // Total number of mission items
+}
+
+// Result type.
+message MissionPlanResult {
+    // Possible results returned for action requests.
+    enum Result {
+        RESULT_UNKNOWN = 0; // Unknown result
+        RESULT_SUCCESS = 1; // Request succeeded
+        RESULT_ERROR = 2; // Error
+        RESULT_TOO_MANY_MISSION_ITEMS = 3; // Too many mission items in the mission
+        RESULT_BUSY = 4; // Vehicle is busy
+        RESULT_TIMEOUT = 5; // Request timed out
+        RESULT_INVALID_ARGUMENT = 6; // Invalid argument
+        RESULT_FAILED_TO_PARSE_PLAN = 7; // Failed to parse the QGroundControl plan
+        RESULT_UNSUPPORTED_MISSION_CMD = 8; // Unsupported mission command
+        RESULT_TRANSFER_CANCELLED = 9; // Mission transfer (upload or download) has been cancelled
+    }
+
+    Result result = 1; // Result enum value
+    string result_str = 2; // Human-readable English string describing the result
+}

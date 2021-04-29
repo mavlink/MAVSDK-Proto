@@ -185,14 +185,12 @@ message MissionItem {
         CAMERA_ACTION_STOP_VIDEO = 5; // Stop capturing video
     }
 
-    enum PlaneAction {
-        VEHICLE_ACTION_NONE = 0;
-        VEHICLE_ACTION_ARM = 1;
-        VEHICLE_ACTION_DISARM = 2;
-        VEHICLE_ACTION_TAKEOFF = 3;
-        VEHICLE_ACTION_LAND = 4;
-        VEHICLE_ACTION_TRANSITION_TO_FW = 5;
-        VEHICLE_ACTION_TRANSITION_TO_MC = 6;
+    enum VehicleAction {
+        VEHICLE_ACTION_NONE = 0; // No action
+        VEHICLE_ACTION_TAKEOFF = 1; // Vehicle will takeoff and go to defined waypoint
+        VEHICLE_ACTION_LAND = 2; // When a waypoint is reached vehicle will land at current position
+        VEHICLE_ACTION_TRANSITION_TO_FW = 3; // When a waypoint is reached vehicle will transition to fixed-wing mode
+        VEHICLE_ACTION_TRANSITION_TO_MC = 4; // When a waypoint is reached vehicle will transition to multi-copter mode
     }
 }
 

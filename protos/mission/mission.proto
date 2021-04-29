@@ -209,6 +209,7 @@ message MissionItem {
     float acceptance_radius_m = 11 [(mavsdk.options.default_value)="NaN"]; // Radius for completing a mission item (in metres)
     float yaw_deg = 12 [(mavsdk.options.default_value)="NaN"]; // Absolute yaw angle (in degrees)
     float camera_photo_distance_m = 13 [(mavsdk.options.default_value)="NAN"]; // Camera photo distance to use after this mission item (in meters)
+    VehicleAction vehicle_action = 14; // Vehicle action to trigger at this mission item.
 
     // Possible camera actions at a mission item.
     enum CameraAction {
@@ -220,6 +221,15 @@ message MissionItem {
         CAMERA_ACTION_STOP_VIDEO = 5; // Stop capturing video
         CAMERA_ACTION_START_PHOTO_DISTANCE = 6; // Start capturing photos at regular distance
         CAMERA_ACTION_STOP_PHOTO_DISTANCE = 7; // Stop capturing photos at regular distance
+    }
+
+    // Possible vehicle actions at a mission item
+    enum VehicleAction {
+        VEHICLE_ACTION_NONE = 0; // No action
+        VEHICLE_ACTION_TAKEOFF = 1; // Vehicle will takeoff and go to defined waypoint
+        VEHICLE_ACTION_LAND = 2; // When a waypoint is reached vehicle will land at current position
+        VEHICLE_ACTION_TRANSITION_TO_FW = 3; // When a waypoint is reached vehicle will transition to fixed-wing mode
+        VEHICLE_ACTION_TRANSITION_TO_MC = 4; // When a waypoint is reached vehicle will transition to multi-copter mode
     }
 }
 

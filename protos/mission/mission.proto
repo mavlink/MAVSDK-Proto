@@ -173,6 +173,7 @@ message MissionItem {
     float loiter_time_s = 9 [(mavsdk.options.default_value)="NaN"]; // Loiter time (in seconds)
     double camera_photo_interval_s = 10 [(mavsdk.options.default_value)="1.0"]; // Camera photo interval to use after this mission item (in seconds)
     float acceptance_radius_m = 11 [(mavsdk.options.default_value)="NaN"]; // Radius for completing a mission item (in metres)
+    VehicleAction vehicle_action = 12; // Plane action to trigger at this mission item. Same idea as CameraAction but for plane
 
     // Possible camera actions at a mission item.
     enum CameraAction {
@@ -182,6 +183,16 @@ message MissionItem {
         CAMERA_ACTION_STOP_PHOTO_INTERVAL = 3; // Stop capturing photos at regular intervals
         CAMERA_ACTION_START_VIDEO = 4; // Start capturing video
         CAMERA_ACTION_STOP_VIDEO = 5; // Stop capturing video
+    }
+
+    enum PlaneAction {
+        VEHICLE_ACTION_NONE = 0;
+        VEHICLE_ACTION_ARM = 1;
+        VEHICLE_ACTION_DISARM = 2;
+        VEHICLE_ACTION_TAKEOFF = 3;
+        VEHICLE_ACTION_LAND = 4;
+        VEHICLE_ACTION_TRANSITION_TO_FW = 5;
+        VEHICLE_ACTION_TRANSITION_TO_MC = 6;
     }
 }
 

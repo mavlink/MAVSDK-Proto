@@ -74,6 +74,8 @@ service TelemetryService {
     rpc SubscribeDistanceSensor(SubscribeDistanceSensorRequest) returns(stream DistanceSensorResponse) {}
     // Subscribe to 'Scaled Pressure' updates.
     rpc SubscribeScaledPressure(SubscribeScaledPressureRequest) returns(stream ScaledPressureResponse) {}
+    // Subscribe to 'VTOL state' updates.
+    rpc SubscribeVtolState(SubscribeVtolStateRequest) returns(stream VtolStateResponse) {}
 
     // Set rate to 'position' updates.
     rpc SetRatePosition(SetRatePositionRequest) returns(SetRatePositionResponse) {}
@@ -275,6 +277,11 @@ message DistanceSensorResponse {
 message SubscribeScaledPressureRequest {}
 message ScaledPressureResponse {
     ScaledPressure scaled_pressure = 1; // The next Scaled Pressure status
+}
+
+message SubscribeVtolStateRequest {}
+message VtolStateResponse {
+    VtolState scaled_pressure = 1; // The next Scaled Pressure status
 }
 
 message SetRatePositionRequest {

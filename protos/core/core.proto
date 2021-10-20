@@ -20,6 +20,11 @@ service CoreService {
      * need to be increased to prevent timeouts.
      */
     rpc SetMavlinkTimeout(SetMavlinkTimeoutRequest) returns(SetMavlinkTimeoutResponse) {}
+
+    /*
+     * Set MAVLink system and component Ids.
+     */
+    rpc SetMavlinkSystemAndComponentId(SetMavlinkSystemAndComponentIdRequest) returns(SetMavlinkSystemAndComponentIdResponse) {}
 }
 
 message SubscribeConnectionStateRequest {}
@@ -31,6 +36,12 @@ message SetMavlinkTimeoutRequest {
     double timeout_s = 1; // Timeout in seconds
 }
 message SetMavlinkTimeoutResponse {}
+
+message SetMavlinkSystemAndComponentIdRequest {
+    uint32 system_id = 1; // MAVLink system ID, range 1..255
+    uint32 component_id = 2; // MAVLinkComponentIdRequest, range: 1..255
+}
+message SetMavlinkSystemAndComponentIdResponse {}
 
 // Connection state type.
 message ConnectionState {

@@ -1,0 +1,196 @@
+syntax = "proto3";
+
+package mavsdk.rpc.custom_action;
+
+option java_package = "io.mavsdk.custom_action";
+option java_outer_classname = "CustomActionProto";
+
+// Allows to send, receive and process custom actions, which description and
+// configuration are defined in a JSON file.
+service CustomActionService {
+    /*
+     * Send custom action command to the system.
+     */
+    rpc SetCustomAction(SetCustomActionRequest) returns(SetCustomActionResponse) {}
+
+    /*
+     * Receive and process custom action command.
+     */
+    rpc SubscribeCustomAction(SubscribeCustomActionRequest) returns(stream CustomActionResponse) {}
+
+    /*
+     * Receive and process custom action command cancellation.
+     */
+    rpc SubscribeCustomActionCancellation(SubscribeCustomActionCancellationRequest) returns(stream CustomActionCancellationResponse) {}
+
+    /*
+     * Respond to the custom action command with progress.
+     */
+    rpc RespondCustomAction(RespondCustomActionRequest) returns(RespondCustomActionResponse) {}
+
+    /*
+     * Request custom action metadata.
+     */
+    rpc CustomActionMetadata(CustomActionMetadataRequest) returns(CustomActionMetadataResponse) {}
+
+    /*
+     * Execute custom action stage.
+     */
+    rpc ExecuteCustomActionStage(ExecuteCustomActionStageRequest) returns(ExecuteCustomActionStageResponse) {}
+
+    /*
+     * Execute custom action global script.
+     */
+    rpc ExecuteCustomActionGlobalScript(ExecuteCustomActionGlobalScriptRequest) returns(ExecuteCustomActionGlobalScriptResponse) {}
+}
+
+message SetCustomActionRequest {
+    ActionToExecute action_to_execute = 1;
+}
+message SetCustomActionResponse {
+    CustomActionResult custom_action_result = 1;
+}
+
+message SubscribeCustomActionRequest {}
+message CustomActionResponse {
+    ActionToExecute action_to_execute = 1;
+}
+
+message RespondCustomActionRequest {
+    ActionToExecute action_to_execute = 1;
+    CustomActionResult custom_action_result = 2;
+}
+message RespondCustomActionResponse {
+    CustomActionResult custom_action_result = 1;
+}
+
+message SubscribeCustomActionCancellationRequest {}
+message CustomActionCancellationResponse {
+    bool cancel = 1;
+}
+
+message CustomActionMetadataRequest {
+    ActionToExecute action_to_execute = 1; // The action to load the metadata about
+    string file_path = 2; // The metadata JSON file absolute path
+}
+message CustomActionMetadataResponse {
+    ActionMetadata action_metadata = 1;
+    CustomActionResult custom_action_result = 2;
+}
+
+message ExecuteCustomActionStageRequest {
+    Stage stage = 1; // The custom action stage to execute
+}
+message ExecuteCustomActionStageResponse {
+    CustomActionResult custom_action_result = 1; // The result of execution of the stage
+}
+
+message ExecuteCustomActionGlobalScriptRequest {
+    string global_script = 1; // The global script to run
+}
+message ExecuteCustomActionGlobalScriptResponse {
+    CustomActionResult custom_action_result = 1; // The result of execution of the global script
+}
+
+// Used to identify action to be executed, its timeout / max execution time,
+// and, while being processed, its execution progress, which is used to send
+// MAVLink command ACKs with progress to the autopilot side.
+message ActionToExecute {
+    uint32 id = 1; // ID of the action
+    double timeout = 2; // Action timeout / max execution time
+    double progress = 3; // Action progress
+}
+
+// General definition of a COMMAND_LONG or a COMMAND_INT MAVLink message to be
+// sent and executed during a custom action.
+message Command {
+    // Command type enumeration
+    enum CommandType {
+        COMMAND_TYPE_LONG = 0; // Command long
+        COMMAND_TYPE_INT  = 1; // Command int
+    }
+
+    CommandType type = 1; // Type enum value. LONG or INT
+    uint32 target_system_id = 2; // Target system ID
+    uint32 target_component_id = 3; // Target component ID. Should match the MAV_COMP
+    uint32 frame = 4; // The coordinate system of the COMMAND. Used in COMMAND_INT
+    uint32 command = 5; // Command to send to target system and component. Should match the MAV_CMD
+    double param1 = 6; // Command parameter 1
+    double param2 = 7; // Command parameter 2
+    double param3 = 8; // Command parameter 3
+    double param4 = 9; // Command parameter 4
+    double param5 = 10; // Command parameter 5. In COMMAND_INT: local x position or latitude. Casted to int32 before sending the command
+    double param6 = 11; // Command parameter 6. In COMMAND_INT: local y position or longitude. Casted to int32 before sending the command
+    double param7 = 12; // Command parameter 7. In COMMAND_INT: z position: global: altitude in meters (relative or absolute, depending on frame)
+    bool is_local = 13; // In COMMAND_INT: Set to true if x/y are local positions. Otherwise, these are lat/lon
+}
+
+// Used to define a parameter to be set by the MAVSDK available API.
+message Parameter {
+    // Parameter type enumeration.
+    enum ParameterType {
+        PARAMETER_TYPE_INT   = 0; // MAV_PARAM_TYPE_ intenger types.
+        PARAMETER_TYPE_FLOAT = 1; // MAV_PARAM_TYPE_ floating point types.
+    }
+
+    ParameterType type = 1; // Type enum value. INT or FLOAT.
+    string name = 2; // Parameter name.
+    float value = 3; // Parameter value. Defaults to float, but can be truncated to an int.
+}
+
+// Defines totally or partially a custom action. Can be a MAVLink command or a
+// script (with full or relative path).
+message Stage {
+    // State transition condition enumeration.
+    enum StateTransitionCondition {
+        STATE_TRANSITION_CONDITION_ON_RESULT_SUCCESS = 0; // Transitions to the next stage case the script/command is successful.
+        STATE_TRANSITION_CONDITION_ON_TIMEOUT = 1; // Transitions to the next stage after a defined time.
+        STATE_TRANSITION_CONDITION_ON_LANDING_COMPLETE = 2; // Transitions to the next stage after the vehicle is landed.
+        STATE_TRANSITION_CONDITION_ON_TAKEOFF_COMPLETE = 3; // Transitions to the next stage after the vehicle finishes takeoff.
+        STATE_TRANSITION_CONDITION_ON_MODE_CHANGE = 4; // Transitions to the next stage after the vehicle changes from one user-specified fligght mode to another.
+        STATE_TRANSITION_CONDITION_ON_CUSTOM_CONDITION_TRUE = 5; // Transitions to the next stage after a user-specified condition is true.
+        STATE_TRANSITION_CONDITION_ON_CUSTOM_CONDITION_FALSE = 6; // Transitions to the next stage after a user-specified condition is false.
+    }
+
+    Command command = 1; // Command to run in the stage (if applicable).
+    string script = 2; // Script to run in that stage (if applicable).
+    Parameter parameter_set = 3; // Parameter to set in the stage (if applicable).
+    StateTransitionCondition state_transition_condition = 4; // State transition condition enum value.
+    double timeout = 5; // Time in seconds when the stage should stop.
+}
+
+// Metadata that describes the custom action and defines its stages.
+message ActionMetadata {
+    // State transition condition enumeration.
+    enum ActionCompleteCondition {
+        ACTION_COMPLETE_CONDITION_ON_LAST_STAGE_COMPLETE = 0; // Action is complete when the last stage is complete.
+        ACTION_COMPLETE_CONDITION_ON_TIMEOUT = 1; // Action is complete when a defined time as passed.
+        ACTION_COMPLETE_CONDITION_ON_RESULT_SUCCESS = 2; // Action is complete when the script/command is successful.
+        ACTION_COMPLETE_CONDITION_ON_CUSTOM_CONDITION_TRUE = 3; // Action is complete when user-specified condition is true.
+        ACTION_COMPLETE_CONDITION_ON_CUSTOM_CONDITION_FALSE = 4; // Action is complete whenr a user-specified condition is false.
+    }
+
+    uint32 id = 1; // ID of the action
+    string action_name = 2; // Name of the action
+    string action_description = 3; // Description of the action
+    string global_script = 4; // Script to run for this specific action. Runs instead of the stages.
+    double global_timeout = 5; // Timeout for the action in seconds. If a global script is set, it is used as a timeout for the script. Otherwise, for a staged action, defines the global timeout for the action. independently of the state of the stage processing.
+    ActionCompleteCondition action_complete_condition = 6; // Action complete condition enum value
+    repeated Stage stages = 7; // Timestamped ordered stages. Runs instead of the global script.
+}
+
+// Custom action result type.
+message CustomActionResult {
+    // Possible results returned for action requests.
+    enum Result {
+        RESULT_UNKNOWN = 0; // Unknown result
+        RESULT_SUCCESS = 1; // Command was accepted
+        RESULT_ERROR = 2; // Error occurred sending the command
+        RESULT_TIMEOUT = 3; // Command timed out
+        RESULT_UNSUPPORTED = 4; // Functionality not supported
+        RESULT_IN_PROGRESS = 5; // Command in progress
+    }
+
+    Result result = 1; // Result enum value
+    string result_str = 2; // Human-readable English string describing the result
+}

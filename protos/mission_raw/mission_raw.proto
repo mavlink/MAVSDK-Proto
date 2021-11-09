@@ -17,6 +17,14 @@ service MissionRawService {
      */
     rpc UploadMission(UploadMissionRequest) returns(UploadMissionResponse) {}
     /*
+     * Upload a list of geofence items to the system.
+     */
+    rpc UploadGeofence(UploadGeofenceRequest) returns(UploadGeofenceResponse) {}
+    /*
+     * Upload a list of rally point items to the system.
+     */
+    rpc UploadRallyPoints(UploadRallyPointsRequest) returns(UploadRallyPointsResponse) {}
+    /*
      * Cancel an ongoing mission upload.
      */
     rpc CancelMissionUpload(CancelMissionUploadRequest) returns(CancelMissionUploadResponse) { option (mavsdk.options.async_type) = SYNC; }
@@ -83,6 +91,20 @@ message UploadMissionRequest {
     repeated MissionItem mission_items = 1; // The mission items
 }
 message UploadMissionResponse {
+    MissionRawResult mission_raw_result = 1;
+}
+
+message UploadGeofenceRequest {
+    repeated MissionItem mission_items = 1; // The mission items
+}
+message UploadGeofenceResponse {
+    MissionRawResult mission_raw_result = 1;
+}
+
+message UploadRallyPointsRequest {
+    repeated MissionItem mission_items = 1; // The mission items
+}
+message UploadRallyPointsResponse {
     MissionRawResult mission_raw_result = 1;
 }
 

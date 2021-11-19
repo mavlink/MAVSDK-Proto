@@ -8,6 +8,10 @@ option java_outer_classname = "GimbalProto";
 // Provide control over a gimbal.
 service GimbalService {
     /*
+     * Prepare the gimbal plugin. Must be called before the plugin can be used.
+     */
+    rpc Prepare(PrepareRequest) returns(PrepareResponse) {}
+    /*
      *
      * Set gimbal pitch and yaw angles.
      *
@@ -69,6 +73,11 @@ service GimbalService {
       * of the other components in control (if any).
       */
      rpc SubscribeControl(SubscribeControlRequest) returns(stream ControlResponse) {}
+}
+
+message PrepareRequest {}
+message PrepareResponse {
+    GimbalResult gimbal_result = 1;
 }
 
 message SetPitchAndYawRequest {

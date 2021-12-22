@@ -16,17 +16,42 @@ service MissionService {
      * executed even if the connection is lost.
      */
     rpc UploadMission(UploadMissionRequest) returns(UploadMissionResponse) {}
+
+    /*
+     * Upload a list of mission items to the system with progress updates.
+     *
+     * The mission items are uploaded to a drone. Once uploaded the mission can be started and
+     * executed even if the connection is lost.
+     */
+    rpc SubscribeUploadMission(SubscribeUploadMissionRequest) returns(stream UploadMissionResponse) {
+        option (mavsdk.options.async_type) = ASYNC;
+        option (mavsdk.options.is_finite) = true;
+    }
+
     /*
      * Cancel an ongoing mission upload.
      */
     rpc CancelMissionUpload(CancelMissionUploadRequest) returns(CancelMissionUploadResponse) { option (mavsdk.options.async_type) = SYNC; }
+
     /*
-     * Download a list of mission items from the system (asynchronous).
+     * Download a list of mission items from the system.
      *
      * Will fail if any of the downloaded mission items are not supported
      * by the MAVSDK API.
      */
     rpc DownloadMission(DownloadMissionRequest) returns(DownloadMissionResponse) {}
+
+    /*
+     * Download a list of mission items from the system with progress updates.
+     *
+     * Will fail if any of the downloaded mission items are not supported
+     * by the MAVSDK API.
+     */
+    rpc SubscribeDownloadMission(SubscribeDownloadMissionRequest) returns(stream DownloadMissionResponse) {
+        option (mavsdk.options.async_type) = ASYNC;
+        option (mavsdk.options.is_finite) = true;
+    }
+
     /*
      * Cancel an ongoing mission download.
      */
@@ -89,6 +114,11 @@ message UploadMissionRequest {
 }
 message UploadMissionResponse {
     MissionResult mission_result = 1;
+    TransferProgress transfer_progress = 2; // The transfer progress
+}
+
+message SubscribeUploadMissionRequest {
+    MissionPlan mission_plan = 1; // The mission plan
 }
 
 message CancelMissionUploadRequest {}
@@ -100,7 +130,10 @@ message DownloadMissionRequest {}
 message DownloadMissionResponse {
     MissionResult mission_result = 1;
     MissionPlan mission_plan = 2; // The mission plan
+    TransferProgress = 3; // The transfer progress
 }
+
+message SubscribeDownloadMissionRequest {}
 
 message CancelMissionDownloadRequest {}
 message CancelMissionDownloadResponse {
@@ -187,6 +220,11 @@ message MissionItem {
         CAMERA_ACTION_START_PHOTO_DISTANCE = 6; // Start capturing photos at regular distance
         CAMERA_ACTION_STOP_PHOTO_DISTANCE = 7; // Stop capturing photos at regular distance
     }
+}
+
+message TransferProgress {
+    bool has_progress = 1 [(mavsdk.options.default_value)="false"]; // Whether this ProgressData contains a 'progress' status or not
+    float progress = 2 [(mavsdk.options.default_value)="NaN"]; // Progress (percentage)
 }
 
 // Mission plan type

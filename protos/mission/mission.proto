@@ -21,6 +21,10 @@ service MissionService {
      */
     rpc CancelMissionUpload(CancelMissionUploadRequest) returns(CancelMissionUploadResponse) { option (mavsdk.options.async_type) = SYNC; }
     /*
+     * Subscribe to mission upload progress.
+     */
+    rpc SubscribeUploadProgress(SubscribeUploadProgressRequest) returns(stream UploadProgressResponse) { option (mavsdk.options.async_type) = ASYNC; }
+    /*
      * Download a list of mission items from the system (asynchronous).
      *
      * Will fail if any of the downloaded mission items are not supported
@@ -31,6 +35,10 @@ service MissionService {
      * Cancel an ongoing mission download.
      */
     rpc CancelMissionDownload(CancelMissionDownloadRequest) returns(CancelMissionDownloadResponse) { option (mavsdk.options.async_type) = SYNC; }
+    /*
+     * Subscribe to mission download progress.
+     */
+    rpc SubscribeDownloadProgress(SubscribeDownloadProgressRequest) returns(stream DownloadProgressResponse) { option (mavsdk.options.async_type) = ASYNC; }
     /*
      * Start the mission.
      *
@@ -96,6 +104,11 @@ message CancelMissionUploadResponse {
     MissionResult mission_result = 1;
 }
 
+message SubscribeUploadProgressRequest {}
+message UploadProgressResponse {
+    UploadProgress upload_progress = 1; // Mission upload progress
+}
+
 message DownloadMissionRequest {}
 message DownloadMissionResponse {
     MissionResult mission_result = 1;
@@ -105,6 +118,11 @@ message DownloadMissionResponse {
 message CancelMissionDownloadRequest {}
 message CancelMissionDownloadResponse {
     MissionResult mission_result = 1;
+}
+
+message SubscribeDownloadProgressRequest {}
+message DownloadProgressResponse {
+    DownloadProgress download_progress = 1; // Mission download progress
 }
 
 message StartMissionRequest {}
@@ -192,6 +210,16 @@ message MissionItem {
 // Mission plan type
 message MissionPlan {
     repeated MissionItem mission_items = 1; // The mission items
+}
+
+// Mission upload progress type.
+message UploadProgress {
+    float progress = 1; // Upload progress from 0.0 to 1.0
+}
+
+// Mission download progress type.
+message DownloadProgress {
+    float progress = 1; // Download progress from 0.0 to 1.0
 }
 
 // Mission progress type.

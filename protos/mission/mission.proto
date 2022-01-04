@@ -130,7 +130,7 @@ message DownloadMissionRequest {}
 message DownloadMissionResponse {
     MissionResult mission_result = 1;
     MissionPlan mission_plan = 2; // The mission plan
-    TransferProgress = 3; // The transfer progress
+    TransferProgress transfer_progress = 3; // The transfer progress
 }
 
 message SubscribeDownloadMissionRequest {}

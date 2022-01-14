@@ -1,0 +1,118 @@
+syntax = "proto3";
+
+package mavsdk.rpc.camera_server;
+
+import "mavsdk_options.proto";
+
+option java_package = "io.mavsdk.camera_server";
+option java_outer_classname = "CameraServerProto";
+
+// Provides handling of camera trigger commands.
+service CameraServerService {
+    // Sets the camera information
+    rpc SetInformation(SetInformationRequest) returns(SetInformationResponse) { option (mavsdk.options.async_type) = SYNC; }
+    // Sets the camera capture status
+    rpc SetInProgress(SetInProgressRequest) returns(SetInProgressResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    // Subscribe to single-image capture commands
+    rpc SubscribeTakePhoto(SubscribeTakePhotoRequest) returns(stream TakePhotoResponse) { option (mavsdk.options.async_type) = ASYNC; }
+    
+    // Adds a photo to the list of available photos
+    rpc PublishPhoto(PublishPhotoRequest) returns(PublishPhotoResponse) { option (mavsdk.options.async_type) = SYNC; }
+}
+
+message SetInformationRequest {
+    Information information = 1; // information about the camera
+}
+
+message SetInformationResponse {
+    CameraServerResult camera_server_result = 1;
+}
+
+message SetInProgressRequest {
+    bool in_progress = 1; // true if capture is in progress or false for idle.
+}
+
+message SetInProgressResponse {
+    CameraServerResult camera_server_result = 1;
+}
+
+message SubscribeTakePhotoRequest {}
+
+message TakePhotoResponse {
+    CameraServerResult camera_server_result = 1;
+    int32 index = 2;
+}
+
+message PublishPhotoRequest {
+    CaptureInfo capture_info = 1;
+}
+
+message PublishPhotoResponse {
+    CameraServerResult camera_server_result = 1;
+}
+
+// Type to represent a camera information.
+message Information {
+    string vendor_name = 1; // Name of the camera vendor
+    string model_name = 2; // Name of the camera model
+    float focal_length_mm = 3; // Focal length
+    float horizontal_sensor_size_mm = 4; // Horizontal sensor size
+    float vertical_sensor_size_mm = 5; // Vertical sensor size
+    uint32 horizontal_resolution_px = 6; // Horizontal image resolution in pixels
+    uint32 vertical_resolution_px = 7; // Vertical image resolution in pixels
+}
+
+// Position type in global coordinates.
+message Position {
+    double latitude_deg = 1; // Latitude in degrees (range: -90 to +90)
+    double longitude_deg = 2; // Longitude in degrees (range: -180 to +180)
+    float absolute_altitude_m = 3; // Altitude AMSL (above mean sea level) in metres
+    float relative_altitude_m = 4; // Altitude relative to takeoff altitude in metres
+}
+
+/*
+ * Quaternion type.
+ *
+ * All rotations and axis systems follow the right-hand rule.
+ * The Hamilton quaternion product definition is used.
+ * A zero-rotation quaternion is represented by (1,0,0,0).
+ * The quaternion could also be written as w + xi + yj + zk.
+ *
+ * For more info see: https://en.wikipedia.org/wiki/Quaternion
+ */
+message Quaternion {
+    float w = 1; // Quaternion entry 0, also denoted as a
+    float x = 2; // Quaternion entry 1, also denoted as b
+    float y = 3; // Quaternion entry 2, also denoted as c
+    float z = 4; // Quaternion entry 3, also denoted as d
+}
+
+// Information about a picture just captured.
+message CaptureInfo {
+    Position position = 1; // Location where the picture was taken
+    Quaternion attitude_quaternion = 2; // Attitude of the camera when the picture was taken (quaternion)
+    uint64 time_utc_us = 3; // Timestamp in UTC (since UNIX epoch) in microseconds
+    bool is_success = 4; // True if the capture was successful
+    int32 index = 5; // Index from TakePhotoResponse
+    string file_url = 6; // Download URL of this image
+}
+
+// Result type.
+message CameraServerResult {
+    // Possible results returned for action requests.
+    enum Result {
+        RESULT_UNKNOWN = 0; // Unknown result
+        RESULT_SUCCESS = 1; // Command executed successfully
+        RESULT_IN_PROGRESS = 2; // Command in progress
+        RESULT_BUSY = 3; // Camera is busy and rejected command
+        RESULT_DENIED = 4; // Camera denied the command
+        RESULT_ERROR = 5; // An error has occurred while executing the command
+        RESULT_TIMEOUT = 6; // Command timed out
+        RESULT_WRONG_ARGUMENT = 7; // Command has wrong argument(s)
+        RESULT_NO_SYSTEM = 8; // No system connected
+    }
+
+    Result result = 1; // Result enum value
+    string result_str = 2; // Human-readable English string describing the result
+}

@@ -17,8 +17,8 @@ service CameraServerService {
     // Subscribe to single-image capture commands
     rpc SubscribeTakePhoto(SubscribeTakePhotoRequest) returns(stream TakePhotoResponse) { option (mavsdk.options.async_type) = ASYNC; }
     
-    // Adds a photo to the list of available photos
-    rpc PublishPhoto(PublishPhotoRequest) returns(PublishPhotoResponse) { option (mavsdk.options.async_type) = SYNC; }
+    // Respond to a single-image capture command.
+    rpc RespondTakePhoto(RespondTakePhotoRequest) returns(RespondTakePhotoResponse) { option (mavsdk.options.async_type) = SYNC; }
 }
 
 message SetInformationRequest {
@@ -44,11 +44,11 @@ message TakePhotoResponse {
     int32 index = 2;
 }
 
-message PublishPhotoRequest {
+message RespondTakePhotoRequest {
     CaptureInfo capture_info = 1;
 }
 
-message PublishPhotoResponse {
+message RespondTakePhotoResponse {
     CameraServerResult camera_server_result = 1;
 }
 

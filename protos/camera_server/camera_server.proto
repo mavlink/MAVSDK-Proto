@@ -9,15 +9,15 @@ option java_outer_classname = "CameraServerProto";
 
 // Provides handling of camera trigger commands.
 service CameraServerService {
-    // Sets the camera information
+    // Sets the camera information. This must be called as soon as the camera server is created.
     rpc SetInformation(SetInformationRequest) returns(SetInformationResponse) { option (mavsdk.options.async_type) = SYNC; }
-    // Sets the camera capture status
+    // Sets image capture in progress status flags. This should be set to true when the camera is busy taking a photo and false when it is done.
     rpc SetInProgress(SetInProgressRequest) returns(SetInProgressResponse) { option (mavsdk.options.async_type) = SYNC; }
 
-    // Subscribe to single-image capture commands
+    // Subscribe to image capture requests. Each request received should respond to using RespondTakePhoto.
     rpc SubscribeTakePhoto(SubscribeTakePhotoRequest) returns(stream TakePhotoResponse) { option (mavsdk.options.async_type) = ASYNC; }
     
-    // Respond to a single-image capture command.
+    // Respond to an image capture request from SubscribeTakePhoto.
     rpc RespondTakePhoto(RespondTakePhotoRequest) returns(RespondTakePhotoResponse) { option (mavsdk.options.async_type) = SYNC; }
 }
 

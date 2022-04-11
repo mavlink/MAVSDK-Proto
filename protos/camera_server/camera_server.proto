@@ -40,12 +40,19 @@ message SetInProgressResponse {
 message SubscribeTakePhotoRequest {}
 
 message TakePhotoResponse {
-    CameraServerResult camera_server_result = 1;
-    int32 index = 2;
+    int32 index = 1;
+}
+
+enum TakePhotoResult {
+    TAKE_PHOTO_RESULT_UNKNOWN = 0;
+    TAKE_PHOTO_RESULT_OK = 1;
+    TAKE_PHOTO_RESULT_BUSY = 2;
+    TAKE_PHOTO_RESULT_FAILED = 3;
 }
 
 message RespondTakePhotoRequest {
-    CaptureInfo capture_info = 1;
+    TakePhotoResult take_photo_result = 1;
+    CaptureInfo capture_info = 2;
 }
 
 message RespondTakePhotoResponse {

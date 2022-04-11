@@ -14,7 +14,8 @@ class File(object):
             enums,
             structs,
             methods,
-            has_result):
+            has_result,
+            is_server):
         self._package = name_parser_factory.create(package)
         self._plugin_name = name_parser_factory.create(plugin_name)
         self._template = template_env.get_template("file.j2")
@@ -23,6 +24,7 @@ class File(object):
         self._structs = structs
         self._methods = methods
         self._has_result = has_result
+        self._is_server = is_server
 
     def __repr__(self):
         return self._template.render(package=self._package,
@@ -31,4 +33,5 @@ class File(object):
                                      enums=self._enums.values(),
                                      structs=self._structs.values(),
                                      methods=self._methods.values(),
-                                     has_result=self._has_result)
+                                     has_result=self._has_result,
+                                     is_server=self._is_server)

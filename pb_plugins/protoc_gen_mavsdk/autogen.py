@@ -8,6 +8,7 @@ from .methods import Method
 from .struct import Struct
 from .utils import (get_template_env,
                     has_result,
+                    is_server,
                     name_parser_factory,
                     type_info_factory)
 
@@ -73,7 +74,8 @@ class AutoGen(object):
                             enums,
                             structs,
                             methods,
-                            has_result(structs))
+                            has_result(structs),
+                            is_server(plugin_name))
 
             # Fill response
             f = _codegen_response.file.add()

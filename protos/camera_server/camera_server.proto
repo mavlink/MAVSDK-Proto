@@ -43,15 +43,15 @@ message TakePhotoResponse {
     int32 index = 1;
 }
 
-enum TakePhotoResult {
-    TAKE_PHOTO_RESULT_UNKNOWN = 0;
-    TAKE_PHOTO_RESULT_OK = 1;
-    TAKE_PHOTO_RESULT_BUSY = 2;
-    TAKE_PHOTO_RESULT_FAILED = 3;
+enum TakePhotoFeedback {
+    TAKE_PHOTO_FEEDBACK_UNKNOWN = 0;
+    TAKE_PHOTO_FEEDBACK_OK = 1;
+    TAKE_PHOTO_FEEDBACK_BUSY = 2;
+    TAKE_PHOTO_FEEDBACK_FAILED = 3;
 }
 
 message RespondTakePhotoRequest {
-    TakePhotoResult take_photo_result = 1;
+    TakePhotoFeedback take_photo_feedback = 1;
     CaptureInfo capture_info = 2;
 }
 

@@ -60,6 +60,7 @@ class AutoGen(object):
 
             methods = Method.collect_methods(plugin_name,
                                              package,
+                                             is_server(plugin_name),
                                              docs,
                                              proto_file.service[0].method,
                                              structs,

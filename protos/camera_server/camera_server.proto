@@ -43,16 +43,17 @@ message TakePhotoResponse {
     int32 index = 1;
 }
 
+// Possible results when taking a photo.
 enum TakePhotoFeedback {
-    TAKE_PHOTO_FEEDBACK_UNKNOWN = 0;
-    TAKE_PHOTO_FEEDBACK_OK = 1;
-    TAKE_PHOTO_FEEDBACK_BUSY = 2;
-    TAKE_PHOTO_FEEDBACK_FAILED = 3;
+    TAKE_PHOTO_FEEDBACK_UNKNOWN = 0; // Unknown
+    TAKE_PHOTO_FEEDBACK_OK = 1; // Ok
+    TAKE_PHOTO_FEEDBACK_BUSY = 2; // Busy
+    TAKE_PHOTO_FEEDBACK_FAILED = 3; // Failed
 }
 
 message RespondTakePhotoRequest {
-    TakePhotoFeedback take_photo_feedback = 1;
-    CaptureInfo capture_info = 2;
+    TakePhotoFeedback take_photo_feedback = 1; // The feedback
+    CaptureInfo capture_info = 2; // The capture information
 }
 
 message RespondTakePhotoResponse {
@@ -63,7 +64,7 @@ message RespondTakePhotoResponse {
 message Information {
     string vendor_name = 1; // Name of the camera vendor
     string model_name = 2; // Name of the camera model
-    string firmware_version = 3; // Camera firmware version in <major>[.<minor>[.<patch>[.<dev>]]] format
+    string firmware_version = 3; // Camera firmware version in major[.minor[.patch[.dev]]] format
     float focal_length_mm = 4; // Focal length
     float horizontal_sensor_size_mm = 5; // Horizontal sensor size
     float vertical_sensor_size_mm = 6; // Vertical sensor size

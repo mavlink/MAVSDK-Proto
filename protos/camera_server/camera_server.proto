@@ -1,0 +1,129 @@
+syntax = "proto3";
+
+package mavsdk.rpc.camera_server;
+
+import "mavsdk_options.proto";
+
+option java_package = "io.mavsdk.camera_server";
+option java_outer_classname = "CameraServerProto";
+
+// Provides handling of camera trigger commands.
+service CameraServerService {
+    // Sets the camera information. This must be called as soon as the camera server is created.
+    rpc SetInformation(SetInformationRequest) returns(SetInformationResponse) { option (mavsdk.options.async_type) = SYNC; }
+    // Sets image capture in progress status flags. This should be set to true when the camera is busy taking a photo and false when it is done.
+    rpc SetInProgress(SetInProgressRequest) returns(SetInProgressResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    // Subscribe to image capture requests. Each request received should respond to using RespondTakePhoto.
+    rpc SubscribeTakePhoto(SubscribeTakePhotoRequest) returns(stream TakePhotoResponse) { option (mavsdk.options.async_type) = ASYNC; }
+    
+    // Respond to an image capture request from SubscribeTakePhoto.
+    rpc RespondTakePhoto(RespondTakePhotoRequest) returns(RespondTakePhotoResponse) { option (mavsdk.options.async_type) = SYNC; }
+}
+
+message SetInformationRequest {
+    Information information = 1; // information about the camera
+}
+
+message SetInformationResponse {
+    CameraServerResult camera_server_result = 1;
+}
+
+message SetInProgressRequest {
+    bool in_progress = 1; // true if capture is in progress or false for idle.
+}
+
+message SetInProgressResponse {
+    CameraServerResult camera_server_result = 1;
+}
+
+message SubscribeTakePhotoRequest {}
+
+message TakePhotoResponse {
+    int32 index = 1;
+}
+
+enum TakePhotoFeedback {
+    TAKE_PHOTO_FEEDBACK_UNKNOWN = 0;
+    TAKE_PHOTO_FEEDBACK_OK = 1;
+    TAKE_PHOTO_FEEDBACK_BUSY = 2;
+    TAKE_PHOTO_FEEDBACK_FAILED = 3;
+}
+
+message RespondTakePhotoRequest {
+    TakePhotoFeedback take_photo_feedback = 1;
+    CaptureInfo capture_info = 2;
+}
+
+message RespondTakePhotoResponse {
+    CameraServerResult camera_server_result = 1;
+}
+
+// Type to represent a camera information.
+message Information {
+    string vendor_name = 1; // Name of the camera vendor
+    string model_name = 2; // Name of the camera model
+    string firmware_version = 3; // Camera firmware version in <major>[.<minor>[.<patch>[.<dev>]]] format
+    float focal_length_mm = 4; // Focal length
+    float horizontal_sensor_size_mm = 5; // Horizontal sensor size
+    float vertical_sensor_size_mm = 6; // Vertical sensor size
+    uint32 horizontal_resolution_px = 7; // Horizontal image resolution in pixels
+    uint32 vertical_resolution_px = 8; // Vertical image resolution in pixels
+    uint32 lens_id = 9; // Lens ID
+    uint32 definition_file_version = 10; // Camera definition file version (iteration)
+    string definition_file_uri = 11; // Camera definition URI (http or mavlink ftp)
+}
+
+// Position type in global coordinates.
+message Position {
+    double latitude_deg = 1; // Latitude in degrees (range: -90 to +90)
+    double longitude_deg = 2; // Longitude in degrees (range: -180 to +180)
+    float absolute_altitude_m = 3; // Altitude AMSL (above mean sea level) in metres
+    float relative_altitude_m = 4; // Altitude relative to takeoff altitude in metres
+}
+
+/*
+ * Quaternion type.
+ *
+ * All rotations and axis systems follow the right-hand rule.
+ * The Hamilton quaternion product definition is used.
+ * A zero-rotation quaternion is represented by (1,0,0,0).
+ * The quaternion could also be written as w + xi + yj + zk.
+ *
+ * For more info see: https://en.wikipedia.org/wiki/Quaternion
+ */
+message Quaternion {
+    float w = 1; // Quaternion entry 0, also denoted as a
+    float x = 2; // Quaternion entry 1, also denoted as b
+    float y = 3; // Quaternion entry 2, also denoted as c
+    float z = 4; // Quaternion entry 3, also denoted as d
+}
+
+// Information about a picture just captured.
+message CaptureInfo {
+    Position position = 1; // Location where the picture was taken
+    Quaternion attitude_quaternion = 2; // Attitude of the camera when the picture was taken (quaternion)
+    uint64 time_utc_us = 3; // Timestamp in UTC (since UNIX epoch) in microseconds
+    bool is_success = 4; // True if the capture was successful
+    int32 index = 5; // Index from TakePhotoResponse
+    string file_url = 6; // Download URL of this image
+}
+
+// Result type.
+message CameraServerResult {
+    // Possible results returned for action requests.
+    enum Result {
+        RESULT_UNKNOWN = 0; // Unknown result
+        RESULT_SUCCESS = 1; // Command executed successfully
+        RESULT_IN_PROGRESS = 2; // Command in progress
+        RESULT_BUSY = 3; // Camera is busy and rejected command
+        RESULT_DENIED = 4; // Camera denied the command
+        RESULT_ERROR = 5; // An error has occurred while executing the command
+        RESULT_TIMEOUT = 6; // Command timed out
+        RESULT_WRONG_ARGUMENT = 7; // Command has wrong argument(s)
+        RESULT_NO_SYSTEM = 8; // No system connected
+    }
+
+    Result result = 1; // Result enum value
+    string result_str = 2; // Human-readable English string describing the result
+}

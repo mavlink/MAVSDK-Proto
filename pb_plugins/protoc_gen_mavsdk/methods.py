@@ -15,6 +15,7 @@ class Method(object):
             self,
             plugin_name,
             package,
+            is_server,
             method_description,
             pb_method,
             requests,
@@ -25,6 +26,7 @@ class Method(object):
         self._returns = False
         self._plugin_name = name_parser_factory.create(plugin_name)
         self._package = name_parser_factory.create(package)
+        self._is_server = is_server
         self._method_description = method_description
         self._name = name_parser_factory.create(pb_method.name)
         self.extract_params(pb_method, requests)
@@ -120,6 +122,10 @@ class Method(object):
         return self._package
 
     @property
+    def is_server(self):
+        return self._is_server
+
+    @property
     def name(self):
         return self._name
 
@@ -131,6 +137,7 @@ class Method(object):
     def collect_methods(
             plugin_name,
             package,
+            is_server,
             docs,
             methods,
             structs,
@@ -149,6 +156,7 @@ class Method(object):
             if (is_stream(method)):
                 _methods[method.name] = Stream(plugin_name,
                                                package,
+                                               is_server,
                                                method_description,
                                                template_env,
                                                method,
@@ -159,6 +167,7 @@ class Method(object):
             elif (no_return(method, responses)):
                 _methods[method.name] = Call(plugin_name,
                                              package,
+                                             is_server,
                                              method_description,
                                              template_env,
                                              method,
@@ -168,6 +177,7 @@ class Method(object):
             else:
                 _methods[method.name] = Request(plugin_name,
                                                 package,
+                                                is_server,
                                                 method_description,
                                                 template_env,
                                                 method,
@@ -190,6 +200,7 @@ class Call(Method):
             self,
             plugin_name,
             package,
+            is_server,
             method_description,
             template_env,
             pb_method,
@@ -198,6 +209,7 @@ class Call(Method):
         super().__init__(
             plugin_name,
             package,
+            is_server,
             method_description,
             pb_method,
             requests,
@@ -210,6 +222,7 @@ class Call(Method):
                                      params=self._params,
                                      plugin_name=self._plugin_name,
                                      package=self._package,
+                                     is_server=self._is_server,
                                      method_description=self._method_description,
                                      has_result=self._has_result,
                                      is_async=self._is_async,
@@ -223,6 +236,7 @@ class Request(Method):
             self,
             plugin_name,
             package,
+            is_server,
             method_description,
             template_env,
             pb_method,
@@ -231,6 +245,7 @@ class Request(Method):
         super().__init__(
             plugin_name,
             package,
+            is_server,
             method_description,
             pb_method,
             requests,
@@ -248,6 +263,7 @@ class Request(Method):
             return_description=self._return_description,
             plugin_name=self._plugin_name,
             package=self._package,
+            is_server=self.is_server,
             method_description=self._method_description,
             has_result=self._has_result,
             is_async=self._is_async,
@@ -261,6 +277,7 @@ class Stream(Method):
             self,
             plugin_name,
             package,
+            is_server,
             method_description,
             template_env,
             pb_method,
@@ -269,6 +286,7 @@ class Stream(Method):
         super().__init__(
             plugin_name,
             package,
+            is_server,
             method_description,
             pb_method,
             requests,
@@ -291,6 +309,7 @@ class Stream(Method):
             return_description=self._return_description,
             plugin_name=self._plugin_name,
             package=self._package,
+            is_server=self._is_server,
             method_description=self._method_description,
             has_result=self._has_result,
             is_async=self._is_async,

@@ -75,6 +75,11 @@ def has_result(structs):
     return False
 
 
+def is_server(plugin_name):
+    """ Checks if the Plugin is a server plugin. """
+    return plugin_name.endswith("Server")
+
+
 def remove_subscribe(name):
     return name.replace("Subscribe", "")
 

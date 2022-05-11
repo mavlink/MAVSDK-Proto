@@ -1,0 +1,82 @@
+syntax = "proto3";
+
+package mavsdk.rpc.autonomy_server;
+
+import "mavsdk_options.proto";
+
+option java_package = "io.mavsdk.autonomy_server";
+option java_outer_classname = "AutonomyServerProto";
+
+// Provide autonomy information.
+service AutonomyServerService {
+    /*
+     * Subscribe to autonomy state.
+     */
+    rpc SubscribeState(SubscribeStateRequest) returns(stream StateResponse) {}
+    /*
+     * Describe the components' health.
+     */
+    rpc SetComponentHealth(SetComponentHealthRequest) returns(SetComponentHealthResponse) { option (mavsdk.options.async_type) = SYNC; }
+}
+
+message SubscribeStateRequest {}
+message StateResponse {
+    AutonomyServerState state = 1; // The state
+}
+
+message SetComponentHealthRequest {
+    repeated AutonomyServerComponentHealth component_health = 2; // The components' health
+}
+message SetComponentHealthResponse {
+    AutonomyServerResult result = 1;
+}
+
+// Current state of the autonomy system
+enum AutonomyServerState {
+    AUTONOMY_SERVER_STATE_DEFAULT = 0; // Default state, ignored
+    AUTONOMY_SERVER_STATE_IDLE = 1; // System has not been started
+    AUTONOMY_SERVER_STATE_EXECUTING = 2; // Autonomy system executing and in control
+    AUTONOMY_SERVER_STATE_PAUSED = 3; // Autonomy system paused
+    AUTONOMY_SERVER_STATE_SUSPENDED = 4; // Autonomy system execution suspended temporarily
+    AUTONOMY_SERVER_STATE_COMPLETED = 5; // Autonomy system execution completed successfully
+    AUTONOMY_SERVER_STATE_STOPPED = 6; // Autonomy system execution stopped early
+}
+
+// Components that can be present in an autonomy system
+enum AutonomyServerComponent {
+    AUTONOMY_SERVER_COMPONENT_CORE = 0; // Autonomy system core
+    AUTONOMY_SERVER_COMPONENT_ATR = 1; // Automated target recognition
+    AUTONOMY_SERVER_COMPONENT_SAS = 2; // Synthetic aperture sonar
+    AUTONOMY_SERVER_COMPONENT_MBES = 4; // Multi beam echo sounder
+    AUTONOMY_SERVER_COMPONENT_FLS = 5; // Forward look sonar
+    AUTONOMY_SERVER_COMPONENT_CAMERA = 6; // Camera
+    AUTONOMY_SERVER_COMPONENT_ACOMMS = 7; // Acomms modem
+}
+
+//  Type to describe one component of an autonomy system
+message AutonomyServerComponentHealth {
+    AutonomyServerComponent component = 1; // component described
+    bool present = 2; // whether component is present
+    bool enabled = 3; // whether component is enabled
+    bool healthy = 4; // whether component is healthy
+}
+
+// Type describing the system state and enumerating component health
+message AutonomyServerStatus {
+    AutonomyServerState system_state = 1; // The system state
+    repeated AutonomyServerComponentHealth component_health = 2; // The components' health
+}
+
+// Result type.
+message AutonomyServerResult {
+    // Possible results returned for param requests.
+    enum Result {
+        RESULT_UNKNOWN = 0; // Unknown result
+        RESULT_SUCCESS = 1; // Request succeeded
+        CONNECTION_ERROR = 2; // Connection error
+        ID_NOT_FOUND = 3; // ID not found
+    }
+
+    Result result = 1; // Result enum value
+    string result_str = 2; // Human-readable English string describing the result
+}

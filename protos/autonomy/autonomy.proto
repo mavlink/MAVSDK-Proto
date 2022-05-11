@@ -1,0 +1,98 @@
+syntax = "proto3";
+
+package mavsdk.rpc.autonomy;
+
+option java_package = "io.mavsdk.autonomy";
+option java_outer_classname = "AutonomyProto";
+
+// Query autonomy information.
+service AutonomyService {
+    /*
+     * Get autonomy state as well as components' health.
+     */
+    rpc GetAutonomyStatus(GetAutonomyStatusRequest) returns(GetAutonomyStatusResponse) {}
+
+    /*
+     * Send autonomy demand to change autonomy state.
+     */
+    rpc SendAutonomyDemand(SendAutonomyDemandRequest) returns(SendAutonomyDemandResponse) {}
+}
+
+message GetAutonomyStatusRequest {}
+
+message GetAutonomyStatusResponse {
+    AutonomyResult result = 1;
+    AutonomyStatus status = 2; // The status received
+}
+
+message SendAutonomyDemandRequest {
+    AutonomyDemand demand = 1; // The demanded autonomy event
+}
+
+message SendAutonomyDemandResponse {
+    AutonomyResult result = 1;
+    AutonomyStatus status = 2; // The status received
+}
+
+// Current state of the autonomy system
+enum AutonomyState {
+    AUTONOMY_STATE_DEFAULT = 0; // Default state, ignored
+    AUTONOMY_STATE_IDLE = 1; // System has not been started
+    AUTONOMY_STATE_EXECUTING = 2; // Autonomy system executing and in control
+    AUTONOMY_STATE_PAUSED = 3; // Autonomy system paused
+    AUTONOMY_STATE_SUSPENDED = 4; // Autonomy system execution suspended temporarily
+    AUTONOMY_STATE_COMPLETED = 5; // Autonomy system execution completed successfully
+    AUTONOMY_STATE_STOPPED = 6; // Autonomy system execution stopped early
+}
+
+// Demands to be made to the autonomy system
+enum AutonomyDemand {
+    AUTONOMY_DEMAND_DEFAULT = 0; // Default value, ignored
+    AUTONOMY_DEMAND_START = 1; // Start autonomy system
+    AUTONOMY_DEMAND_STOP = 2; // Stop autonomy system
+    AUTONOMY_DEMAND_GO_TO_RECOVERY = 3; // Abort autonomy system to the recovery point
+    AUTONOMY_DEMAND_PAUSE = 4; // Pause autonomy system
+    AUTONOMY_DEMAND_SUSPEND = 5; // Suspend autonomy system control temporarily
+    AUTONOMY_DEMAND_RESUME = 6; // Resume autonomy system
+}
+
+// Components that can be present in an autonomy system
+enum AutonomyComponent {
+    AUTONOMY_COMPONENT_CORE = 0; // Autonomy system core
+    AUTONOMY_COMPONENT_ATR = 1; // Automated target recognition
+    AUTONOMY_COMPONENT_SAS = 2; // Synthetic aperture sonar
+    AUTONOMY_COMPONENT_MBES = 4; // Multi beam echo sounder
+    AUTONOMY_COMPONENT_FLS = 5; // Forward look sonar
+    AUTONOMY_COMPONENT_CAMERA = 6; // Camera
+    AUTONOMY_COMPONENT_ACOMMS = 7; // Acomms modem
+}
+
+//  Type to describe one component of an autonomy system
+message AutonomyComponentHealth {
+    AutonomyComponent component = 1; // component described
+    bool present = 2; // whether component is present
+    bool enabled = 3; // whether component is enabled
+    bool healthy = 4; // whether component is healthy
+}
+
+// Type describing the system state and enumerating component health
+message AutonomyStatus {
+    AutonomyState system_state = 1; // The system state
+    repeated AutonomyComponentHealth component_health = 2; // All components to list
+}
+
+// Result type.
+message AutonomyResult {
+    // Possible results returned for autonomy requests.
+    enum Result {
+        RESULT_UNKNOWN = 0; // Unknown result
+        RESULT_SUCCESS = 1; // Request succeeded
+        CONNECTION_ERROR = 2; // Connection error
+        NO_SYSTEM = 3; // No system available
+        TIMEOUT = 4; // Timeout happened
+        BUSY = 6; // Action already in progress
+    }
+
+    Result result = 1; // Result enum value
+    string result_str = 2; // Human-readable English string describing the result
+}

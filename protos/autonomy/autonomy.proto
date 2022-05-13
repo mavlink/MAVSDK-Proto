@@ -91,6 +91,9 @@ message AutonomyResult {
         NO_SYSTEM = 3; // No system available
         TIMEOUT = 4; // Timeout happened
         BUSY = 6; // Action already in progress
+        DENIED = 7; // Request has been denied
+        FAILED = 8; // Request has failed
+        UNSUPPORTED = 9; // Request is unsupported
     }
 
     Result result = 1; // Result enum value

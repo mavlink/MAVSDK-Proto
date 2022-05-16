@@ -46,6 +46,8 @@ service TelemetryServerService {
     rpc PublishAttitude(PublishAttitudeRequest) returns(PublishAttitudeResponse) { option (mavsdk.options.async_type) = SYNC; }
     // Publish to "Visual Flight Rules HUD" updates.
     rpc PublishVisualFlightRulesHud(PublishVisualFlightRulesHudRequest) returns(PublishVisualFlightRulesHudResponse) { option (mavsdk.options.async_type) = SYNC; }
+    // Publish to 'wind' updates.
+    rpc PublishWind(PublishWindRequest) returns(PublishWindResponse) { option (mavsdk.options.async_type) = SYNC; }
 }
 
 message PublishPositionRequest {
@@ -138,6 +140,10 @@ message PublishVisualFlightRulesHudRequest {
     FixedwingMetrics fixed_wing_metrics = 1;
 }
 
+message PublishWindRequest {
+    Wind wind = 1; // The next 'wind' update
+}
+
 message PublishPositionResponse {
     TelemetryServerResult telemetry_server_result = 1;
 }
@@ -191,7 +197,6 @@ message PublishRawImuResponse {
     TelemetryServerResult telemetry_server_result = 1;
 }
 
-
 message PublishUnixEpochTimeResponse {
     TelemetryServerResult telemetry_server_result = 1;
 }
@@ -205,6 +210,10 @@ message PublishAttitudeResponse {
 }
 
 message PublishVisualFlightRulesHudResponse {
+    TelemetryServerResult telemetry_server_result = 1;
+}
+
+message PublishWindResponse {
     TelemetryServerResult telemetry_server_result = 1;
 }
 
@@ -492,6 +501,19 @@ message Imu {
     MagneticFieldFrd magnetic_field_frd = 3; // Magnetic field
     float temperature_degc = 4 [(mavsdk.options.default_value)="NaN"]; // Temperature
     uint64 timestamp_us = 5; // Timestamp in microseconds
+}
+
+// Wind message type
+message Wind {
+    uint64 timestamp_us = 1 [(mavsdk.options.default_value)="NaN"]; // Timestamp in microseconds
+    float wind_north_m_s = 2 [(mavsdk.options.default_value)="NaN"]; // Wind in North direction in meters/second
+    float wind_east_m_s = 3 [(mavsdk.options.default_value)="NaN"]; // Wind in East direction in meters/second
+    float wind_down_m_s = 4 [(mavsdk.options.default_value)="NaN"]; // Wind in down direction in meters/second
+    float variability_horizontal_m_s = 5 [(mavsdk.options.default_value)="NaN"]; // Horizontal variability in meters/second, standard deviation
+    float variability_vertical_m_s = 6 [(mavsdk.options.default_value)="NaN"]; // Vertical variability in meters/second, standard deviation
+    float measurement_altitude_msl_m = 7 [(mavsdk.options.default_value)="NaN"]; // Altitude MSL where measurement was taken
+    float accuracy_horizontal_m_s = 8 [(mavsdk.options.default_value)="NaN"]; // Horizontal accuracy in meters/second, standard deviation
+    float accuracy_vertical_m_s = 9 [(mavsdk.options.default_value)="NaN"]; // Vertical accuracy in meters/second, standard deviation
 }
 
 // Result type.

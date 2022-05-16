@@ -131,6 +131,8 @@ service TelemetryService {
     rpc SetRateAltitude(SetRateAltitudeRequest) returns(SetRateAltitudeResponse){}
     // Set rate to 'Health' updates.
     rpc SetRateHealth(SetRateHealthRequest) returns(SetRateHealthResponse){}
+    // Set rate to 'Wind' updates.
+    rpc SetRateWind(SetRateWindRequest) returns(SetRateWindResponse) {}
 
     // Get the GPS location of where the estimator has been initialized.
     rpc GetGpsGlobalOrigin(GetGpsGlobalOriginRequest) returns(GetGpsGlobalOriginResponse) {}
@@ -468,6 +470,13 @@ message SetRateDistanceSensorRequest {
     double rate_hz = 1; // The requested rate (in Hertz)
 }
 message SetRateDistanceSensorResponse {
+    TelemetryResult telemetry_result = 1;
+}
+
+message SetRateWindRequest {
+    double rate_hz = 1; // The requested rate (in Hertz)
+}
+message SetRateWindResponse {
     TelemetryResult telemetry_result = 1;
 }
 
@@ -846,6 +855,19 @@ message Imu {
     MagneticFieldFrd magnetic_field_frd = 3; // Magnetic field
     float temperature_degc = 4 [(mavsdk.options.default_value)="NaN"]; // Temperature
     uint64 timestamp_us = 5; // Timestamp in microseconds
+}
+
+// Wind message type
+message Wind {
+    uint64 timestamp_us = 1 [(mavsdk.options.default_value)="NaN"]; // Timestamp in microseconds
+    float wind_north_m_s = 2 [(mavsdk.options.default_value)="NaN"]; // Wind in North direction in meters/second
+    float wind_east_m_s = 3 [(mavsdk.options.default_value)="NaN"]; // Wind in East direction in meters/second
+    float wind_down_m_s = 4 [(mavsdk.options.default_value)="NaN"]; // Wind in down direction in meters/second
+    float variability_horizontal_m_s = 5 [(mavsdk.options.default_value)="NaN"]; // Horizontal variability in meters/second, standard deviation
+    float variability_vertical_m_s = 6 [(mavsdk.options.default_value)="NaN"]; // Vertical variability in meters/second, standard deviation
+    float measurement_altitude_msl_m = 7 [(mavsdk.options.default_value)="NaN"]; // Altitude MSL where measurement was taken
+    float accuracy_horizontal_m_s = 8 [(mavsdk.options.default_value)="NaN"]; // Horizontal accuracy in meters/second, standard deviation
+    float accuracy_vertical_m_s = 9 [(mavsdk.options.default_value)="NaN"]; // Vertical accuracy in meters/second, standard deviation
 }
 
 // Gps global origin type.

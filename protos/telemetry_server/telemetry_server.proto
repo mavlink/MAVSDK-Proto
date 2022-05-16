@@ -51,7 +51,7 @@ service TelemetryServerService {
     // Publish to 'water_current' updates.
     rpc PublishWaterCurrent(PublishWaterCurrentRequest) returns(PublishWaterCurrentResponse) { option (mavsdk.options.async_type) = SYNC; }
     // Publish to 'DVL' updates.
-    rpc PublishDvl(PublishDvlRequest) returns(PublishDvlResponse) { option (mavsdk.options.async_type) = SYNC; }
+    rpc PublishDopplerVelocityLog(PublishDopplerVelocityLogRequest) returns(PublishDopplerVelocityLogResponse) { option (mavsdk.options.async_type) = SYNC; }
 }
 
 message PublishPositionRequest {
@@ -152,8 +152,8 @@ message PublishWaterCurrentRequest {
     WaterCurrent water_current = 1; // The next 'water_current' update
 }
 
-message PublishDvlRequest {
-    Dvl dvl = 1; // The next 'DVL' update
+message PublishDopplerVelocityLogRequest {
+    DopplerVelocityLog doppler_velocity_log = 1; // The next 'doppler_velocity_log' update
 }
 
 message PublishPositionResponse {
@@ -233,7 +233,7 @@ message PublishWaterCurrentResponse {
     TelemetryServerResult telemetry_server_result = 1;
 }
 
-message PublishDvlResponse {
+message PublishDopplerVelocityLogResponse {
     TelemetryServerResult telemetry_server_result = 1;
 }
 
@@ -547,8 +547,8 @@ message WaterCurrent {
     float distance_m = 7 [(mavsdk.options.default_value)="NaN"]; // Measurement distance from the sensor in meters
 }
 
-// DVL message type
-message Dvl {
+// Dopper Velocity Log (DVL) message type
+message DopplerVelocityLog {
     bool has_lock = 1; // Whether DVL has bottom lock to the floor
     repeated float altitude_waters_m = 2; // Vehicle altitude to the floor of body of water for each beam (up to 16)
     float vehicle_velocity_x_m_s = 3 [(mavsdk.options.default_value)="NaN"]; // Vehicle velocity in North (NED) direction in meters/second

@@ -43,6 +43,7 @@ enum AutonomyState {
     AUTONOMY_STATE_SUSPENDED = 4; // Autonomy system execution suspended temporarily
     AUTONOMY_STATE_COMPLETED = 5; // Autonomy system execution completed successfully
     AUTONOMY_STATE_STOPPED = 6; // Autonomy system execution stopped early
+    AUTONOMY_STATE_RECOVERING = 7; // Autonomy system heading to recovery position.
 }
 
 // Demands to be made to the autonomy system

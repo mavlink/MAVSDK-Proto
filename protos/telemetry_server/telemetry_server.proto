@@ -50,6 +50,8 @@ service TelemetryServerService {
     rpc PublishWind(PublishWindRequest) returns(PublishWindResponse) { option (mavsdk.options.async_type) = SYNC; }
     // Publish to 'water_current' updates.
     rpc PublishWaterCurrent(PublishWaterCurrentRequest) returns(PublishWaterCurrentResponse) { option (mavsdk.options.async_type) = SYNC; }
+    // Publish to 'DVL' updates.
+    rpc PublishDvl(PublishDvlRequest) returns(PublishDvlResponse) { option (mavsdk.options.async_type) = SYNC; }
 }
 
 message PublishPositionRequest {
@@ -150,6 +152,10 @@ message PublishWaterCurrentRequest {
     WaterCurrent water_current = 1; // The next 'water_current' update
 }
 
+message PublishDvlRequest {
+    Dvl dvl = 1; // The next 'DVL' update
+}
+
 message PublishPositionResponse {
     TelemetryServerResult telemetry_server_result = 1;
 }
@@ -224,6 +230,10 @@ message PublishWindResponse {
 }
 
 message PublishWaterCurrentResponse {
+    TelemetryServerResult telemetry_server_result = 1;
+}
+
+message PublishDvlResponse {
     TelemetryServerResult telemetry_server_result = 1;
 }
 
@@ -535,6 +545,15 @@ message WaterCurrent {
     float calculated_current_y_m_s = 5 [(mavsdk.options.default_value)="NaN"]; // Calculated water current in East (NED) direction in meters/second
     float calculated_current_z_m_s = 6 [(mavsdk.options.default_value)="NaN"]; // Calculated water current in down (NED) direction in meters/second
     float distance_m = 7 [(mavsdk.options.default_value)="NaN"]; // Measurement distance from the sensor in meters
+}
+
+// DVL message type
+message Dvl {
+    bool has_lock = 1; // Whether DVL has bottom lock to the floor
+    repeated float altitude_waters_m = 2; // Vehicle altitude to the floor of body of water for each beam (up to 16)
+    float vehicle_velocity_x_m_s = 3 [(mavsdk.options.default_value)="NaN"]; // Vehicle velocity in North (NED) direction in meters/second
+    float vehicle_velocity_y_m_s = 4 [(mavsdk.options.default_value)="NaN"]; // Vehicle velocity in East (NED) direction in meters/second
+    float vehicle_velocity_z_m_s = 5 [(mavsdk.options.default_value)="NaN"]; // Vehicle velocity in down (NED) direction in meters/second
 }
 
 // Result type.

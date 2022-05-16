@@ -48,6 +48,8 @@ service TelemetryServerService {
     rpc PublishVisualFlightRulesHud(PublishVisualFlightRulesHudRequest) returns(PublishVisualFlightRulesHudResponse) { option (mavsdk.options.async_type) = SYNC; }
     // Publish to 'wind' updates.
     rpc PublishWind(PublishWindRequest) returns(PublishWindResponse) { option (mavsdk.options.async_type) = SYNC; }
+    // Publish to 'water_current' updates.
+    rpc PublishWaterCurrent(PublishWaterCurrentRequest) returns(PublishWaterCurrentResponse) { option (mavsdk.options.async_type) = SYNC; }
 }
 
 message PublishPositionRequest {
@@ -144,6 +146,10 @@ message PublishWindRequest {
     Wind wind = 1; // The next 'wind' update
 }
 
+message PublishWaterCurrentRequest {
+    WaterCurrent water_current = 1; // The next 'water_current' update
+}
+
 message PublishPositionResponse {
     TelemetryServerResult telemetry_server_result = 1;
 }
@@ -214,6 +220,10 @@ message PublishVisualFlightRulesHudResponse {
 }
 
 message PublishWindResponse {
+    TelemetryServerResult telemetry_server_result = 1;
+}
+
+message PublishWaterCurrentResponse {
     TelemetryServerResult telemetry_server_result = 1;
 }
 
@@ -514,6 +524,17 @@ message Wind {
     float horizontal_wind_speed_accuracy_m_s = 7 [(mavsdk.options.default_value)="NaN"]; // Horizontal speed 1-STD accuracy
     float vertical_wind_speed_accuracy_m_s = 8 [(mavsdk.options.default_value)="NaN"]; // Vertical speed 1-STD accuracy
     uint64 timestamp_us = 9 [(mavsdk.options.default_value)="NaN"]; // Timestamp in microseconds
+}
+
+// Water current message type
+message WaterCurrent {
+    float measured_current_x_m_s = 1 [(mavsdk.options.default_value)="NaN"]; // Raw measured water current in North (NED) direction in meters/second
+    float measured_current_y_m_s = 2 [(mavsdk.options.default_value)="NaN"]; // Raw measured water current in East (NED) direction in meters/second
+    float measured_current_z_m_s = 3 [(mavsdk.options.default_value)="NaN"]; // Raw measured water current in down (NED) direction in meters/second
+    float calculated_current_x_m_s = 4 [(mavsdk.options.default_value)="NaN"]; // Calculated water current in North (NED) direction in meters/second
+    float calculated_current_y_m_s = 5 [(mavsdk.options.default_value)="NaN"]; // Calculated water current in East (NED) direction in meters/second
+    float calculated_current_z_m_s = 6 [(mavsdk.options.default_value)="NaN"]; // Calculated water current in down (NED) direction in meters/second
+    float distance_m = 7 [(mavsdk.options.default_value)="NaN"]; // Measurement distance from the sensor in meters
 }
 
 // Result type.

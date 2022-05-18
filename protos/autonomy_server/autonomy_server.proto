@@ -68,8 +68,8 @@ enum AutonomyServerDemand {
 
 // Ack/answer to demand
 enum AutonomyServerDemandAnswer {
-    AUTONOMY_SERVER_DEMAND_ANSWER_ACCEPTED = 0;
-    AUTONOMY_SERVER_DEMAND_ANSWER_DENIED = 1;
+    AUTONOMY_SERVER_DEMAND_ANSWER_ACCEPTED = 0; // Demand has been accepted
+    AUTONOMY_SERVER_DEMAND_ANSWER_DENIED = 1; // Demand has been denied
 }
 
 // Components that can be present in an autonomy system

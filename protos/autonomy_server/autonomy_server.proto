@@ -10,19 +10,31 @@ option java_outer_classname = "AutonomyServerProto";
 // Provide autonomy information.
 service AutonomyServerService {
     /*
-     * Subscribe to autonomy state.
+     * Subscribe to autonomy state demands.
      */
-    rpc SubscribeState(SubscribeStateRequest) returns(stream StateResponse) {}
+    rpc SubscribeDemand(SubscribeDemandRequest) returns(stream DemandResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    /*
+     * Respond to autonomy state demands.
+     */
+    rpc SetDemandAnswer(SetDemandAnswerRequest) returns(SetDemandAnswerResponse) { option (mavsdk.options.async_type) = SYNC; }
+
     /*
      * Describe the components' health.
      */
     rpc SetComponentHealth(SetComponentHealthRequest) returns(SetComponentHealthResponse) { option (mavsdk.options.async_type) = SYNC; }
 }
 
-message SubscribeStateRequest {}
-message StateResponse {
-    AutonomyServerState state = 1; // The state
+message SubscribeDemandRequest {}
+message DemandResponse {
+    AutonomyServerDemand demand = 1; // The autonomy demand
 }
+
+message SetDemandAnswerRequest {
+    AutonomyServerDemandAnswer answer = 1; // The answer
+    AutonomyServerState state = 2; // The new state
+}
+message SetDemandAnswerResponse {}
 
 message SetComponentHealthRequest {
     repeated AutonomyServerComponentHealth component_health = 2; // The components' health
@@ -41,6 +53,23 @@ enum AutonomyServerState {
     AUTONOMY_SERVER_STATE_COMPLETED = 5; // Autonomy system execution completed successfully
     AUTONOMY_SERVER_STATE_STOPPED = 6; // Autonomy system execution stopped early
     AUTONOMY_SERVER_STATE_RECOVERING = 7; // Autonomy system heading to recovery position.
+}
+
+// Demands to be made to the autonomy system
+enum AutonomyServerDemand {
+    AUTONOMY_SERVER_DEMAND_DEFAULT = 0; // Default value, ignored
+    AUTONOMY_SERVER_DEMAND_START = 1; // Start autonomy system
+    AUTONOMY_SERVER_DEMAND_STOP = 2; // Stop autonomy system
+    AUTONOMY_SERVER_DEMAND_GO_TO_RECOVERY = 3; // Abort autonomy system to the recovery point
+    AUTONOMY_SERVER_DEMAND_PAUSE = 4; // Pause autonomy system
+    AUTONOMY_SERVER_DEMAND_SUSPEND = 5; // Suspend autonomy system control temporarily
+    AUTONOMY_SERVER_DEMAND_RESUME = 6; // Resume autonomy system
+}
+
+// Ack/answer to demand
+enum AutonomyServerDemandAnswer {
+    AUTONOMY_SERVER_DEMAND_ANSWER_ACCEPTED = 0;
+    AUTONOMY_SERVER_DEMAND_ANSWER_DENIED = 1;
 }
 
 // Components that can be present in an autonomy system

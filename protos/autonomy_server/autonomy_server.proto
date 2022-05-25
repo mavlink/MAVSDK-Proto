@@ -82,6 +82,7 @@ enum AutonomyServerDemand {
 enum AutonomyServerDemandAnswer {
     AUTONOMY_SERVER_DEMAND_ANSWER_ACCEPTED = 0; // Demand has been accepted
     AUTONOMY_SERVER_DEMAND_ANSWER_DENIED = 1; // Demand has been denied
+    AUTONOMY_SERVER_DEMAND_ANSWER_TEMPORARILY_REJECTED = 2; // Demand can't be handled right now
 }
 
 // Components that can be present in an autonomy system

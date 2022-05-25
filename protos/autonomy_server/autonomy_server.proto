@@ -10,6 +10,11 @@ option java_outer_classname = "AutonomyServerProto";
 // Provide autonomy information.
 service AutonomyServerService {
     /*
+     * Set state directly.
+     */
+    rpc SetState(SetStateRequest) returns(SetStateResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    /*
      * Subscribe to autonomy state demands.
      */
     rpc SubscribeDemand(SubscribeDemandRequest) returns(stream DemandResponse) { option (mavsdk.options.async_type) = ASYNC; }
@@ -23,6 +28,13 @@ service AutonomyServerService {
      * Describe the components' health.
      */
     rpc SetComponentHealth(SetComponentHealthRequest) returns(SetComponentHealthResponse) { option (mavsdk.options.async_type) = SYNC; }
+}
+
+message SetStateRequest {
+    AutonomyServerState state = 1; // The state to set
+}
+message SetStateResponse {
+    AutonomyServerResult result = 1;
 }
 
 message SubscribeDemandRequest {}

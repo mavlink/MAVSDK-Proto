@@ -189,6 +189,7 @@ message MissionRawResult {
         RESULT_FAILED_TO_OPEN_QGC_PLAN = 10; // Failed to open the QGroundControl plan
         RESULT_FAILED_TO_PARSE_QGC_PLAN = 11; // Failed to parse the QGroundControl plan
         RESULT_NO_SYSTEM = 12; // No system connected
+        RESULT_DENIED = 13; // Request denied
     }
 
     Result result = 1; // Result enum value

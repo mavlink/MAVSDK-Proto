@@ -258,6 +258,7 @@ message OffboardResult {
         RESULT_COMMAND_DENIED = 5; // Command denied
         RESULT_TIMEOUT = 6; // Request timed out
         RESULT_NO_SETPOINT_SET = 7; // Cannot start without setpoint set
+        RESULT_FAILED = 8; // Request failed
     }
 
     Result result = 1; // Result enum value

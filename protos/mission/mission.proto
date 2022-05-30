@@ -251,6 +251,7 @@ message MissionResult {
         RESULT_TRANSFER_CANCELLED = 12; // Mission transfer (upload or download) has been cancelled
         RESULT_NO_SYSTEM = 13; // No system connected
         RESULT_NEXT = 14; // Intermediate message showing progress
+        RESULT_DENIED = 15; // Request denied
     }
 
     Result result = 1; // Result enum value

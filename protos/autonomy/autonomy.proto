@@ -95,6 +95,7 @@ message AutonomyResult {
         DENIED = 7; // Request has been denied
         FAILED = 8; // Request has failed
         UNSUPPORTED = 9; // Request is unsupported
+        TEMPORARILY_REJECTED = 10; // Request has temporarily been rejected
     }
 
     Result result = 1; // Result enum value

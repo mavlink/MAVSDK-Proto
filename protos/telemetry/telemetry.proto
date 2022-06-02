@@ -564,11 +564,37 @@ enum FixType {
     FIX_TYPE_RTK_FIXED = 6; // RTK Fixed, 3D position
 }
 
+
+enum BatteryStatusFlags {
+    BATTERY_STATUS_FLAGS_READY_TO_USE = 1; // The battery is ready to use (fly).
+    BATTERY_STATUS_FLAGS_CHARGING = 2; // Battery is charging.
+    BATTERY_STATUS_FLAGS_CELL_BALANCING = 4; // Battery is cell balancing (during charging).
+    BATTERY_STATUS_FLAGS_FAULT_CELL_IMBALANCE = 8; // Battery cells are not balanced.
+    BATTERY_STATUS_FLAGS_AUTO_DISCHARGING = 16; // Battery is auto discharging (towards storage level).
+    BATTERY_STATUS_FLAGS_REQUIRES_SERVICE = 32; // Battery requires service (not safe to fly). 
+    BATTERY_STATUS_FLAGS_BAD_BATTERY = 64; // Battery is faulty and cannot be repaired (not safe to fly).
+    BATTERY_STATUS_FLAGS_PROTECTIONS_ENABLED = 128; // Automatic battery protection monitoring is enabled. 
+    BATTERY_STATUS_FLAGS_FAULT_PROTECTION_SYSTEM = 256; // The battery fault protection system had detected a fault and cut all power from the battery.
+    BATTERY_STATUS_FLAGS_FAULT_OVER_VOLT = 512; // One or more cells are above their maximum voltage rating.
+    BATTERY_STATUS_FLAGS_FAULT_UNDER_VOLT = 1024; // One or more cells are below their minimum voltage rating.
+    BATTERY_STATUS_FLAGS_FAULT_OVER_TEMPERATURE = 2048; // Over-temperature fault. 
+    BATTERY_STATUS_FLAGS_FAULT_UNDER_TEMPERATURE = 4096; // Under-temperature fault.
+    BATTERY_STATUS_FLAGS_FAULT_OVER_CURRENT = 8192; // Over-current fault.
+    BATTERY_STATUS_FLAGS_FAULT_SHORT_CIRCUIT = 16384; // Short circuit event detected.
+    BATTERY_STATUS_FLAGS_FAULT_INCOMPATIBLE_VOLTAGE = 32768; // Voltage not compatible with power rail voltage (batteries on same power rail should have similar voltage).
+    BATTERY_STATUS_FLAGS_FAULT_INCOMPATIBLE_FIRMWARE = 65536; // Battery firmware is not compatible with current autopilot firmware.
+    BATTERY_STATUS_FLAGS_FAULT_INCOMPATIBLE_CELLS_CONFIGURATION = 131072; // Battery is not compatible due to cell configuration.
+    BATTERY_STATUS_FLAGS_CAPACITY_RELATIVE_TO_FULL = 262144; // Battery capacity values are relative to a known-full battery (smart battery) and not estimated.
+    BATTERY_STATUS_FLAGS_EXTENDED = 4294967295; // Reserved for future use.
+}
+
 // Battery type.
 message Battery {
     uint32 id = 3 [(mavsdk.options.default_value)="0"]; // Battery ID, for systems with multiple batteries
     float voltage_v = 1 [(mavsdk.options.default_value)="NaN"]; // Voltage in volts
-    float remaining_percent = 2 [(mavsdk.options.default_value)="NaN"]; // Estimated battery remaining (range: 0.0 to 1.0)
+    float remaining_percent = 2 [(mavsdk.options.default_value)="NaN"]; // Estimated battery remaining (range: 0 to 100)
+    float current_ma = 4 [(mavsdk.options.default_value)="NaN"]; // Current in mA
+    BatteryStatusFlags status = 5; // Battery status flags
 }
 
 /*

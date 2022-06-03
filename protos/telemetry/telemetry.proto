@@ -566,7 +566,7 @@ enum FixType {
 
 
 enum BatteryStatusFlags {
-    BATTERY_STATUS_FLAGS_READY_TO_USE = 1; // The battery is ready to use (fly).
+    BATTERY_STATUS_FLAGS_NOT_READY_TO_USE = 1; // The battery is is not ready to use (fly).
     BATTERY_STATUS_FLAGS_CHARGING = 2; // Battery is charging.
     BATTERY_STATUS_FLAGS_CELL_BALANCING = 4; // Battery is cell balancing (during charging).
     BATTERY_STATUS_FLAGS_FAULT_CELL_IMBALANCE = 8; // Battery cells are not balanced.

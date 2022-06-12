@@ -565,28 +565,7 @@ enum FixType {
 }
 
 
-enum BatteryStatusFlags {
-    BATTERY_STATUS_FLAGS_NOT_READY_TO_USE = 1; // The battery is is not ready to use (fly).
-    BATTERY_STATUS_FLAGS_CHARGING = 2; // Battery is charging.
-    BATTERY_STATUS_FLAGS_CELL_BALANCING = 4; // Battery is cell balancing (during charging).
-    BATTERY_STATUS_FLAGS_FAULT_CELL_IMBALANCE = 8; // Battery cells are not balanced.
-    BATTERY_STATUS_FLAGS_AUTO_DISCHARGING = 16; // Battery is auto discharging (towards storage level).
-    BATTERY_STATUS_FLAGS_REQUIRES_SERVICE = 32; // Battery requires service (not safe to fly). 
-    BATTERY_STATUS_FLAGS_BAD_BATTERY = 64; // Battery is faulty and cannot be repaired (not safe to fly).
-    BATTERY_STATUS_FLAGS_PROTECTIONS_ENABLED = 128; // Automatic battery protection monitoring is enabled. 
-    BATTERY_STATUS_FLAGS_FAULT_PROTECTION_SYSTEM = 256; // The battery fault protection system had detected a fault and cut all power from the battery.
-    BATTERY_STATUS_FLAGS_FAULT_OVER_VOLT = 512; // One or more cells are above their maximum voltage rating.
-    BATTERY_STATUS_FLAGS_FAULT_UNDER_VOLT = 1024; // One or more cells are below their minimum voltage rating.
-    BATTERY_STATUS_FLAGS_FAULT_OVER_TEMPERATURE = 2048; // Over-temperature fault. 
-    BATTERY_STATUS_FLAGS_FAULT_UNDER_TEMPERATURE = 4096; // Under-temperature fault.
-    BATTERY_STATUS_FLAGS_FAULT_OVER_CURRENT = 8192; // Over-current fault.
-    BATTERY_STATUS_FLAGS_FAULT_SHORT_CIRCUIT = 16384; // Short circuit event detected.
-    BATTERY_STATUS_FLAGS_FAULT_INCOMPATIBLE_VOLTAGE = 32768; // Voltage not compatible with power rail voltage (batteries on same power rail should have similar voltage).
-    BATTERY_STATUS_FLAGS_FAULT_INCOMPATIBLE_FIRMWARE = 65536; // Battery firmware is not compatible with current autopilot firmware.
-    BATTERY_STATUS_FLAGS_FAULT_INCOMPATIBLE_CELLS_CONFIGURATION = 131072; // Battery is not compatible due to cell configuration.
-    BATTERY_STATUS_FLAGS_CAPACITY_RELATIVE_TO_FULL = 262144; // Battery capacity values are relative to a known-full battery (smart battery) and not estimated.
-    BATTERY_STATUS_FLAGS_EXTENDED = 4294967295; // Reserved for future use.
-}
+
 
 // Battery type.
 message Battery {
@@ -594,8 +573,28 @@ message Battery {
     float voltage_v = 1 [(mavsdk.options.default_value)="NaN"]; // Voltage in volts
     float remaining_percent = 2 [(mavsdk.options.default_value)="NaN"]; // Estimated battery remaining (range: 0 to 100)
     float current_ma = 4 [(mavsdk.options.default_value)="NaN"]; // Current in mA
-    BatteryStatusFlags status = 5; // Battery status flags
+    bool status_not_ready_to_use = 5  [(mavsdk.options.default_value)="0"]; // Battery not ready to use
+    bool status_charging = 6  [(mavsdk.options.default_value)="0"]; // Battery charging
+    
+    bool status_cell_balancing = 7  [(mavsdk.options.default_value)="0"]; // Battery is cell balancing (during charging)
+    bool battery_fault_cells_not_balanced = 8  [(mavsdk.options.default_value)="0"]; // Cells are not balanced
+    bool status_auto_discharging = 9  [(mavsdk.options.default_value)="0"]; // Battery is auto discharging (towards storage level)
+    bool status_requires_service = 10  [(mavsdk.options.default_value)="0"]; // Battery requires service (not safe to fly)
+    bool status_bad_battery = 11 [(mavsdk.options.default_value)="0"]; // Battery is faulty and cannot be repaired (not safe to fly)
+    bool status_protections_enabled = 12  [(mavsdk.options.default_value)="0"]; // Automatic battery protection monitoring is enabled. 
+    bool battery_fault_protection_system = 13  [(mavsdk.options.default_value)="0"]; // The battery fault protection system had detected a fault and cut all power from the battery
+    bool battery_fault_over_volt = 14  [(mavsdk.options.default_value)="0"]; // One or more cells are above their maximum voltage rating
+    bool battery_fault_under_volt = 15  [(mavsdk.options.default_value)="0"]; // One or more cells are below their minimum voltage rating
+    bool battery_fault_over_temperature = 16  [(mavsdk.options.default_value)="0"]; // Over-temperature fault
+    bool battery_fault_under_temperature = 17  [(mavsdk.options.default_value)="0"]; // Under-temperature fault
+    bool battery_fault_over_current = 18 [(mavsdk.options.default_value)="0"]; // Over-current fault
+    bool battery_fault_short_curcuit = 19  [(mavsdk.options.default_value)="0"]; // Short circuit event detected
+    bool battery_fault_incompatible_voltage = 20  [(mavsdk.options.default_value)="0"]; // Voltage not compatible with power rail voltage (batteries on same power rail should have similar voltage)
+    bool battery_fault_incompatible_firmware = 21  [(mavsdk.options.default_value)="0"]; // Battery firmware is not compatible with current autopilot firmware
+    bool battery_fault_incompatible_cells_configuration = 22  [(mavsdk.options.default_value)="0"]; // Battery is not compatible due to cell configuration
+    bool status_capacity_relative_to_full = 23  [(mavsdk.options.default_value)="0"]; // Battery capacity values are relative to a known-full battery (smart battery) and not estimated
 }
+
 
 /*
  * Flight modes.

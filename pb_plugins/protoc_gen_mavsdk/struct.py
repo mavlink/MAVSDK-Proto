@@ -18,7 +18,10 @@ class Struct(object):
                  template_env, pb_struct, struct_docs):
         self._plugin_name = name_parser_factory.create(plugin_name)
         self._package = name_parser_factory.create(package)
-        self._template = template_env.get_template("struct.j2")
+        try:
+            self._template = template_env.get_template("struct.j2")
+        except:
+            self._template = None
         self._struct_description = struct_docs['description'].strip(
         ) if struct_docs else None
         self._name = name_parser_factory.create(pb_struct.name)

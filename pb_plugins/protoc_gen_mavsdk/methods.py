@@ -214,7 +214,10 @@ class Call(Method):
             pb_method,
             requests,
             responses)
-        self._template = template_env.get_template("call.j2")
+        try:
+            self._template = template_env.get_template("call.j2")
+        except:
+            self._template = None
         self._no_return = True
 
     def __repr__(self):
@@ -250,7 +253,10 @@ class Request(Method):
             pb_method,
             requests,
             responses)
-        self._template = template_env.get_template("request.j2")
+        try:
+            self._template = template_env.get_template("request.j2")
+        except:
+            self._template = None
         self._method_description = method_description
         self._returns = True
 
@@ -294,7 +300,10 @@ class Stream(Method):
         self._is_stream = True
         self._name = name_parser_factory.create(
             remove_subscribe(pb_method.name))
-        self._template = template_env.get_template("stream.j2")
+        try:
+            self._template = template_env.get_template("stream.j2")
+        except:
+            self._template = None
 
     @property
     def return_type_required(self):

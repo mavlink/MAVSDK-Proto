@@ -15,7 +15,10 @@ class Enum(object):
             parent_struct=None):
         self._plugin_name = name_parser_factory.create(plugin_name)
         self._package = name_parser_factory.create(package)
-        self._template = template_env.get_template("enum.j2")
+        try:
+            self._template = template_env.get_template("enum.j2")
+        except:
+            self._template = None
         self._enum_description = enum_docs['description'].strip(
         ) if enum_docs else None
         self._name = name_parser_factory.create(pb_enum.name)

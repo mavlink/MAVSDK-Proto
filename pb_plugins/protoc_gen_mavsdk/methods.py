@@ -20,7 +20,6 @@ class Method(object):
             pb_method,
             requests,
             responses):
-        self._is_stream = False
         self._no_return = False
         self._has_result = False
         self._returns = False
@@ -102,10 +101,6 @@ class Method(object):
                 self._is_finite = pb_method.options.Extensions[method_descriptor]
 
     @property
-    def is_stream(self):
-        return self._is_stream
-
-    @property
     def no_return(self):
         return self._no_return
 
@@ -130,8 +125,16 @@ class Method(object):
         return self._name
 
     @property
+    def params(self):
+        return self._params
+
+    @property
     def return_type_required(self):
         return False
+
+    @property
+    def method_description(self):
+        return self._method_description
 
     @staticmethod
     def collect_methods(
@@ -220,6 +223,10 @@ class Call(Method):
             self._template = None
         self._no_return = True
 
+    @property
+    def is_call(self):
+        return True
+
     def __repr__(self):
         return self._template.render(name=self._name,
                                      params=self._params,
@@ -260,6 +267,22 @@ class Request(Method):
         self._method_description = method_description
         self._returns = True
 
+    @property
+    def is_request(self):
+        return True
+
+    @property
+    def return_name(self):
+        return self._return_name
+
+    @property
+    def return_type(self):
+        return self._return_type
+
+    @property
+    def return_description(self):
+        return self._return_description
+
     def __repr__(self):
         return self._template.render(
             name=self._name,
@@ -297,7 +320,6 @@ class Stream(Method):
             pb_method,
             requests,
             responses)
-        self._is_stream = True
         self._name = name_parser_factory.create(
             remove_subscribe(pb_method.name))
         try:
@@ -308,6 +330,22 @@ class Stream(Method):
     @property
     def return_type_required(self):
         return True
+
+    @property
+    def is_stream(self):
+        return True
+
+    @property
+    def return_name(self):
+        return self._return_name
+
+    @property
+    def return_type(self):
+        return self._return_type
+
+    @property
+    def return_description(self):
+        return self._return_description
 
     def __repr__(self):
         return self._template.render(

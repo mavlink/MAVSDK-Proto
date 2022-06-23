@@ -41,6 +41,18 @@ class Enum(object):
             self._values.append({'name': value_name, 'description': enum_docs['params'][value_id], 'has_prefix': has_prefix})
             value_id += 1
 
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def values(self):
+        return self._values
+
+    @property
+    def parent_struct(self):
+        return self._parent_struct
+
     def __repr__(self):
         return self._template.render(plugin_name=self._plugin_name,
                                      package=self._package,

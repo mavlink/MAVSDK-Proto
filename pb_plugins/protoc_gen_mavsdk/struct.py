@@ -72,6 +72,22 @@ class Struct(object):
     def name(self):
         return self._name
 
+    @property
+    def fields(self):
+        return self._fields
+
+    @property
+    def nested_enums(self):
+        return self._nested_enums
+
+    @property
+    def nested_structs(self):
+        return self._nested_structs
+
+    @property
+    def struct_description(self):
+        return self._struct_description
+
     @staticmethod
     def collect_structs(plugin_name, package, structs, template_env, docs):
         _structs = {}

@@ -21,10 +21,27 @@ class AutoGen(object):
     def generate_reactive(request):
 
         params = AutoGen.parse_parameter(request.parameter)
-        is_java = params["file_ext"] == "java"
-        name_parser_factory.set_template_path(params["template_path"])
-        type_info_factory.set_template_path(params["template_path"])
-        template_env = get_template_env(params["template_path"])
+
+        if "output_file" in params:
+            is_java = params["output_file"].endswith("java")
+        else:
+            is_java = params["file_ext"] == "java"
+
+        # Load initialisms
+        if "initialisms_file" in params:
+            initialisms_path = params["initialisms_file"]
+        else:
+            initialisms_path = f"{params['template_path']}/initialisms"
+        name_parser_factory.set_initialisms_path(initialisms_path)
+
+        # Load type conversions
+        if "conversions_file" in params:
+            conversion_path = params["conversions_file"]
+        else:
+            conversion_path = f"{params['template_path']}/type_conversions"
+        type_info_factory.set_conversion_path(conversion_path)
+
+        template_env = get_template_env(params["template_path"], params["lstrip_blocks"], params["trim_blocks"])
 
         _codegen_response = plugin_pb2.CodeGeneratorResponse()
 
@@ -71,6 +88,7 @@ class AutoGen(object):
             out_file = File(plugin_name,
                             package,
                             template_env,
+                            params['template_file'],
                             docs,
                             enums,
                             structs,
@@ -80,7 +98,10 @@ class AutoGen(object):
 
             # Fill response
             f = _codegen_response.file.add()
-            f.name = f"{plugin_dir}/{plugin_name}.{params['file_ext']}"
+            if "output_file" in params:
+                f.name = params["output_file"]
+            else:
+                f.name = f"{plugin_dir}/{plugin_name}.{params['file_ext']}"
             f.content = str(out_file)
 
         return _codegen_response
@@ -95,7 +116,16 @@ class AutoGen(object):
             if len(split_param) == 2:
                 params_dict[split_param[0]] = split_param[1]
 
-        if 'file_ext' not in params_dict:
+        if 'template_file' not in params_dict:
+            params_dict["template_file"] = None
+
+        if 'lstrip_blocks' not in params_dict:
+            params_dict["lstrip_blocks"] = False
+
+        if 'trim_blocks' not in params_dict:
+            params_dict["trim_blocks"] = False
+
+        if 'file_ext' not in params_dict and 'output_file' not in params_dict:
             raise Exception("'file_ext' option was not specified! See " +
                             "--[name]_out=file_ext=<value>,<other_options>:/path/to/output " +
                             "or --[name]_opt=file_ext=<value>,<other_options> in the protoc" +

@@ -7,15 +7,14 @@ class TypeInfoFactory:
     def create(self, field):
         return TypeInfo(field, self._conversion_dict)
 
-    def set_template_path(self, template_path):
-        self._conversion_dict = self._load_conversions_dict(template_path)
+    def set_conversion_path(self, conversions_path):
+        self._conversion_dict = self._load_conversions_dict(conversions_path)
 
-    def _load_conversions_dict(self, template_path):
+    def _load_conversions_dict(self, conversions_path):
         try:
-            _conversion_dict_path = f"{template_path}/type_conversions"
-            with open(_conversion_dict_path, "r") as handle:
+            with open(conversions_path, "r") as handle:
                 return json.loads(handle.read())
-        except FileNotFoundError:
+        except:
             return {}
 
 

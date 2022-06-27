@@ -9,15 +9,14 @@ class NameParserFactory:
     def create(self, name):
         return NameParser(name, self._initialisms)
 
-    def set_template_path(self, template_path):
-        self._initialisms = self._load_initialisms(template_path)
+    def set_initialisms_path(self, initialisms_path):
+        self._initialisms = self._load_initialisms(initialisms_path)
 
-    def _load_initialisms(self, template_path):
+    def _load_initialisms(self, initialisms_path):
         try:
-            _initialisms_path = f"{template_path}/initialisms"
-            with open(_initialisms_path, "r") as handle:
+            with open(initialisms_path, "r") as handle:
                 return json.loads(handle.read())
-        except FileNotFoundError:
+        except:
             return []
 
 

@@ -66,7 +66,7 @@ enum AutonomyComponent {
     AUTONOMY_COMPONENT_FLS = 5; // Forward look sonar
     AUTONOMY_COMPONENT_CAMERA = 6; // Camera
     AUTONOMY_COMPONENT_ACOMMS = 7; // Acomms modem
-    AUTONOMY_COMPONENT_MISSION = 7; // Mission
+    AUTONOMY_COMPONENT_MISSION = 8; // Mission
 }
 
 //  Type to describe one component of an autonomy system

@@ -30,19 +30,21 @@ service FollowMeService {
 
 // Configuration type.
 message Config {
-    // Direction relative to the target that the vehicle should follow
-    enum FollowDirection {
-        FOLLOW_DIRECTION_NONE = 0; // Do not follow
-        FOLLOW_DIRECTION_BEHIND = 1; // Follow from behind
-        FOLLOW_DIRECTION_FRONT = 2; // Follow from front
-        FOLLOW_DIRECTION_FRONT_RIGHT = 3; // Follow from front right
-        FOLLOW_DIRECTION_FRONT_LEFT = 4; // Follow from front left
+
+    // Altitude mode to configure which altitude the follow me will assume the target to be at.
+    enum FollowAltitudeMode {
+        FOLLOW_ALTITUDE_MODE_CONSTANT = 0; // Target assumed to be mobing at a constant altitude of home position (where the vehicle armed)
+        FOLLOW_ALTITUDE_MODE_TERRAIN = 1; // Target assumed to be at the terrain level sensed by the distance sensor
+        FOLLOW_ALTITUDE_MODE_TARGET_GPS = 2; // Target GPS altitude taken into account to do 3D tracking
     }
 
-    float min_height_m = 1 [(mavsdk.options.default_value)="8.0"]; // Minimum height for the vehicle in meters (recommended minimum 8 meters)
-    float follow_distance_m = 2 [(mavsdk.options.default_value)="8.0"]; // Distance from target for vehicle to follow in meters (recommended minimum 1 meter)
-    FollowDirection follow_direction = 3; // Direction to follow in
-    float responsiveness = 4 [(mavsdk.options.default_value)="0.5"]; // How responsive the vehicle is to the motion of the target (range 0.0 to 1.0)
+    float follow_height_m = 1 [(mavsdk.options.default_value)="8.0f"]; // [m] Follow height in meters (recommended minimum 8 meters)
+    float follow_distance_m = 2 [(mavsdk.options.default_value)="8.0f"]; // [m] Follow distance to target in meters (recommended minimum 4 meter)
+    // FollowDirection follow_direction = 3; // [!DEPRECIATED!] Direction to follow target at. Exists as a legacy to old PX4 Follow-Me, but now only used for setting the follow_angle_deg. This value never gets sent to the PX4 side!
+    float responsiveness = 4 [(mavsdk.options.default_value)="0.1f"]; // How responsive the vehicle is to the motion of the target, Lower value = More responsive (range 0.0 to 1.0)
+    FollowAltitudeMode altitude_mode = 5; // Follow Altitude control mode
+    float max_tangential_vel_m_s = 6 [(mavsdk.options.default_value)="8.0f"]; // [m/s] Maximum orbit tangential velocity relative to the target, in meters per second. Higher value = More aggressive follow angle tracking.
+    float follow_angle_deg = 7 [(mavsdk.options.default_value)="180.0f"]; // [deg] Follow Angle relative to the target. 0 equals following in front of the target's direction. Angle increases in Clockwise direction, so following from right would be 90 degrees, from the left is -90 degrees, and so on.
 }
 
 // Target location for the vehicle to follow

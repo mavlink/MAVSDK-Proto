@@ -89,8 +89,10 @@ service TelemetryService {
     rpc SetRateLandedState(SetRateLandedStateRequest) returns(SetRateLandedStateResponse) {}
     // Set rate to VTOL state updates
     rpc SetRateVtolState(SetRateVtolStateRequest) returns(SetRateVtolStateResponse) {}
-    // Set rate to 'attitude' updates.
-    rpc SetRateAttitude(SetRateAttitudeRequest) returns(SetRateAttitudeResponse) {}
+    // Set rate to 'attitude euler angle' updates.
+    rpc SetRateAttitudeQuaternion(SetRateAttitudeQuaternionRequest) returns(SetRateAttitudeQuaternionResponse) {}
+    // Set rate to 'attitude quaternion' updates.
+    rpc SetRateAttitudeEuler(SetRateAttitudeEulerRequest) returns(SetRateAttitudeEulerResponse) {}
     // Set rate of camera attitude updates.
     rpc SetRateCameraAttitude(SetRateCameraAttitudeRequest) returns(SetRateCameraAttitudeResponse) {}
     // Set rate to 'ground speed' updates (NED).
@@ -328,10 +330,17 @@ message SetRateVtolStateResponse {
     TelemetryResult telemetry_result = 1;
 }
 
-message SetRateAttitudeRequest {
+message SetRateAttitudeEulerRequest {
     double rate_hz = 1; // The requested rate (in Hertz)
 }
-message SetRateAttitudeResponse {
+message SetRateAttitudeEulerResponse {
+    TelemetryResult telemetry_result = 1;
+}
+
+message SetRateAttitudeQuaternionRequest {
+    double rate_hz = 1; // The requested rate (in Hertz)
+}
+message SetRateAttitudeQuaternionResponse {
     TelemetryResult telemetry_result = 1;
 }
 

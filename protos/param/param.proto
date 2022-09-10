@@ -49,6 +49,12 @@ service ParamService {
      * Get all parameters.
      */
     rpc GetAllParams(GetAllParamsRequest) returns(GetAllParamsResponse) { option (mavsdk.options.async_type) = SYNC; }
+    /*
+     * Select component ID of parameter component to talk to and param protocol version.
+     *
+     * Default is the autopilot component (1), and Version (0).
+     */
+    rpc SelectComponent(SelectComponentRequest) returns(SelectComponentResponse) { option (mavsdk.options.async_type) = SYNC; }
 }
 
 message GetParamIntRequest {
@@ -104,6 +110,21 @@ message GetAllParamsRequest {}
 
 message GetAllParamsResponse {
     AllParams params = 1; // Collection of all parameters
+}
+
+message SelectComponentResponse {
+    ParamResult param_result = 1;
+}
+
+message SelectComponentRequest {
+    int32 component_id = 1; // MAVLink component Id of component to select
+    ProtocolVersion protocol_version = 2; // Protocol version
+}
+
+// Parameter version
+enum ProtocolVersion {
+    PROTOCOL_VERSION_V1 = 0; // Original v1 version
+    PROTOCOL_VERSION_EXT = 1; // Extended param version
 }
 
 /*

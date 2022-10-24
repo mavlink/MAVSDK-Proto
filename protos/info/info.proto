@@ -72,7 +72,7 @@ message Product {
 }
 
 // System version information.
-message Version { 
+message Version {
     // These values define the type of firmware/flight software release
     enum FlightSoftwareVersionType {
         FLIGHT_SOFTWARE_VERSION_TYPE_UNKNOWN = 0; // Unknown type
@@ -81,8 +81,8 @@ message Version {
         FLIGHT_SOFTWARE_VERSION_TYPE_BETA = 3; // Beta release
         FLIGHT_SOFTWARE_VERSION_TYPE_RC  = 4; // Release candidate
         FLIGHT_SOFTWARE_VERSION_TYPE_RELEASE = 5; // Official stable release
-    }   
-    
+    }
+
     int32 flight_sw_major = 1; // Flight software major version
     int32 flight_sw_minor = 2; // Flight software minor version
     int32 flight_sw_patch = 3; // Flight software patch version

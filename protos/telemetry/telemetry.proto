@@ -301,8 +301,8 @@ message HeadingResponse {
     Heading heading_deg = 1; // The next heading (yaw) in degrees
 }
 
-message SubscribeAltitudeRequest{}
-message AltitudeResponse{
+message SubscribeAltitudeRequest {}
+message AltitudeResponse {
     Altitude altitude = 1; // The next altitude
 }
 
@@ -822,7 +822,6 @@ message GpsGlobalOrigin {
 }
 
 // Altitude message type
-// For more info see: https://mavlink.io/en/messages/common.html#ALTITUDE
 message Altitude {
     float altitude_monotonic_m = 1 [(mavsdk.options.default_value)="NaN"]; // Altitude in meters is initialized on system boot and monotonic
     float altitude_amsl_m = 2 [(mavsdk.options.default_value)="NaN"];  //  Altitude AMSL (above mean sea level) in meters

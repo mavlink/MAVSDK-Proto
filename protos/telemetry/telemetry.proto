@@ -78,6 +78,8 @@ service TelemetryService {
     rpc SubscribeScaledPressure(SubscribeScaledPressureRequest) returns(stream ScaledPressureResponse) {}
     // Subscribe to 'Heading' updates.
     rpc SubscribeHeading(SubscribeHeadingRequest) returns(stream HeadingResponse) {}
+    // Subscribe to 'Altitude' updates.
+    rpc SubscribeAltitude(SubscribeAltitudeRequest) returns(stream AltitudeResponse){}
 
     // Set rate to 'position' updates.
     rpc SetRatePosition(SetRatePositionRequest) returns(SetRatePositionResponse) {}
@@ -125,9 +127,13 @@ service TelemetryService {
     rpc SetRateUnixEpochTime(SetRateUnixEpochTimeRequest) returns(SetRateUnixEpochTimeResponse) {}
     // Set rate to 'Distance Sensor' updates.
     rpc SetRateDistanceSensor(SetRateDistanceSensorRequest) returns(SetRateDistanceSensorResponse) {}
+    // Set rate to 'Altitude' updates.
+    rpc SetRateAltitude(SetRateAltitudeRequest) returns(SetRateAltitudeResponse){}
 
     // Get the GPS location of where the estimator has been initialized.
     rpc GetGpsGlobalOrigin(GetGpsGlobalOriginRequest) returns(GetGpsGlobalOriginResponse) {}
+
+
 }
 
 message SubscribePositionRequest {}
@@ -293,6 +299,11 @@ message ScaledPressureResponse {
 message SubscribeHeadingRequest {}
 message HeadingResponse {
     Heading heading_deg = 1; // The next heading (yaw) in degrees
+}
+
+message SubscribeAltitudeRequest {}
+message AltitudeResponse {
+    Altitude altitude = 1; // The next altitude
 }
 
 message SetRatePositionRequest {
@@ -478,6 +489,13 @@ message GetGpsGlobalOriginRequest {}
 message GetGpsGlobalOriginResponse {
     TelemetryResult telemetry_result = 1;
     GpsGlobalOrigin gps_global_origin = 2;
+}
+
+message SetRateAltitudeRequest {
+    double rate_hz = 1;  // The requested rate (in Hertz)
+}
+message SetRateAltitudeResponse {
+    TelemetryResult telemetry_result = 1;
 }
 
 // Position type in global coordinates.
@@ -801,6 +819,15 @@ message GpsGlobalOrigin {
     double latitude_deg = 1 [(mavsdk.options.default_value)="NaN"]; // Latitude of the origin
     double longitude_deg = 2 [(mavsdk.options.default_value)="NaN"]; // Longitude of the origin
     float altitude_m = 3 [(mavsdk.options.default_value)="NaN"]; // Altitude AMSL (above mean sea level) in metres
+}
+
+// Altitude message type
+message Altitude {
+    float altitude_monotonic_m = 1 [(mavsdk.options.default_value)="NaN"]; // Altitude in meters is initialized on system boot and monotonic
+    float altitude_amsl_m = 2 [(mavsdk.options.default_value)="NaN"];  //  Altitude AMSL (above mean sea level) in meters
+    float altitude_local_m = 3 [(mavsdk.options.default_value)="NaN"]; // Local altitude in meters
+    float altitude_relative_m = 4 [(mavsdk.options.default_value)="NaN"]; // Altitude above home position in meters
+    float altitude_terrain_m = 5 [(mavsdk.options.default_value)="NaN"]; // Altitude above terrain in meters
 }
 
 // Result type.

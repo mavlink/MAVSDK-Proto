@@ -13,6 +13,8 @@ service InfoService {
     rpc GetFlightInformation(GetFlightInformationRequest) returns(GetFlightInformationResponse) { option (mavsdk.options.async_type) = SYNC; }
     // Get the identification of the system.
     rpc GetIdentification(GetIdentificationRequest) returns(GetIdentificationResponse) { option (mavsdk.options.async_type) = SYNC; }
+    // Get the capabilities of the system.
+    rpc GetCapabilities(GetCapabilitiesRequest) returns(GetCapabilitiesResponse) { option (mavsdk.options.async_type) = SYNC; }
     // Get product information of the system.
     rpc GetProduct(GetProductRequest) returns(GetProductResponse) { option (mavsdk.options.async_type) = SYNC; }
     // Get the version information of the system.
@@ -31,6 +33,12 @@ message GetIdentificationRequest {}
 message GetIdentificationResponse {
     InfoResult info_result = 1;
     Identification identification = 2; // Identification of the system
+}
+
+message GetCapabilitiesRequest {}
+message GetCapabilitiesResponse {
+    InfoResult info_result = 1;
+    Capabilities capabilities = 2; // Capabilities of the system
 }
 
 message GetProductRequest {}
@@ -61,6 +69,34 @@ message FlightInfo {
 message Identification {
     string hardware_uid = 1; // UID of the hardware. This refers to uid2 of MAVLink. If the system does not support uid2 yet, this is all zeros.
     uint64 legacy_uid = 2; // Legacy UID of the hardware, referred to as uid in MAVLink (formerly exposed during system discovery as UUID).
+}
+
+// System capabilities
+message Capabilities {
+    // Bitmask of autopilot capabilities (64 bit). If a bit is set, the autopilot supports this capability.
+    enum ProtocolCapability {
+        PROTOCOL_CAPABILITY_UNKNOWN = 0x00000000; // Unknown
+        PROTOCOL_CAPABILITY_MISSION_FLOAT = 0x00000001; // Autopilot supports the MISSION_ITEM float message type. Note that MISSION_ITEM is deprecated, and autopilots should use MISSION_INT instead.
+        PROTOCOL_CAPABILITY_PARAM_FLOAT = 0x00000002; // DEPRECATED: Replaced by PROTOCOL_CAPABILITY_PARAM_ENCODE_C_CAST (2022-03). Autopilot supports the new param float message type.
+        PROTOCOL_CAPABILITY_MISSION_INT	= 0x00000004; // Autopilot supports MISSION_ITEM_INT scaled integer message type. Note that this flag must always be set if missions are supported, because missions must always use MISSION_ITEM_INT (rather than MISSION_ITEM, which is deprecated).
+        PROTOCOL_CAPABILITY_COMMAND_INT	= 0x00000008; // Autopilot supports COMMAND_INT scaled integer message type.
+        PROTOCOL_CAPABILITY_PARAM_ENCODE_BYTEWISE = 0x00000010; // Parameter protocol uses byte-wise encoding of parameter values into param_value (float) fields: https://mavlink.io/en/services/parameter.html#parameter-encoding. Note that either this flag or MAV_PROTOCOL_CAPABILITY_PARAM_ENCODE_C_CAST should be set if the parameter protocol is supported.
+        PROTOCOL_CAPABILITY_FTP = 0x00000020; // Autopilot supports the File Transfer Protocol v1: https://mavlink.io/en/services/ftp.html.
+        PROTOCOL_CAPABILITY_SET_ATTITUDE_TARGET = 0x00000040; // Autopilot supports commanding attitude offboard.
+        PROTOCOL_CAPABILITY_SET_POSITION_TARGET_LOCAL_NED = 0x00000080; // Autopilot supports commanding position and velocity targets in local NED frame.
+        PROTOCOL_CAPABILITY_SET_POSITION_TARGET_GLOBAL_INT = 0x00000100; // Autopilot supports commanding position and velocity targets in global scaled integers.
+        PROTOCOL_CAPABILITY_TERRAIN = 0x00000200; // Autopilot supports terrain protocol / data handling.
+        PROTOCOL_CAPABILITY_SET_ACTUATOR_TARGET	= 0x00000400; // Autopilot supports direct actuator control.
+        PROTOCOL_CAPABILITY_FLIGHT_TERMINATION = 0x00000800; // Autopilot supports the MAV_CMD_DO_FLIGHTTERMINATION command (flight termination).
+        PROTOCOL_CAPABILITY_COMPASS_CALIBRATION = 0x00001000; // Autopilot supports onboard compass calibration.
+        PROTOCOL_CAPABILITY_MAVLINK2 = 0x00002000; // Autopilot supports MAVLink version 2.
+        PROTOCOL_CAPABILITY_MISSION_FENCE = 0x00004000; // Autopilot supports mission fence protocol.
+        PROTOCOL_CAPABILITY_MISSION_RALLY = 0x00008000; // Autopilot supports mission rally point protocol.
+        PROTOCOL_CAPABILITY_RESERVED2 = 0x00010000; // Reserved for future use.
+        PROTOCOL_CAPABILITY_PARAM_ENCODE_C_CAST = 0x00020000; // Parameter protocol uses C-cast of parameter values to set the param_value (float) fields: https://mavlink.io/en/services/parameter.html#parameter-encoding. Note that either this flag or PROTOCOL_CAPABILITY_PARAM_ENCODE_BYTEWISE should be set if the parameter protocol is supported.
+    }
+
+    int32 capabilities = 1; // Bitmap of capabilities.
 }
 
 // System product information.

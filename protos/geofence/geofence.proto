@@ -2,15 +2,17 @@ syntax = "proto3";
 
 package mavsdk.rpc.geofence;
 
+import "mavsdk_options.proto";
+
 option java_package = "io.mavsdk.geofence";
 option java_outer_classname = "GeofenceProto";
 
 // Enable setting a geofence.
 service GeofenceService {
     /*
-     * Upload a geofence.
+     * Upload geofences.
      *
-     * Polygons are uploaded to a drone. Once uploaded, the geofence will remain
+     * Polygon and Circular geofences are uploaded to a drone. Once uploaded, the geofence will remain
      * on the drone even if a connection is lost.
      */
     rpc UploadGeofence(UploadGeofenceRequest) returns(UploadGeofenceResponse) {}
@@ -26,20 +28,33 @@ message Point {
     double longitude_deg = 2; // Longitude in degrees (range: -180 to +180)
 }
 
+// Geofence types.
+enum FenceType {
+    FENCE_TYPE_INCLUSION = 0; // Type representing an inclusion fence
+    FENCE_TYPE_EXCLUSION = 1; // Type representing an exclusion fence
+}
+
 // Polygon type.
 message Polygon {
-    // Geofence polygon types.
-    enum FenceType {
-        FENCE_TYPE_INCLUSION = 0; // Type representing an inclusion fence
-        FENCE_TYPE_EXCLUSION = 1; // Type representing an exclusion fence
-    }
-
     repeated Point points = 1; // Points defining the polygon
     FenceType fence_type = 2; // Fence type
 }
 
-message UploadGeofenceRequest {
+// Circular type.
+message Circle {
+    Point point = 1; // Point defining the center
+    float radius = 2 [(mavsdk.options.default_value)="NaN"]; // Radius of the circular fence
+    FenceType fence_type = 3; // Fence type
+}
+
+// Geofence data type.
+message GeofenceData {
     repeated Polygon polygons = 1; // Polygon(s) representing the geofence(s)
+    repeated Circle circles = 2; // Circle(s) representing the geofence(s)
+}
+
+message UploadGeofenceRequest {
+    GeofenceData geofence_data = 1; // Circle(s) and/or Polygon(s) representing the geofence(s)
 }
 
 message UploadGeofenceResponse {
@@ -58,7 +73,7 @@ message GeofenceResult {
         RESULT_UNKNOWN = 0; // Unknown result
         RESULT_SUCCESS = 1; // Request succeeded
         RESULT_ERROR = 2; // Error
-        RESULT_TOO_MANY_GEOFENCE_ITEMS = 3; // Too many Polygon objects in the geofence
+        RESULT_TOO_MANY_GEOFENCE_ITEMS = 3; // Too many objects in the geofence
         RESULT_BUSY = 4; // Vehicle is busy
         RESULT_TIMEOUT = 5; // Request timed out
         RESULT_INVALID_ARGUMENT = 6; // Invalid argument

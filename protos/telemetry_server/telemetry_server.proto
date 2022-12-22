@@ -24,6 +24,8 @@ service TelemetryServerService {
     rpc PublishRawGps(PublishRawGpsRequest) returns(PublishRawGpsResponse) { option (mavsdk.options.async_type) = SYNC; }
     // Publish to 'battery' updates.
     rpc PublishBattery(PublishBatteryRequest) returns(PublishBatteryResponse) { option (mavsdk.options.async_type) = SYNC; }
+    // Publish to 'cellular_status' updates.
+    rpc PublishCellularStatus(PublishCellularStatusRequest) returns(PublishCellularStatusResponse) { option (mavsdk.options.async_type) = SYNC; }
     // Publish to 'status text' updates.
     rpc PublishStatusText(PublishStatusTextRequest) returns(PublishStatusTextResponse) { option (mavsdk.options.async_type) = SYNC; }
     // Publish to 'odometry' updates.
@@ -81,6 +83,10 @@ message PublishRawGpsRequest {
 
 message PublishBatteryRequest {
     Battery battery = 1; // The next 'battery' state
+}
+
+message PublishCellularStatusRequest {
+    CellularStatus cellular_status = 1; // The next Cellular status
 }
 
 message PublishRcStatusRequest {
@@ -143,6 +149,9 @@ message PublishBatteryResponse {
     TelemetryServerResult telemetry_server_result = 1;
 }
 
+message PublishCellularStatusResponse {
+    TelemetryServerResult telemetry_server_result = 1;
+}
 
 message PublishStatusTextResponse {
     TelemetryServerResult telemetry_server_result = 1;
@@ -292,6 +301,18 @@ message RcStatus {
     bool was_available_once = 1 [(mavsdk.options.default_value)="false"]; // True if an RC signal has been available once
     bool is_available = 2 [(mavsdk.options.default_value)="false"]; // True if the RC signal is available now
     float signal_strength_percent = 3 [(mavsdk.options.default_value)="NaN"]; // Signal strength (range: 0 to 100, NaN if unknown)
+}
+
+// Cellular modem status type.
+message CellularStatus {
+    uint32 id = 1;// (actually uint8_t)
+    uint32 status = 2;// (actually uint8_t)
+    uint32 failure_reason = 3; // (actually uint8_t)
+    uint32 type = 4; //(actually uint8_t)
+    uint32 quality = 5; // Signal strength
+    uint32 mcc = 6; //  (actually uint16_t)
+    uint32 mnc = 7; //  (actually uint16_t)
+    uint32 lac = 8; // (actually uint16_t)
 }
 
 // Status types.

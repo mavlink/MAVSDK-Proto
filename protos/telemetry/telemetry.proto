@@ -48,6 +48,8 @@ service TelemetryService {
     rpc SubscribeHealth(SubscribeHealthRequest) returns(stream HealthResponse) {}
     // Subscribe to 'RC status' updates.
     rpc SubscribeRcStatus(SubscribeRcStatusRequest) returns(stream RcStatusResponse) {}
+    // Subscribe to 'Cellular status' updates.
+    rpc SubscribeCellularStatus(SubscribeCellularStatusRequest) returns(stream CellularStatusResponse) {}
     // Subscribe to 'status text' updates.
     rpc SubscribeStatusText(SubscribeStatusTextRequest) returns(stream StatusTextResponse) {}
     // Subscribe to 'actuator control target' updates.
@@ -105,6 +107,8 @@ service TelemetryService {
     rpc SetRateBattery(SetRateBatteryRequest) returns(SetRateBatteryResponse) {}
     // Set rate to 'RC status' updates.
     rpc SetRateRcStatus(SetRateRcStatusRequest) returns(SetRateRcStatusResponse) {}
+    // Set rate to 'Cellular status' updates.
+    rpc SetRateCellularStatus(SetRateCellularStatusRequest) returns(SetRateCellularStatusResponse) {}
     // Set rate to 'actuator control target' updates.
     rpc SetRateActuatorControlTarget(SetRateActuatorControlTargetRequest) returns(SetRateActuatorControlTargetResponse) {}
     // Set rate to 'actuator output status' updates.
@@ -224,6 +228,11 @@ message HealthResponse {
 message SubscribeRcStatusRequest {}
 message RcStatusResponse {
     RcStatus rc_status = 1; // The next RC status
+}
+
+message SubscribeCellularStatusRequest {}
+message CellularStatusResponse {
+    CellularStatus cellular_status = 1; // The next RC status
 }
 
 message SubscribeStatusTextRequest {}
@@ -404,7 +413,16 @@ message SetRateBatteryResponse {
 message SetRateRcStatusRequest {
     double rate_hz = 1; // The requested rate (in Hertz)
 }
+
+message SetRateCellularStatusRequest {
+    double rate_hz = 1; // The requested rate (in Hertz)
+}
+
 message SetRateRcStatusResponse {
+    TelemetryResult telemetry_result = 1;
+}
+
+message SetRateCellularStatusResponse {
     TelemetryResult telemetry_result = 1;
 }
 
@@ -641,6 +659,18 @@ message RcStatus {
     bool was_available_once = 1 [(mavsdk.options.default_value)="false"]; // True if an RC signal has been available once
     bool is_available = 2 [(mavsdk.options.default_value)="false"]; // True if the RC signal is available now
     float signal_strength_percent = 3 [(mavsdk.options.default_value)="NaN"]; // Signal strength (range: 0 to 100, NaN if unknown)
+}
+
+// Cellular modem status type.
+message CellularStatus {
+    uint32 id = 1;// (actually uint8_t)
+    uint32 status = 2;// (actually uint8_t)
+    uint32 failure_reason = 3; // (actually uint8_t)
+    uint32 type = 4; //(actually uint8_t)
+    uint32 quality = 5; // Signal strength
+    uint32 mcc = 6; //  (actually uint16_t)
+    uint32 mnc = 7; //  (actually uint16_t)
+    uint32 lac = 8; // (actually uint16_t)
 }
 
 // Status types.

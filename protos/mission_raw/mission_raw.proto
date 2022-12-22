@@ -76,7 +76,7 @@ service MissionRawService {
      */
     rpc SubscribeMissionChanged(SubscribeMissionChangedRequest) returns(stream MissionChangedResponse) { option (mavsdk.options.async_type) = ASYNC; }
     /*
-     * Import a QGroundControl missions in JSON .plan format.
+     * Import a QGroundControl missions in JSON .plan format, from a file.
      *
      * Supported:
      * - Waypoints
@@ -85,6 +85,16 @@ service MissionRawService {
      * - Structure Scan
      */
     rpc ImportQgroundcontrolMission(ImportQgroundcontrolMissionRequest) returns(ImportQgroundcontrolMissionResponse) { option (mavsdk.options.async_type) = SYNC; }
+    /*
+     * Import a QGroundControl missions in JSON .plan format, from a string.
+     *
+     * Supported:
+     * - Waypoints
+     * - Survey
+     * Not supported:
+     * - Structure Scan
+     */
+    rpc ImportQgroundcontrolMissionFromString(ImportQgroundcontrolMissionFromStringRequest) returns(ImportQgroundcontrolMissionFromStringResponse) { option (mavsdk.options.async_type) = SYNC; }
 }
 
 message UploadMissionRequest {
@@ -160,6 +170,14 @@ message ImportQgroundcontrolMissionRequest {
     string qgc_plan_path = 1; // File path of the QGC plan
 }
 message ImportQgroundcontrolMissionResponse {
+    MissionRawResult mission_raw_result = 1;
+    MissionImportData mission_import_data = 2; // The imported mission data
+}
+
+message ImportQgroundcontrolMissionFromStringRequest {
+    string qgc_plan = 1; // QGC plan as string
+}
+message ImportQgroundcontrolMissionFromStringResponse {
     MissionRawResult mission_raw_result = 1;
     MissionImportData mission_import_data = 2; // The imported mission data
 }

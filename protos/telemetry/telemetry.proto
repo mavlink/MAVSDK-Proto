@@ -593,9 +593,12 @@ enum FixType {
 
 // Battery type.
 message Battery {
-    uint32 id = 3 [(mavsdk.options.default_value)="0"]; // Battery ID, for systems with multiple batteries
-    float voltage_v = 1 [(mavsdk.options.default_value)="NaN"]; // Voltage in volts
-    float remaining_percent = 2 [(mavsdk.options.default_value)="NaN"]; // Estimated battery remaining (range: 0.0 to 1.0)
+    uint32 id = 1 [(mavsdk.options.default_value)="0"]; // Battery ID, for systems with multiple batteries
+    float temperature_degc = 2 [(mavsdk.options.default_value)="NaN"]; // Temperature of the battery in degrees Celsius. NAN for unknown temperature
+    float voltage_v = 3 [(mavsdk.options.default_value)="NaN"]; // Voltage in volts
+    float current_battery_a = 4 [(mavsdk.options.default_value)="NaN"]; // Battery current in Amps, NAN if autopilot does not measure the current
+    float capacity_consumed_ah = 5 [(mavsdk.options.default_value)="NaN"]; // Consumed charge in Amp hours, NAN if autopilot does not provide consumption estimate
+    float remaining_percent = 6 [(mavsdk.options.default_value)="NaN"]; // Estimated battery remaining (range: 0 to 100)
 }
 
 /*

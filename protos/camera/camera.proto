@@ -244,6 +244,7 @@ message CameraResult {
         RESULT_TIMEOUT = 6; // Command timed out
         RESULT_WRONG_ARGUMENT = 7; // Command has wrong argument(s)
         RESULT_NO_SYSTEM = 8; // No system connected
+        RESULT_PROTOCOL_UNSUPPORTED = 9; // Definition file protocol not supported
     }
 
     Result result = 1; // Result enum value

@@ -313,6 +313,14 @@ message CellularStatus {
     uint32 mcc = 6; //  (actually uint16_t)
     uint32 mnc = 7; //  (actually uint16_t)
     uint32 lac = 8; // (actually uint16_t)
+    uint32 slot_number = 9; //(actually uint8_t)
+    uint32 rx_level = 10; //(actually uint8_t)
+    uint32 signal_to_noise = 11; //(actually uint8_t)
+    uint32 band_number = 12; //(actually uint8_t)
+    uint32 arfcn = 13; 
+    uint32 cell_id = 14; // char[9]
+    float download_rate = 15; 
+    float upload_rate = 16;
 }
 
 // Status types.

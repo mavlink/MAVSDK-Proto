@@ -318,7 +318,7 @@ message CellularStatus {
     uint32 signal_to_noise = 11; //(actually uint8_t)
     uint32 band_number = 12; //(actually uint8_t)
     uint32 arfcn = 13; 
-    uint32 cell_id = 14; // char[9]
+    string cell_id = 14; // char[9]
     float download_rate = 15; 
     float upload_rate = 16;
 }

@@ -40,6 +40,8 @@ service TelemetryServerService {
     rpc PublishRawImu(PublishRawImuRequest) returns(PublishRawImuResponse) { option (mavsdk.options.async_type) = SYNC; }
     // Publish to 'unix epoch time' updates.
     rpc PublishUnixEpochTime(PublishUnixEpochTimeRequest) returns(PublishUnixEpochTimeResponse) { option (mavsdk.options.async_type) = SYNC; }
+    // Publish to "distance sensor" updates.
+    rpc PublishDistanceSensor(PublishDistanceSensorRequest) returns(PublishDistanceSensorResponse) { option (mavsdk.options.async_type) = SYNC; }
 }
 
 message PublishPositionRequest {
@@ -119,6 +121,10 @@ message PublishUnixEpochTimeRequest {
     uint64 time_us = 1; // The next 'unix epoch time' status
 }
 
+message PublishDistanceSensorRequest {
+    DistanceSensor distance_sensor = 1; // The next 'Distance Sensor' status
+}
+
 message PublishPositionResponse {
     TelemetryServerResult telemetry_server_result = 1;
 }
@@ -174,6 +180,10 @@ message PublishRawImuResponse {
 
 
 message PublishUnixEpochTimeResponse {
+    TelemetryServerResult telemetry_server_result = 1;
+}
+
+message PublishDistanceSensorResponse {
     TelemetryServerResult telemetry_server_result = 1;
 }
 

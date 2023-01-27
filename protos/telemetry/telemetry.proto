@@ -663,22 +663,24 @@ message RcStatus {
 
 // Cellular modem status type.
 message CellularStatus {
-    uint32 id = 1;// (actually uint8_t)
-    uint32 status = 2;// (actually uint8_t)
-    uint32 failure_reason = 3; // (actually uint8_t)
-    uint32 type = 4; //(actually uint8_t)
-    uint32 quality = 5; // Signal strength
-    uint32 mcc = 6; //  (actually uint16_t)
-    uint32 mnc = 7; //  (actually uint16_t)
-    uint32 lac = 8; // (actually uint16_t)
-    uint32 slot_number = 9; //(actually uint8_t)
-    uint32 rx_level = 10; //(actually uint8_t)
-    uint32 signal_to_noise = 11; //(actually uint8_t)
-    uint32 band_number = 12; //(actually uint8_t)
-    uint32 arfcn = 13; 
-    string cell_id = 14; // char[9]
-    float download_rate = 15; 
-    float upload_rate = 16;
+    uint32 status = 1;
+    uint32 failure_reason = 2; 
+    uint32 type = 3; 
+    uint32 quality = 4;
+    uint32 mcc = 5;
+    uint32 mnc = 6;
+    uint32 lac = 7;
+    uint32 instance_number = 8; 
+    uint64 download_rate = 9; 
+    uint64 upload_rate = 10;
+    uint64 bit_error_rate = 11;
+    float rx_level = 12;
+    float tx_level = 13;
+    float signal_to_noise = 14;
+    string cell_tower_id = 15; 
+    uint32 band_number = 16;
+    float band_frequency = 17;
+    float arfcn = 18;//Absolute radio-frequency channel number
 }
 
 // Status types.

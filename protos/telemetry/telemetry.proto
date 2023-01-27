@@ -50,6 +50,8 @@ service TelemetryService {
     rpc SubscribeRcStatus(SubscribeRcStatusRequest) returns(stream RcStatusResponse) {}
     // Subscribe to 'Cellular status' updates.
     rpc SubscribeCellularStatus(SubscribeCellularStatusRequest) returns(stream CellularStatusResponse) {}
+    // Subscribe to 'NIC_INFO' updates.
+    rpc SubscribeNicInfo(SubscribeNicInfoRequest) returns(stream NicInfoResponse) {}
     // Subscribe to 'status text' updates.
     rpc SubscribeStatusText(SubscribeStatusTextRequest) returns(stream StatusTextResponse) {}
     // Subscribe to 'actuator control target' updates.
@@ -109,6 +111,8 @@ service TelemetryService {
     rpc SetRateRcStatus(SetRateRcStatusRequest) returns(SetRateRcStatusResponse) {}
     // Set rate to 'Cellular status' updates.
     rpc SetRateCellularStatus(SetRateCellularStatusRequest) returns(SetRateCellularStatusResponse) {}
+    // Set rate to 'NIC_INFO' updates.
+    rpc SetRateNicInfo(SetRateNicInfoRequest) returns(SetRateNicInfoResponse) {}
     // Set rate to 'actuator control target' updates.
     rpc SetRateActuatorControlTarget(SetRateActuatorControlTargetRequest) returns(SetRateActuatorControlTargetResponse) {}
     // Set rate to 'actuator output status' updates.
@@ -232,8 +236,14 @@ message RcStatusResponse {
 
 message SubscribeCellularStatusRequest {}
 message CellularStatusResponse {
-    CellularStatus cellular_status = 1; // The next RC status
+    CellularStatus cellular_status = 1; // The next cellular status
 }
+
+message SubscribeNicInfoRequest {}
+message NicInfoResponse {
+    NicInfo nic_info = 1; // The next nic info
+}
+
 
 message SubscribeStatusTextRequest {}
 message StatusTextResponse {
@@ -418,11 +428,20 @@ message SetRateCellularStatusRequest {
     double rate_hz = 1; // The requested rate (in Hertz)
 }
 
+message SetRateNicInfoRequest {
+    double rate_hz = 1; // The requested rate (in Hertz)
+}
+
+
 message SetRateRcStatusResponse {
     TelemetryResult telemetry_result = 1;
 }
 
 message SetRateCellularStatusResponse {
+    TelemetryResult telemetry_result = 1;
+}
+
+message SetRateNicInfoResponse {
     TelemetryResult telemetry_result = 1;
 }
 
@@ -681,6 +700,17 @@ message CellularStatus {
     uint32 band_number = 16;
     float band_frequency = 17;
     float arfcn = 18;//Absolute radio-frequency channel number
+}
+
+// Network interface controller information.
+message NicInfo {
+    uint32 instance_number = 1; 
+    uint32 nic_id = 2; 
+    string nic_model_name = 3;
+    uint64 imei = 4; //Unique NIC International Mobile Equipment Identity Number
+    uint64 iccid = 5; //Integrated Circuit Card Identification Number of SIM Card
+    uint64 imsi = 6; //Current SIM International mobile subscriber identity.
+    float firmware_version = 7;//The firmware version installed on the modem
 }
 
 // Status types.

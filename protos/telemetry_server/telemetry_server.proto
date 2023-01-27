@@ -26,6 +26,8 @@ service TelemetryServerService {
     rpc PublishBattery(PublishBatteryRequest) returns(PublishBatteryResponse) { option (mavsdk.options.async_type) = SYNC; }
     // Publish to 'cellular_status' updates.
     rpc PublishCellularStatus(PublishCellularStatusRequest) returns(PublishCellularStatusResponse) { option (mavsdk.options.async_type) = SYNC; }
+    // Publish to 'nic_info' updates.
+    rpc PublishNicInfo(PublishNicInfoRequest) returns(PublishNicInfoResponse) { option (mavsdk.options.async_type) = SYNC; }
     // Publish to 'status text' updates.
     rpc PublishStatusText(PublishStatusTextRequest) returns(PublishStatusTextResponse) { option (mavsdk.options.async_type) = SYNC; }
     // Publish to 'odometry' updates.
@@ -89,6 +91,11 @@ message PublishCellularStatusRequest {
     CellularStatus cellular_status = 1; // The next Cellular status
 }
 
+message PublishNicInfoRequest {
+    NicInfo nic_info = 1; // The next nic info
+}
+
+
 message PublishRcStatusRequest {
     RcStatus rc_status = 1; // The next RC status
 }
@@ -150,6 +157,10 @@ message PublishBatteryResponse {
 }
 
 message PublishCellularStatusResponse {
+    TelemetryServerResult telemetry_server_result = 1;
+}
+
+message PublishNicInfoResponse {
     TelemetryServerResult telemetry_server_result = 1;
 }
 
@@ -323,6 +334,17 @@ message CellularStatus {
     uint32 band_number = 16;
     float band_frequency = 17;
     float arfcn = 18;//Absolute radio-frequency channel number
+}
+
+// Network interface controller information.
+message NicInfo {
+    uint32 instance_number = 1; 
+    uint32 nic_id = 2; 
+    string nic_model_name = 3;
+    uint64 imei = 4; //Unique NIC International Mobile Equipment Identity Number
+    uint64 iccid = 5; //Integrated Circuit Card Identification Number of SIM Card
+    uint64 imsi = 6; //Current SIM International mobile subscriber identity.
+    float firmware_version = 7;//The firmware version installed on the modem
 }
 
 // Status types.

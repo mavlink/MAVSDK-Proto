@@ -120,7 +120,7 @@ message RelaxResponse {
 message RelativeLengthControlRequest {
     uint32 instance = 1; // Instance ID of the winch addressed by this request
     float length_m = 2; // Length of line to unwind or wind
-    float rate_m_s = 3 [(mavsdk.options.default_value)="NaN"];; // Rate at which to wind or unwind the line
+    float rate_m_s = 3 [(mavsdk.options.default_value)="NaN"]; // Rate at which to wind or unwind the line
 }
 
 message RelativeLengthControlResponse {

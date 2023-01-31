@@ -86,14 +86,14 @@ message StatusFlags {
 }
 
 message Status {
-    uint64 time_usec = 1;
-    float line_length_m = 2;
-    float speed_m_s = 3;
-    float tension_kg = 4;
-    float voltage_v = 5;
-    float current_a = 6;
-    int32 temperature_c = 7;
-    StatusFlags status_flags = 8;
+    uint64 time_usec = 1; // Time in usec
+    float line_length_m = 2; // Length of the line in meters
+    float speed_m_s = 3; // Speed in meters per second
+    float tension_kg = 4; // Tension in kilograms
+    float voltage_v = 5; // Voltage in volts
+    float current_a = 6; // Current in amperes
+    int32 temperature_c = 7; // Temperature in Celsius
+    StatusFlags status_flags = 8; // Status flags
 }
 
 enum WinchAction {

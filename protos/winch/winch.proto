@@ -119,8 +119,8 @@ message RelaxResponse {
 
 message RelativeLengthControlRequest {
     uint32 instance = 1; // Instance ID of the winch addressed by this request
-    float length = 2; // Length of line to unwind or wind
-    float rate = 3; // Rate at which to wind or unwind the line
+    float length_m = 2; // Length of line to unwind or wind
+    float rate_m_s = 3; // Rate at which to wind or unwind the line
 }
 
 message RelativeLengthControlResponse {
@@ -129,7 +129,7 @@ message RelativeLengthControlResponse {
 
 message RateControlRequest {
     uint32 instance = 1;
-    float rate = 2; // Rate at which to wind or unwind the line
+    float rate_m_s = 2; // Rate at which to wind or unwind the line
 }
 
 message RateControlResponse {

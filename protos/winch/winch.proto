@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package mavsdk.rpc.winch;
 
+import "mavsdk_options.proto";
+
 option java_package = "io.mavsdk.winch";
 option java_outer_classname = "WinchProto";
 

@@ -5,6 +5,9 @@ package mavsdk.rpc.gripper;
 option java_package = "io.mavsdk.gripper";
 option java_outer_classname = "GripperProto";
 
+/*
+ * Allows users to send gripper actions.
+ */
 service GripperService {
     /*
      * Gripper grab cargo.
@@ -17,6 +20,12 @@ service GripperService {
     rpc Release(ReleaseRequest) returns(ReleaseResponse) {}
 }
 
+/*
+ * Gripper Actions.
+ *
+ * Available gripper actions are defined in mavlink under
+ * https://mavlink.io/en/messages/common.html#GRIPPER_ACTIONS
+ */
 enum GripperAction {
     GRIPPER_ACTION_RELEASE = 0; // Open the gripper to release the cargo
     GRIPPER_ACTION_GRAB = 1; // Close the gripper and grab onto cargo

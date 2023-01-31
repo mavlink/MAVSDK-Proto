@@ -1,0 +1,212 @@
+syntax = "proto3";
+
+package mavsdk.rpc.winch;
+
+import "mavsdk_options.proto";
+
+option java_package = "io.mavsdk.winch";
+option java_outer_classname = "WinchProto";
+
+service WinchService {
+    // Subscribe to 'winch status' updates.
+    rpc SubscribeStatus(SubscribeStatusRequest) returns(stream StatusResponse) {}
+
+    /*
+     * Allow motor to freewheel.
+     */
+    rpc Relax(RelaxRequest) returns(RelaxResponse) {}
+
+    /*
+     * Wind or unwind specified length of line, optionally using specified rate.
+     */
+    rpc RelativeLengthControl(RelativeLengthControlRequest) returns(RelativeLengthControlResponse) {}
+
+    /*
+     * Wind or unwind line at specified rate.
+     */
+    rpc RateControl(RateControlRequest) returns(RateControlResponse) {}
+    
+    /*
+     * Perform the locking sequence to relieve motor while in the fully retracted position.
+     */
+    rpc Lock(LockRequest) returns(LockResponse) {}
+
+    /*
+     * Sequence of drop, slow down, touch down, reel up, lock.
+     */
+    rpc Deliver(DeliverRequest) returns(DeliverResponse) {}
+
+    /*
+     * Engage motor and hold current position.
+     */
+    rpc Hold(HoldRequest) returns(HoldResponse) {}
+
+    /*
+     * Return the reel to the fully retracted position.
+     */
+    rpc Retract(RetractRequest) returns(RetractResponse) {}
+
+    /*
+     * Load the reel with line.
+     *
+     * The winch will calculate the total loaded length and stop when the tension exceeds a threshold.
+     */
+    rpc LoadLine(LoadLineRequest) returns(LoadLineResponse) {}
+
+    /*
+     * Spool out the entire length of the line.
+     */
+    rpc AbandonLine(AbandonLineRequest) returns(AbandonLineResponse) {}
+
+    /*
+     * Spools out just enough to present the hook to the user to load the payload.
+     */
+    rpc LoadPayload(LoadPayloadRequest) returns(LoadPayloadResponse) {}
+
+}
+
+message SubscribeStatusRequest {}
+message StatusResponse {
+    Status status = 1; // The next 'winch status' state
+}
+
+message StatusFlags {
+    bool healthy = 1;           // Winch is healthy
+    bool fully_retracted = 2;   // Winch line is fully retracted
+    bool moving = 3;            // Winch motor is moving
+    bool clutch_engaged = 4;    // Winch clutch is engaged allowing motor to move freely
+    bool locked = 5;            // Winch is locked by locking mechanism
+    bool dropping = 6;          // Winch is gravity dropping payload
+    bool arresting = 7;         // Winch is arresting payload descent
+    bool ground_sense = 8;      // Winch is using torque measurements to sense the ground
+    bool retracting = 9;        // Winch is returning to the fully retracted position
+    bool redeliver = 10;        // Winch is redelivering the payload. This is a failover state if the line tension goes above a threshold during RETRACTING.
+    bool abandon_line = 11;     // Winch is abandoning the line and possibly payload. Winch unspools the entire calculated line length. This is a failover state from REDELIVER if the number of attempts exceeds a threshold.
+    bool locking = 12;          // Winch is engaging the locking mechanism
+    bool load_line = 13;        // Winch is spooling on line
+    bool load_payload = 14;     // Winch is loading a payload
+}
+
+message Status {
+    uint64 time_usec = 1; // Time in usec
+    float line_length_m = 2; // Length of the line in meters
+    float speed_m_s = 3; // Speed in meters per second
+    float tension_kg = 4; // Tension in kilograms
+    float voltage_v = 5; // Voltage in volts
+    float current_a = 6; // Current in amperes
+    int32 temperature_c = 7; // Temperature in Celsius
+    StatusFlags status_flags = 8; // Status flags
+}
+
+enum WinchAction {
+    WINCH_ACTION_RELAXED = 0;       // Allow motor to freewheel
+    WINCH_ACTION_RELATIVE_LENGTH_CONTROL = 1; // Wind or unwind specified length of line, optionally using specified rate
+    WINCH_ACTION_RATE_CONTROL = 2;  // Wind or unwind line at specified rate
+    WINCH_ACTION_LOCK = 3;          // Perform the locking sequence to relieve motor while in the fully retracted position
+    WINCH_ACTION_DELIVER = 4;       // Sequence of drop, slow down, touch down, reel up, lock
+    WINCH_ACTION_HOLD = 5;          // Engage motor and hold current position
+    WINCH_ACTION_RETRACT = 6;       // Return the reel to the fully retracted position
+    WINCH_ACTION_LOAD_LINE = 7;     // Load the reel with line. The winch will calculate the total loaded length and stop when the tension exceeds a threshold
+    WINCH_ACTION_ABANDON_LINE = 8;  // Spool out the entire length of the line
+    WINCH_ACTION_LOAD_PAYLOAD = 9;  // Spools out just enough to present the hook to the user to load the payload
+}
+
+message RelaxRequest {
+    uint32 instance = 1;
+}
+
+message RelaxResponse {
+    WinchResult winch_result = 1;
+}
+
+message RelativeLengthControlRequest {
+    uint32 instance = 1; // Instance ID of the winch addressed by this request
+    float length_m = 2; // Length of line to unwind or wind
+    float rate_m_s = 3 [(mavsdk.options.default_value)="NaN"]; // Rate at which to wind or unwind the line
+}
+
+message RelativeLengthControlResponse {
+    WinchResult winch_result = 1;
+}
+
+message RateControlRequest {
+    uint32 instance = 1;
+    float rate_m_s = 2; // Rate at which to wind or unwind the line
+}
+
+message RateControlResponse {
+    WinchResult winch_result = 1;
+}
+
+message LockRequest {
+    uint32 instance = 1;
+}
+
+message LockResponse {
+    WinchResult winch_result = 1;
+}
+
+message DeliverRequest {
+    uint32 instance = 1;
+}
+
+message DeliverResponse {
+    WinchResult winch_result = 1;
+}
+
+message HoldRequest {
+    uint32 instance = 1;
+}
+
+message HoldResponse {
+    WinchResult winch_result = 1;
+}
+
+message RetractRequest {
+    uint32 instance = 1;
+}
+
+message RetractResponse {
+    WinchResult winch_result = 1;
+}
+
+message LoadLineRequest {
+    uint32 instance = 1;
+}
+
+message LoadLineResponse {
+    WinchResult winch_result = 1;
+}
+
+message AbandonLineRequest {
+    uint32 instance = 1;
+}
+
+message AbandonLineResponse {
+    WinchResult winch_result = 1;
+}
+
+message LoadPayloadRequest {
+    uint32 instance = 1;
+}
+
+message LoadPayloadResponse {
+    WinchResult winch_result = 1;
+}
+
+// Result type.
+message WinchResult {
+    // Possible results returned for winch action requests.
+    enum Result {
+        RESULT_UNKNOWN = 0; // Unknown result
+        RESULT_SUCCESS = 1; // Request was successful
+        RESULT_NO_SYSTEM = 2; // No system is connected
+        RESULT_BUSY = 3; // Temporarily rejected
+        RESULT_TIMEOUT = 4; // Request timed out
+        RESULT_UNSUPPORTED = 5; // Action not supported
+        RESULT_FAILED = 6; // Action failed
+    }
+
+    Result result = 1; // Result enum value
+    string result_str = 2; // Human-readable English string describing the result
+}

@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package mavsdk.rpc.gripper;
+
+option java_package = "io.mavsdk.gripper";
+option java_outer_classname = "GripperProto";
+
+service GripperService {
+    /*
+     * Gripper grab cargo.
+     */
+    rpc Grab(GrabRequest) returns(GrabResponse) {}
+
+    /*
+     * Gripper release cargo.
+     */
+    rpc Release(ReleaseRequest) returns(ReleaseResponse) {}
+}
+
+enum GripperAction {
+    GRIPPER_ACTION_RELEASE = 0; // Open the gripper to release the cargo
+    GRIPPER_ACTION_GRAB = 1; // Close the gripper and grab onto cargo
+}
+
+message GrabRequest {
+    uint32 instance = 1;
+}
+
+message GrabResponse {
+    GripperResult gripper_result = 1;
+}
+
+message ReleaseRequest {
+    uint32 instance = 1;
+}
+
+message ReleaseResponse {
+    GripperResult gripper_result = 1;
+}
+
+// Result type.
+message GripperResult {
+    // Possible results returned for gripper action requests.
+    enum Result {
+        RESULT_UNKNOWN = 0;     // Unknown result
+        RESULT_SUCCESS = 1;     // Request was successful
+        RESULT_NO_SYSTEM = 2;   // No system is connected
+        RESULT_BUSY = 3;        // Temporarily rejected
+        RESULT_TIMEOUT = 4;     // Request timed out
+        RESULT_UNSUPPORTED = 5; // Action not supported
+        RESULT_FAILED = 6;      // Action failed
+    }
+
+    Result result = 1; // Result enum value
+    string result_str = 2; // Human-readable English string describing the result
+}

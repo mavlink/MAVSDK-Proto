@@ -97,38 +97,41 @@ message Status {
 }
 
 enum WinchAction {
-    WINCH_ACTION_RELAXED = 0;
-    WINCH_ACTION_RELATIVE_LENGTH_CONTROL = 1;
-    WINCH_ACTION_RATE_CONTROL = 2;
-    WINCH_ACTION_LOCK = 3;
-    WINCH_ACTION_DELIVER = 4;
-    WINCH_ACTION_HOLD = 5;
-    WINCH_ACTION_RETRACT = 6;
-    WINCH_ACTION_LOAD_LINE = 7;
-    WINCH_ACTION_ABANDON_LINE = 8;
-    WINCH_ACTION_LOAD_PAYLOAD = 9;
+    WINCH_ACTION_RELAXED = 0;       // Allow motor to freewheel
+    WINCH_ACTION_RELATIVE_LENGTH_CONTROL = 1; // Wind or unwind specified length of line, optionally using specified rate
+    WINCH_ACTION_RATE_CONTROL = 2;  // Wind or unwind line at specified rate
+    WINCH_ACTION_LOCK = 3;          // Perform the locking sequence to relieve motor while in the fully retracted position
+    WINCH_ACTION_DELIVER = 4;       // Sequence of drop, slow down, touch down, reel up, lock
+    WINCH_ACTION_HOLD = 5;          // Engage motor and hold current position
+    WINCH_ACTION_RETRACT = 6;       // Return the reel to the fully retracted position
+    WINCH_ACTION_LOAD_LINE = 7;     // Load the reel with line. The winch will calculate the total loaded length and stop when the tension exceeds a threshold
+    WINCH_ACTION_ABANDON_LINE = 8;  // Spool out the entire length of the line
+    WINCH_ACTION_LOAD_PAYLOAD = 9;  // Spools out just enough to present the hook to the user to load the payload
 }
 
 message RelaxRequest {
     uint32 instance = 1;
 }
+
 message RelaxResponse {
     WinchResult winch_result = 1;
 }
 
 message RelativeLengthControlRequest {
-    uint32 instance = 1;
-    float length = 2;
-    float rate = 3;
+    uint32 instance = 1; // Instance ID of the winch addressed by this request
+    float length = 2; // Length of line to unwind or wind
+    float rate = 3; // Rate at which to wind or unwind the line
 }
+
 message RelativeLengthControlResponse {
     WinchResult winch_result = 1;
 }
 
 message RateControlRequest {
     uint32 instance = 1;
-    float rate = 2;
+    float rate = 2; // Rate at which to wind or unwind the line
 }
+
 message RateControlResponse {
     WinchResult winch_result = 1;
 }
@@ -136,6 +139,7 @@ message RateControlResponse {
 message LockRequest {
     uint32 instance = 1;
 }
+
 message LockResponse {
     WinchResult winch_result = 1;
 }
@@ -143,6 +147,7 @@ message LockResponse {
 message DeliverRequest {
     uint32 instance = 1;
 }
+
 message DeliverResponse {
     WinchResult winch_result = 1;
 }
@@ -150,6 +155,7 @@ message DeliverResponse {
 message HoldRequest {
     uint32 instance = 1;
 }
+
 message HoldResponse {
     WinchResult winch_result = 1;
 }
@@ -157,6 +163,7 @@ message HoldResponse {
 message RetractRequest {
     uint32 instance = 1;
 }
+
 message RetractResponse {
     WinchResult winch_result = 1;
 }
@@ -164,6 +171,7 @@ message RetractResponse {
 message LoadLineRequest {
     uint32 instance = 1;
 }
+
 message LoadLineResponse {
     WinchResult winch_result = 1;
 }
@@ -171,6 +179,7 @@ message LoadLineResponse {
 message AbandonLineRequest {
     uint32 instance = 1;
 }
+
 message AbandonLineResponse {
     WinchResult winch_result = 1;
 }
@@ -178,6 +187,7 @@ message AbandonLineResponse {
 message LoadPayloadRequest {
     uint32 instance = 1;
 }
+
 message LoadPayloadResponse {
     WinchResult winch_result = 1;
 }
@@ -189,7 +199,7 @@ message WinchResult {
         RESULT_UNKNOWN = 0; // Unknown result
         RESULT_SUCCESS = 1; // Request was successful
         RESULT_NO_SYSTEM = 2; // No system is connected
-        RESULT_BUSY = 3;    // Temporarily rejected
+        RESULT_BUSY = 3; // Temporarily rejected
         RESULT_TIMEOUT = 4; // Request timed out
         RESULT_UNSUPPORTED = 5; // Action not supported
         RESULT_FAILED = 6; // Action failed

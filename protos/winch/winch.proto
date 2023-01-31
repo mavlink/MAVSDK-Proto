@@ -7,6 +7,10 @@ import "mavsdk_options.proto";
 option java_package = "io.mavsdk.winch";
 option java_outer_classname = "WinchProto";
 
+/*
+ * Allows users to send winch actions, as well as receive status information from winch systems.
+ *
+ */
 service WinchService {
     // Subscribe to 'winch status' updates.
     rpc SubscribeStatus(SubscribeStatusRequest) returns(stream StatusResponse) {}
@@ -70,6 +74,15 @@ message StatusResponse {
     Status status = 1; // The next 'winch status' state
 }
 
+/*
+ * Winch Status Flags.
+ *
+ * The status flags are defined in mavlink
+ * https://mavlink.io/en/messages/common.html#MAV_WINCH_STATUS_FLAG.
+ *
+ * Multiple status fields can be set simultaneously. Mavlink does
+ * not specify which states are mutually exclusive.
+ */
 message StatusFlags {
     bool healthy = 1;           // Winch is healthy
     bool fully_retracted = 2;   // Winch line is fully retracted
@@ -87,6 +100,7 @@ message StatusFlags {
     bool load_payload = 14;     // Winch is loading a payload
 }
 
+// Status type.
 message Status {
     uint64 time_usec = 1; // Time in usec
     float line_length_m = 2; // Length of the line in meters
@@ -98,6 +112,7 @@ message Status {
     StatusFlags status_flags = 8; // Status flags
 }
 
+// Winch Action type.
 enum WinchAction {
     WINCH_ACTION_RELAXED = 0;       // Allow motor to freewheel
     WINCH_ACTION_RELATIVE_LENGTH_CONTROL = 1; // Wind or unwind specified length of line, optionally using specified rate

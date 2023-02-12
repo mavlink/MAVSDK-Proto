@@ -26,8 +26,8 @@ service TelemetryServerService {
     rpc PublishBattery(PublishBatteryRequest) returns(PublishBatteryResponse) { option (mavsdk.options.async_type) = SYNC; }
     // Publish to 'cellular_status' updates.
     rpc PublishCellularStatus(PublishCellularStatusRequest) returns(PublishCellularStatusResponse) { option (mavsdk.options.async_type) = SYNC; }
-    // Publish to 'nic_info' updates.
-    rpc PublishNicInfo(PublishNicInfoRequest) returns(PublishNicInfoResponse) { option (mavsdk.options.async_type) = SYNC; }
+    // Publish to 'modem_info' updates.
+    rpc PublishModemInfo(PublishModemInfoRequest) returns(PublishModemInfoResponse) { option (mavsdk.options.async_type) = SYNC; }
     // Publish to 'status text' updates.
     rpc PublishStatusText(PublishStatusTextRequest) returns(PublishStatusTextResponse) { option (mavsdk.options.async_type) = SYNC; }
     // Publish to 'odometry' updates.
@@ -91,8 +91,8 @@ message PublishCellularStatusRequest {
     CellularStatus cellular_status = 1; // The next Cellular status
 }
 
-message PublishNicInfoRequest {
-    NicInfo nic_info = 1; // The next nic info
+message PublishModemInfoRequest {
+    ModemInfo modem_info = 1; // The next modem info
 }
 
 
@@ -160,7 +160,7 @@ message PublishCellularStatusResponse {
     TelemetryServerResult telemetry_server_result = 1;
 }
 
-message PublishNicInfoResponse {
+message PublishModemInfoResponse {
     TelemetryServerResult telemetry_server_result = 1;
 }
 
@@ -323,28 +323,28 @@ message CellularStatus {
     uint32 mcc = 5;
     uint32 mnc = 6;
     uint32 lac = 7;
-    uint32 instance_number = 8; 
-    uint64 download_rate = 9; 
-    uint64 upload_rate = 10;
-    uint64 bit_error_rate = 11;
-    float rx_level = 12;
-    float tx_level = 13;
-    float signal_to_noise = 14;
-    string cell_tower_id = 15; 
-    uint32 band_number = 16;
-    float band_frequency = 17;
-    float arfcn = 18;//Absolute radio-frequency channel number
+    uint32 band_number = 8;
+    float band_frequency = 9;
+    uint32 channel_number = 10;
+    float rx_level = 11;
+    float tx_level = 12;
+    float rx_quality = 13;
+    uint32 link_tx_rate = 14; 
+    uint32 link_rx_rate = 15;
+    uint32 bit_error_rate = 16;
+    uint32 instance_number = 17; 
+    string cell_tower_id = 18; 
 }
 
-// Network interface controller information.
-message NicInfo {
+// Modem information.
+message ModemInfo {
     uint32 instance_number = 1; 
-    uint32 nic_id = 2; 
-    string nic_model_name = 3;
-    uint64 imei = 4; //Unique NIC International Mobile Equipment Identity Number
-    uint64 iccid = 5; //Integrated Circuit Card Identification Number of SIM Card
-    uint64 imsi = 6; //Current SIM International mobile subscriber identity.
-    float firmware_version = 7;//The firmware version installed on the modem
+    uint64 imei = 2; //Unique Modem International Mobile Equipment Identity Number
+    uint64 iccid = 3; //Integrated Circuit Card Identification Number of SIM Card
+    uint64 imsi = 4; //Current SIM International mobile subscriber identity.
+    string modem_id = 5; 
+    string firmware_version = 6; //The firmware version installed on the modem
+    string modem_model_name = 7;
 }
 
 // Status types.

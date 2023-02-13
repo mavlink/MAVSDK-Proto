@@ -706,9 +706,9 @@ message CellularStatus {
 message ModemInfo {
     uint32 instance_number = 1; 
     uint64 imei = 2; //Unique Modem International Mobile Equipment Identity Number
-    uint64 iccid = 3; //Integrated Circuit Card Identification Number of SIM Card
-    uint64 imsi = 4; //Current SIM International mobile subscriber identity.
-    string modem_id = 5; 
+    uint64 imsi = 3; //Current SIM International mobile subscriber identity.
+    string modem_id = 4; 
+    string iccid = 5; //Integrated Circuit Card Identification Number of SIM Card
     string firmware_version = 6; //The firmware version installed on the modem
     string modem_model_name = 7;
 }

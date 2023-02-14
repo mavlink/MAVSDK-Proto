@@ -52,6 +52,10 @@ service TelemetryService {
     rpc SubscribeCellularStatus(SubscribeCellularStatusRequest) returns(stream CellularStatusResponse) {}
     // Subscribe to 'MODEM_INFO' updates.
     rpc SubscribeModemInfo(SubscribeModemInfoRequest) returns(stream ModemInfoResponse) {}
+    // Subscribe to 'Onboard computer status' updates.
+    rpc SubscribeOnboardComputerStatus(SubscribeOnboardComputerStatusRequest) returns(stream OnboardComputerStatusResponse) {}
+    // Subscribe to 'Component info basic' updates.
+    rpc SubscribeComponentInfoBasic(SubscribeComponentInfoBasicRequest) returns(stream ComponentInfoBasicResponse) {}
     // Subscribe to 'status text' updates.
     rpc SubscribeStatusText(SubscribeStatusTextRequest) returns(stream StatusTextResponse) {}
     // Subscribe to 'actuator control target' updates.
@@ -113,6 +117,10 @@ service TelemetryService {
     rpc SetRateCellularStatus(SetRateCellularStatusRequest) returns(SetRateCellularStatusResponse) {}
     // Set rate to 'MODEM_INFO' updates.
     rpc SetRateModemInfo(SetRateModemInfoRequest) returns(SetRateModemInfoResponse) {}
+    // Set rate to 'Onboard computer status' updates.
+    rpc SetRateOnboardComputerStatus(SetRateOnboardComputerStatusRequest) returns(SetRateOnboardComputerStatusResponse) {}
+    // Set rate to 'Component info basic' updates.
+    rpc SetRateComponentInfoBasic(SetRateComponentInfoBasicRequest) returns(SetRateComponentInfoBasicResponse) {}
     // Set rate to 'actuator control target' updates.
     rpc SetRateActuatorControlTarget(SetRateActuatorControlTargetRequest) returns(SetRateActuatorControlTargetResponse) {}
     // Set rate to 'actuator output status' updates.
@@ -244,6 +252,15 @@ message ModemInfoResponse {
     ModemInfo modem_info = 1; // The next modem info
 }
 
+message SubscribeOnboardComputerStatusRequest {}
+message OnboardComputerStatusResponse {
+    OnboardComputerStatus onboard_computer_status = 1; // The next 'onboard computer status'
+}
+
+message SubscribeComponentInfoBasicRequest {}
+message ComponentInfoBasicResponse {
+    ComponentInfoBasic component_info_basic = 1; // The next 'component info basic'
+}
 
 message SubscribeStatusTextRequest {}
 message StatusTextResponse {
@@ -432,6 +449,13 @@ message SetRateModemInfoRequest {
     double rate_hz = 1; // The requested rate (in Hertz)
 }
 
+message SetRateOnboardComputerStatusRequest {
+    double rate_hz = 1; // The requested rate (in Hertz)
+}
+
+message SetRateComponentInfoBasicRequest {
+    double rate_hz = 1; // The requested rate (in Hertz)
+}
 
 message SetRateRcStatusResponse {
     TelemetryResult telemetry_result = 1;
@@ -442,6 +466,14 @@ message SetRateCellularStatusResponse {
 }
 
 message SetRateModemInfoResponse {
+    TelemetryResult telemetry_result = 1;
+}
+
+message SetRateOnboardComputerStatusResponse {
+    TelemetryResult telemetry_result = 1;
+}
+
+message SetRateComponentInfoBasicResponse {
     TelemetryResult telemetry_result = 1;
 }
 
@@ -711,6 +743,39 @@ message ModemInfo {
     string iccid = 5; //Integrated Circuit Card Identification Number of SIM Card
     string firmware_version = 6; //The firmware version installed on the modem
     string modem_model_name = 7;
+}
+
+message OnboardComputerStatus{
+    uint64 time_usec = 1;
+    uint32 uptime  = 2;
+    uint32 type = 3;
+    repeated uint32 cpu_cores = 4;
+    repeated uint32 cpu_combined = 5;
+    repeated uint32 gpu_cores = 6;
+    repeated uint32 gpu_combined = 7;
+    uint32 temperature_board = 8;
+    repeated uint32 temperature_core = 9;
+    repeated uint32 fan_speed = 10;
+    uint32 ram_usage = 11;
+    uint32 ram_total = 12;
+    repeated uint32 storage_type = 13;
+    repeated uint32 storage_usage = 14;
+    repeated uint32 storage_total = 15; 
+    repeated uint32 link_type = 16;
+    repeated uint32 link_tx_rate = 17;
+    repeated uint32 link_rx_rate = 18;
+    repeated uint32 link_tx_max = 19;
+    repeated uint32 link_rx_max = 20;
+}
+
+message ComponentInfoBasic {
+    uint32 time_boot_ms = 1;
+    uint64 capabilities = 2;
+    string vendor_name = 3;
+    string model_name = 4;
+    string software_version = 5;
+    string hardware_version = 6;
+    string serial_number = 7;
 }
 
 // Status types.

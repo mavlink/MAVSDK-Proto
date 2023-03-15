@@ -1,18 +1,18 @@
 syntax = "proto3";
 
-package mavsdk.rpc.landing_target_server;
+package mavsdk.rpc.landing_target;
 
 import "mavsdk_options.proto";
 
-option java_package = "io.mavsdk.landing_target_server";
-option java_outer_classname = "LandingTargetServerProto";
+option java_package = "io.mavsdk.landing_target";
+option java_outer_classname = "LandingTargetProto";
 
 /*
  * Allows developers to stream the position of a landing target for the drone to land on.
  */
-service LandingTargetServerService {
+service LandingTargetService {
     // Publish landing target measurement recorded by a sensor onboard the drone
-    rpc PublishLandingTargetRelative(PublishLandingTargetRelativeRequest) returns(PublishLandingTargetRelativeResponse) { option (mavsdk.options.async_type) = SYNC; }
+    rpc PublishPositionRelative(PublishPositionRelativeRequest) returns(PublishPositionRelativeResponse) { option (mavsdk.options.async_type) = SYNC; }
 }
 
 // Position type in sensor frame coordinates
@@ -27,20 +27,20 @@ message PositionLocal {
 //     uint32 longitude = 2;
 // }
 
-message PublishLandingTargetRelativeRequest {
+message PublishPositionRelativeRequest {
     PositionLocal position_local = 1; // The next landing position
 }
 
-message PublishLandingTargetRelativeResponse {
+message PublishPositionRelativeResponse {
     LandingTargetResult landing_target_result = 1;
 }
 
 // Target Observation Frame type.
-enum ObservationFrame {
-    OBSERVATION_FRAME_LOCAL_NED = 0;        // NED local tangent frame (x: North, y: East, z: Down) with origin fixed relative to earth.
-    OBSERVATION_FRAME_BODY_FRD = 1;         // FRD local frame aligned to the vehicle's attitude (x: Forward, y: Right, z: Down) with an origin that travels with vehicle.
-    OBSERVATION_FRAME_LOCAL_OFFSET_NED = 2; // NED local tangent frame (x: North, y: East, z: Down) with an origin that travels with vehicle.
-}
+// enum ObservationFrame {
+//     OBSERVATION_FRAME_LOCAL_NED = 0;        // NED local tangent frame (x: North, y: East, z: Down) with origin fixed relative to earth.
+//     OBSERVATION_FRAME_BODY_FRD = 1;         // FRD local frame aligned to the vehicle's attitude (x: Forward, y: Right, z: Down) with an origin that travels with vehicle.
+//     OBSERVATION_FRAME_LOCAL_OFFSET_NED = 2; // NED local tangent frame (x: North, y: East, z: Down) with an origin that travels with vehicle.
+// }
 
 // Result type.
 message LandingTargetResult {
@@ -52,4 +52,5 @@ message LandingTargetResult {
     }
 
     Result result = 1; // Result enum value
+    string result_str = 2; // Human-readable English string describing the result
 }

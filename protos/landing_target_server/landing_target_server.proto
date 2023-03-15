@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package mavsdk.rpc.landing_target_server;
+
+import "mavsdk_options.proto";
+
+option java_package = "io.mavsdk.landing_target_server";
+option java_outer_classname = "LandingTargetServerProto";
+
+/*
+ * Allows developers to stream the position of a landing target for the drone to land on.
+ */
+service LandingTargetServerService {
+    // Publish landing target measurement recorded by a sensor onboard the drone
+    rpc PublishLandingTargetRelative(PublishLandingTargetRelativeRequest) returns(PublishLandingTargetRelativeResponse) { option (mavsdk.options.async_type) = SYNC; }
+}
+
+// Position type in sensor frame coordinates
+message Position {
+    float x = 1; // Coordinate of landing target
+    float y = 2; // Coordinate of landing target
+    float z = 3; // Coordinate of landing target
+}
+
+message PublishLandingTargetRelativeRequest {
+    Position position = 1; // The next landing position
+}
+
+message PublishLandingTargetRelativeResponse {
+    LandingTargetResult landing_target_result = 1;
+}
+
+// Result type.
+message LandingTargetResult {
+    // Possible results returned for LandingTarget publish requests.
+    enum Result {
+        RESULT_UNKNOWN = 0; // Unknown result
+        RESULT_SUCCESS = 1; // Success
+        RESULT_NO_SYSTEM = 2; // No system is connected
+    }
+
+    Result result = 1; // Result enum value
+}

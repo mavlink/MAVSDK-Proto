@@ -16,18 +16,30 @@ service LandingTargetServerService {
 }
 
 // Position type in sensor frame coordinates
-message Position {
+message PositionLocal {
     float x = 1; // Coordinate of landing target
     float y = 2; // Coordinate of landing target
     float z = 3; // Coordinate of landing target
 }
 
+// message PositionGlobal {
+//     uint32 latitude = 1;
+//     uint32 longitude = 2;
+// }
+
 message PublishLandingTargetRelativeRequest {
-    Position position = 1; // The next landing position
+    PositionLocal position_local = 1; // The next landing position
 }
 
 message PublishLandingTargetRelativeResponse {
     LandingTargetResult landing_target_result = 1;
+}
+
+// Target Observation Frame type.
+enum ObservationFrame {
+    OBSERVATION_FRAME_LOCAL_NED = 0;        // NED local tangent frame (x: North, y: East, z: Down) with origin fixed relative to earth.
+    OBSERVATION_FRAME_BODY_FRD = 1;         // FRD local frame aligned to the vehicle's attitude (x: Forward, y: Right, z: Down) with an origin that travels with vehicle.
+    OBSERVATION_FRAME_LOCAL_OFFSET_NED = 2; // NED local tangent frame (x: North, y: East, z: Down) with an origin that travels with vehicle.
 }
 
 // Result type.

@@ -1,25 +1,25 @@
 syntax = "proto3";
 
-package mavsdk.rpc.landing_target;
+package mavsdk.rpc.precision_target;
 
 import "mavsdk_options.proto";
 
-option java_package = "io.mavsdk.landing_target";
-option java_outer_classname = "LandingTargetProto";
+option java_package = "io.mavsdk.precision_target";
+option java_outer_classname = "PrecisionTargetProto";
 
 /*
- * Allows developers to stream the position of a landing target for the drone to land on.
+ * Allows developers to stream the position of a precision target for the drone to land on.
  */
-service LandingTargetService {
-    // Publish landing target measurement recorded by a sensor onboard the drone
+service PrecisionTargetService {
+    // Publish precision target measurement recorded by a sensor onboard the drone
     rpc PublishPositionRelative(PublishPositionRelativeRequest) returns(PublishPositionRelativeResponse) { option (mavsdk.options.async_type) = SYNC; }
 }
 
 // Position type in sensor frame coordinates
 message PositionLocal {
-    float x = 1; // Coordinate of landing target
-    float y = 2; // Coordinate of landing target
-    float z = 3; // Coordinate of landing target
+    float x = 1; // Coordinate of precision target
+    float y = 2; // Coordinate of precision target
+    float z = 3; // Coordinate of precision target
 }
 
 // message PositionGlobal {
@@ -28,11 +28,11 @@ message PositionLocal {
 // }
 
 message PublishPositionRelativeRequest {
-    PositionLocal position_local = 1; // The next landing position
+    PositionLocal position_local = 1; // The next precision target position
 }
 
 message PublishPositionRelativeResponse {
-    LandingTargetResult landing_target_result = 1;
+    PrecisionTargetResult precision_target_result = 1;
 }
 
 // Target Observation Frame type.
@@ -43,8 +43,8 @@ message PublishPositionRelativeResponse {
 // }
 
 // Result type.
-message LandingTargetResult {
-    // Possible results returned for LandingTarget publish requests.
+message PrecisionTargetResult {
+    // Possible results returned for PrecisionTarget publish requests.
     enum Result {
         RESULT_UNKNOWN = 0; // Unknown result
         RESULT_SUCCESS = 1; // Success

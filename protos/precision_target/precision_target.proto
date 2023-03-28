@@ -22,13 +22,14 @@ message PositionLocal {
     float z = 3; // Coordinate of precision target
 }
 
-// message PositionGlobal {
-//     uint32 latitude = 1;
-//     uint32 longitude = 2;
-// }
+    // message PositionGlobal {
+    //     uint32 latitude = 1;
+    //     uint32 longitude = 2;
+    // }
 
 message PublishPositionRelativeRequest {
     PositionLocal position_local = 1; // The next precision target position
+    ObservationFrame observation_frame = 2; // The coordinate frame of the local position
 }
 
 message PublishPositionRelativeResponse {
@@ -36,11 +37,10 @@ message PublishPositionRelativeResponse {
 }
 
 // Target Observation Frame type.
-// enum ObservationFrame {
-//     OBSERVATION_FRAME_LOCAL_NED = 0;        // NED local tangent frame (x: North, y: East, z: Down) with origin fixed relative to earth.
-//     OBSERVATION_FRAME_BODY_FRD = 1;         // FRD local frame aligned to the vehicle's attitude (x: Forward, y: Right, z: Down) with an origin that travels with vehicle.
-//     OBSERVATION_FRAME_LOCAL_OFFSET_NED = 2; // NED local tangent frame (x: North, y: East, z: Down) with an origin that travels with vehicle.
-// }
+enum ObservationFrame {
+    OBSERVATION_FRAME_LOCAL_NED = 0;        // NED local tangent frame (x: North, y: East, z: Down) with origin fixed relative to earth.
+    OBSERVATION_FRAME_BODY_FRD = 1;         // FRD local frame aligned to the vehicle's attitude (x: Forward, y: Right, z: Down) with an origin that travels with vehicle.
+}
 
 // Result type.
 message PrecisionTargetResult {

@@ -172,6 +172,7 @@ message ParamResult {
         RESULT_PARAM_NAME_TOO_LONG = 5; // Parameter name too long (> 16)
         RESULT_NO_SYSTEM = 6; // No system connected
         RESULT_PARAM_VALUE_TOO_LONG = 7; // Param value too long (> 128)
+        RESULT_FAILED = 8; // Operation failed.
     }
 
     Result result = 1; // Result enum value

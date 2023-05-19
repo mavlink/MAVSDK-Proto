@@ -70,6 +70,12 @@ service OffboardService {
     * Set the position in NED coordinates, with the velocity to be used as feed-forward.
     */
     rpc SetPositionVelocityNed(SetPositionVelocityNedRequest) returns(SetPositionVelocityNedResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    /*
+    * Set the position Velocity and Acceleration in NED coordinates, with the velocity and acceleration to be used as feed-forward.
+    */
+    rpc SetPositionVelocityAccelerationNed(SetPositionVelocityAccelerationNedRequest) returns(SetPositionVelocityAccelerationNedResponse) { option (mavsdk.options.async_type) = SYNC; }
+
     /*
     * Set the acceleration in NED coordinates.
     */
@@ -144,7 +150,18 @@ message SetPositionVelocityNedRequest {
     PositionNedYaw position_ned_yaw = 1; // Position and yaw
     VelocityNedYaw velocity_ned_yaw = 2; // Velocity and yaw
 }
+
+message SetPositionVelocityAccelerationNedRequest {
+    PositionNedYaw position_ned_yaw = 1; // Position and yaw
+    VelocityNedYaw velocity_ned_yaw = 2; // Velocity and yaw
+    AccelerationNed acceleration_ned = 3; // Acceleration
+}
+
 message SetPositionVelocityNedResponse {
+    OffboardResult offboard_result = 1;
+}
+
+message SetPositionVelocityAccelerationNedResponse {
     OffboardResult offboard_result = 1;
 }
 

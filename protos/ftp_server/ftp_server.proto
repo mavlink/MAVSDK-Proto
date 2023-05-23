@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package mavsdk.rpc.ftp_server;
+
+import "mavsdk_options.proto";
+
+option java_package = "io.mavsdk.ftp_server";
+option java_outer_classname = "FtpServerProto";
+
+// Provide files or directories to transfer.
+service FtpServerService {
+    /*
+     * Provide a file.
+     */
+    rpc ProvideDirectory(ProvideDirectoryRequest) returns(ProvideDirectoryResponse) { option (mavsdk.options.async_type) = SYNC; }
+}
+
+message ProvideDirectoryRequest {
+    string path = 1; // Absolute path of folder
+}
+
+message ProvideDirectoryResponse {
+    FtpServerResult ftp_server_result = 1;
+}
+
+// Result type.
+message FtpServerResult {
+    // Possible results returned for FTP server requests.
+    enum Result {
+        RESULT_UNKNOWN = 0; // Unknown result
+        RESULT_SUCCESS = 1; // Request succeeded
+        RESULT_NOT_FOUND = 2; // Not Found
+        RESULT_DUPLICATE = 3; // Directory already exists
+    }
+
+    Result result = 1; // Result enum value
+    string result_str = 2; // Human-readable English string describing the result
+}

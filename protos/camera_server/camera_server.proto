@@ -31,6 +31,9 @@ service CameraServerService {
 
     // Subscribe to stop video streaming requests. Each request received should response to using StopVideoStreamingResponse
     rpc SubscribeStopVideoStreaming(SubscribeStopVideoStreamingRequest) returns(stream StopVideoStreamingResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    // Subscribe to set camera mode requests. Each request received should response to using SetCameraModeResponse
+    rpc SubscribeSetMode(SubscribeSetModeRequest) returns(stream SetModeResponse) { option (mavsdk.options.async_type) = ASYNC; }
 }
 
 message SetInformationRequest {
@@ -72,6 +75,11 @@ message StartVideoStreamingResponse {
 message SubscribeStopVideoStreamingRequest {}
 message StopVideoStreamingResponse {
     int32 stream_id = 1;    // video stream id
+}
+
+message SubscribeSetModeRequest {}
+message SetModeResponse {
+    Mode mode = 1;
 }
 
 // Possible results when taking a photo.
@@ -158,4 +166,11 @@ message CameraServerResult {
 
     Result result = 1; // Result enum value
     string result_str = 2; // Human-readable English string describing the result
+}
+
+// Camera mode type.
+enum Mode {
+    MODE_UNKNOWN = 0; // Unknown mode
+    MODE_PHOTO = 1; // Photo mode
+    MODE_VIDEO = 2; // Video mode
 }

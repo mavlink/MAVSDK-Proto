@@ -143,12 +143,16 @@ message StopVideoResponse {
     CameraResult camera_result = 1;
 }
 
-message StartVideoStreamingRequest {}
+message StartVideoStreamingRequest {
+    int32 stream_id = 1;    // video stream id
+}
 message StartVideoStreamingResponse {
     CameraResult camera_result = 1;
 }
 
-message StopVideoStreamingRequest {}
+message StopVideoStreamingRequest {
+    int32 stream_id = 1;    // video stream id
+}
 message StopVideoStreamingResponse {
     CameraResult camera_result = 1;
 }

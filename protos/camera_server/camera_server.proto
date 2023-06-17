@@ -25,6 +25,12 @@ service CameraServerService {
 
     // Subscribe to stop video requests. Each request received should respond using StopVideoResponse
     rpc SubscribeStopVideo(SubscribeStopVideoRequest) returns(stream StopVideoResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+        // Subscribe to start video streaming requests. Each request received should response to using StartVideoStreamingResponse
+    rpc SubscribeStartVideoStreaming(SubscribeStartVideoStreamingRequest) returns(stream StartVideoStreamingResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    // Subscribe to stop video streaming requests. Each request received should response to using StopVideoStreamingResponse
+    rpc SubscribeStopVideoStreaming(SubscribeStopVideoStreamingRequest) returns(stream StopVideoStreamingResponse) { option (mavsdk.options.async_type) = ASYNC; }
 }
 
 message SetInformationRequest {
@@ -55,6 +61,16 @@ message StartVideoResponse {
 
 message SubscribeStopVideoRequest {}
 message StopVideoResponse {
+    int32 stream_id = 1;    // video stream id
+}
+
+message SubscribeStartVideoStreamingRequest {}
+message StartVideoStreamingResponse {
+    int32 stream_id = 1;    // video stream id
+}
+
+message SubscribeStopVideoStreamingRequest {}
+message StopVideoStreamingResponse {
     int32 stream_id = 1;    // video stream id
 }
 

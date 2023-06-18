@@ -256,9 +256,9 @@ message CaptureStatus {
         VIDEO_STATUS_IDLE = 0;  // idle
         VIDEO_STATUS_CAPTURE_IN_PROGRESS = 1;   // capture in progress
     }
-    float image_interval = 1; // Image capture interval (in s)
+    float image_interval_s = 1; // Image capture interval (in s)
     float recording_time_s = 2; // Elapsed time since recording started (in s)
-    float available_capacity = 3; // Available storage capacity. (in MiB)
+    float available_capacity_mib = 3; // Available storage capacity. (in MiB)
     ImageStatus image_status = 4; // Current status of image capturing
     VideoStatus video_status = 5; // Current status of video capturing
     int32 image_count = 6; // Total number of images captured ('forever', or until reset using MAV_CMD_STORAGE_FORMAT)

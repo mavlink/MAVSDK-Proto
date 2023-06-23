@@ -241,8 +241,8 @@ message StorageInformation {
 
     StorageType storage_type = 6; // Storage type
 
-    float read_speed = 7; // Read speed [MiB/s]
-    float write_speed = 8; // Write speed [MiB/s]
+    float read_speed_mib_s = 7; // Read speed [MiB/s]
+    float write_speed_mib_s = 8; // Write speed [MiB/s]
 }
 
 message CaptureStatus {

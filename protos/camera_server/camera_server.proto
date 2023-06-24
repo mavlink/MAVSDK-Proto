@@ -46,6 +46,12 @@ service CameraServerService {
 
     // Respond to camera capture status from SubscribeCaptureStatus.
     rpc RespondCaptureStatus(RespondCaptureStatusRequest) returns(RespondCaptureStatusResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    // Subscribe to format storage requests. Each request received should response to using FormatStorageResponse
+    rpc SubscribeFormatStorage(SubscribeFormatStorageRequest) returns(stream FormatStorageResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    // Subscribe to reset settings requests. Each request received should response to using ResetSettingsResponse
+    rpc SubscribeResetSettings(SubscribeResetSettingsRequest) returns(stream ResetSettingsResponse) { option (mavsdk.options.async_type) = ASYNC; }
 }
 
 message SetInformationRequest {
@@ -116,6 +122,16 @@ message RespondCaptureStatusRequest {
 }
 message RespondCaptureStatusResponse {
     CameraServerResult camera_server_result = 1;
+}
+
+message SubscribeFormatStorageRequest {}
+message FormatStorageResponse {
+    int32 storage_id = 1;   // the storage id to format
+}
+
+message SubscribeResetSettingsRequest {}
+message ResetSettingsResponse {
+    int32 reserved = 1;    // reserved, just make protoc-gen-mavsdk working
 }
 
 // Possible results when taking a photo.

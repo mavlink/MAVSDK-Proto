@@ -170,6 +170,8 @@ message MissionImportData {
     repeated MissionItem mission_items = 1; // Mission items
     repeated MissionItem geofence_items = 2; // Geofence items
     repeated MissionItem rally_items = 3; // Rally items
+    bool has_planned_home = 4; // Whether it contains a planned home position element or not
+    MissionItem planned_home_position = 5; // Planned home position
 }
 
 // Result type.

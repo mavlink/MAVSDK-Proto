@@ -58,6 +58,7 @@ service FtpService {
 message SubscribeDownloadRequest {
     string remote_file_path = 1; // The path of the remote file to download.
     string local_dir = 2; // The local directory to download to.
+    bool use_burst = 3; // Use burst for faster downloading.
 }
 message DownloadResponse {
     FtpResult ftp_result = 1;

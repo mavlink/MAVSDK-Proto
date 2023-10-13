@@ -196,7 +196,7 @@ message ActuatorControlGroup {
  *
  * One group support eight controls.
  *
- * Up to 16 actuator controls can be set. To ignore an output group, set all it conrols to NaN.
+ * Up to 16 actuator controls can be set. To ignore an output group, set all it controls to NaN.
  * If one or more controls in group is not NaN, then all NaN controls will sent as zero.
  * The first 8 actuator controls internally map to control group 0, the latter 8 actuator
  * controls map to control group 1. Depending on what controls are set (instead of NaN) 1 or 2
@@ -232,12 +232,12 @@ message PositionGlobalYaw {
         ALTITUDE_TYPE_REL_HOME = 0; // Altitude relative to the Home position
         ALTITUDE_TYPE_AMSL = 1; // Altitude above mean sea level (AMSL)
         ALTITUDE_TYPE_AGL = 2; // Altitude above ground level (AGL)
-    }    
+    }
     double lat_deg = 1; // Latitude (in degrees)
     double lon_deg = 2; // Longitude (in degrees)
     float alt_m = 3;    // altitude (in metres)
     float yaw_deg = 4;  // Yaw in degrees (0 North, positive is clock-wise looking from above)
-    AltitudeType altitude_type = 5; // altitude type for this position 
+    AltitudeType altitude_type = 5; // altitude type for this position
 }
 
 // Type for velocity commands in body coordinates.

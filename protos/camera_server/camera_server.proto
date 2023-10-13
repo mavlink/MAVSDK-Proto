@@ -19,12 +19,6 @@ service CameraServerService {
     
     // Respond to an image capture request from SubscribeTakePhoto.
     rpc RespondTakePhoto(RespondTakePhotoRequest) returns(RespondTakePhotoResponse) { option (mavsdk.options.async_type) = SYNC; }
-
-    // Subscribe to start video requests. Each request received should response to using StartVideoResponse
-    rpc SubscribeStartVideo(SubscribeStartVideoRequest) returns(stream StartVideoResponse) { option (mavsdk.options.async_type) = ASYNC; }
-
-    // Subscribe to stop video requests. Each request received should response to using StopVideoResponse
-    rpc SubscribeStopVideo(SubscribeStopVideoRequest) returns(stream StopVideoResponse) { option (mavsdk.options.async_type) = ASYNC; }
 }
 
 message SetInformationRequest {
@@ -44,18 +38,9 @@ message SetInProgressResponse {
 }
 
 message SubscribeTakePhotoRequest {}
+
 message TakePhotoResponse {
     int32 index = 1;
-}
-
-message SubscribeStartVideoRequest {}
-message StartVideoResponse {
-    int32 stream_id = 1;    // video stream id
-}
-
-message SubscribeStopVideoRequest {}
-message StopVideoResponse {
-    int32 stream_id = 1;    // video stream id
 }
 
 // Possible results when taking a photo.

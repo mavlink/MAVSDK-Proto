@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package mavsdk.rpc.ftp_server;
+
+import "mavsdk_options.proto";
+
+option java_package = "io.mavsdk.ftp_server";
+option java_outer_classname = "FtpServerProto";
+
+// Provide files or directories to transfer.
+service FtpServerService {
+    /*
+     * Set root directory.
+     *
+     * This is the directory that can then be accessed by a client.
+     * The directory needs to exist when this is called.
+     * The permissions are the same as the file permission for the user running the server.
+     * The root directory can't be changed while an FTP process is in progress.
+     */
+    rpc SetRootDir(SetRootDirRequest) returns(SetRootDirResponse) { option (mavsdk.options.async_type) = SYNC; }
+}
+
+message SetRootDirRequest {
+    string path = 1; // Absolute path of folder
+}
+
+message SetRootDirResponse {
+    FtpServerResult ftp_server_result = 1;
+}
+
+// Result type.
+message FtpServerResult {
+    // Possible results returned for FTP server requests.
+    enum Result {
+        RESULT_UNKNOWN = 0; // Unknown result
+        RESULT_SUCCESS = 1; // Request succeeded
+        RESULT_DOES_NOT_EXIST = 2; // Directory does not exist
+        RESULT_BUSY = 3; // Operations in progress
+    }
+
+    Result result = 1; // Result enum value
+    string result_str = 2; // Human-readable English string describing the result
+}

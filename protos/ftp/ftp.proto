@@ -12,10 +12,6 @@ option java_outer_classname = "FtpProto";
  */
 service FtpService {
     /*
-     * Resets FTP server in case there are stale open sessions.
-     */
-    rpc Reset(ResetRequest) returns(ResetResponse) { option (mavsdk.options.async_type) = ASYNC; }
-    /*
      * Downloads a file to local directory.
      */
     rpc SubscribeDownload(SubscribeDownloadRequest) returns(stream DownloadResponse) {
@@ -54,27 +50,15 @@ service FtpService {
      */
     rpc AreFilesIdentical(AreFilesIdenticalRequest) returns(AreFilesIdenticalResponse) {}
     /*
-     * Set root directory for MAVLink FTP server.
-     */
-    rpc SetRootDirectory(SetRootDirectoryRequest) returns(SetRootDirectoryResponse) { option (mavsdk.options.async_type) = SYNC; }
-    /*
      * Set target component ID. By default it is the autopilot.
      */
     rpc SetTargetCompid(SetTargetCompidRequest) returns(SetTargetCompidResponse) { option (mavsdk.options.async_type) = SYNC; }
-    /*
-     * Get our own component ID.
-     */
-    rpc GetOurCompid(GetOurCompidRequest) returns(GetOurCompidResponse) { option (mavsdk.options.async_type) = SYNC; }
-}
-
-message ResetRequest {}
-message ResetResponse {
-    FtpResult ftp_result = 1;
 }
 
 message SubscribeDownloadRequest {
     string remote_file_path = 1; // The path of the remote file to download.
     string local_dir = 2; // The local directory to download to.
+    bool use_burst = 3; // Use burst for faster downloading.
 }
 message DownloadResponse {
     FtpResult ftp_result = 1;
@@ -136,23 +120,11 @@ message AreFilesIdenticalResponse {
     bool are_identical = 2; // Whether the files are identical.
 }
 
-message SetRootDirectoryRequest {
-    string root_dir = 1; // The root directory to set.
-}
-message SetRootDirectoryResponse {
-    FtpResult ftp_result = 1;
-}
-
 message SetTargetCompidRequest {
     uint32 compid = 1; // The component ID to set.
 }
 message SetTargetCompidResponse {
     FtpResult ftp_result = 1;
-}
-
-message GetOurCompidRequest {}
-message GetOurCompidResponse {
-    uint32 compid = 1; // Our component ID.
 }
 
 // Progress data type for file transfer.

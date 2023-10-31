@@ -16,14 +16,14 @@ service CameraServerService {
 
     // Subscribe to image capture requests. Each request received should respond to using RespondTakePhoto.
     rpc SubscribeTakePhoto(SubscribeTakePhotoRequest) returns(stream TakePhotoResponse) { option (mavsdk.options.async_type) = ASYNC; }
-    
+
     // Respond to an image capture request from SubscribeTakePhoto.
     rpc RespondTakePhoto(RespondTakePhotoRequest) returns(RespondTakePhotoResponse) { option (mavsdk.options.async_type) = SYNC; }
 
-    // Subscribe to start video requests. Each request received should response to using StartVideoResponse
+    // Subscribe to start video requests. Each request received should respond using a StartVideoResponse
     rpc SubscribeStartVideo(SubscribeStartVideoRequest) returns(stream StartVideoResponse) { option (mavsdk.options.async_type) = ASYNC; }
 
-    // Subscribe to stop video requests. Each request received should response to using StopVideoResponse
+    // Subscribe to stop video requests. Each request received should respond using StopVideoResponse
     rpc SubscribeStopVideo(SubscribeStopVideoRequest) returns(stream StopVideoResponse) { option (mavsdk.options.async_type) = ASYNC; }
 }
 

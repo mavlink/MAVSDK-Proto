@@ -11,6 +11,10 @@ option java_outer_classname = "CameraServerProto";
 service CameraServerService {
     // Sets the camera information. This must be called as soon as the camera server is created.
     rpc SetInformation(SetInformationRequest) returns(SetInformationResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    // Sets video streaming settings.
+    rpc SetVideoStreaming(SetVideoStreamingRequest) returns(SetVideoStreamingResponse) { option (mavsdk.options.async_type) = SYNC; }
+
     // Sets image capture in progress status flags. This should be set to true when the camera is busy taking a photo and false when it is done.
     rpc SetInProgress(SetInProgressRequest) returns(SetInProgressResponse) { option (mavsdk.options.async_type) = SYNC; }
 
@@ -80,6 +84,14 @@ message SetInformationRequest {
 }
 
 message SetInformationResponse {
+    CameraServerResult camera_server_result = 1;
+}
+
+message SetVideoStreamingRequest {
+    VideoStreaming video_streaming = 1; // information about the video stream
+}
+
+message SetVideoStreamingResponse {
     CameraServerResult camera_server_result = 1;
 }
 
@@ -235,6 +247,12 @@ message Information {
     uint32 lens_id = 9; // Lens ID
     uint32 definition_file_version = 10; // Camera definition file version (iteration)
     string definition_file_uri = 11; // Camera definition URI (http or mavlink ftp)
+}
+
+// Type to represent video streaming settings
+message VideoStreaming {
+    bool has_rtsp_server = 1; // True if the capture was successful
+    string rtsp_uri = 2; // RTSP URI (e.g. rtsp://192.168.1.42:8554/live)
 }
 
 // Position type in global coordinates.

@@ -109,6 +109,12 @@ service CameraService {
      * Bind the plugin instance to a specific camera_id 
      */
     rpc SelectCamera(SelectCameraRequest) returns(SelectCameraResponse) { option (mavsdk.options.async_type) = SYNC; }
+    /*
+     * Reset all settings in camera.
+     *
+     * This will reset all camera settings to default value
+     */
+    rpc ResetSettings(ResetSettingsRequest) returns(ResetSettingsResponse) {}
 }
 
 message PrepareRequest {}
@@ -143,12 +149,16 @@ message StopVideoResponse {
     CameraResult camera_result = 1;
 }
 
-message StartVideoStreamingRequest {}
+message StartVideoStreamingRequest {
+    int32 stream_id = 1;    // video stream id
+}
 message StartVideoStreamingResponse {
     CameraResult camera_result = 1;
 }
 
-message StopVideoStreamingRequest {}
+message StopVideoStreamingRequest {
+    int32 stream_id = 1;    // video stream id
+}
 message StopVideoStreamingResponse {
     CameraResult camera_result = 1;
 }
@@ -218,7 +228,9 @@ message GetSettingResponse {
     Setting setting = 2; // Setting
 }
 
-message FormatStorageRequest {}
+message FormatStorageRequest {
+    int32 storage_id = 1;   //Storage identify to be format
+}
 message FormatStorageResponse {
     CameraResult camera_result = 1;
 }
@@ -226,9 +238,13 @@ message FormatStorageResponse {
 message SelectCameraResponse {
     CameraResult camera_result = 1;
 }
-
 message SelectCameraRequest {
     int32 camera_id = 1; // Id of camera to be selected
+}
+
+message ResetSettingsRequest {}
+message ResetSettingsResponse {
+    CameraResult camera_result = 1;
 }
 
 // Result type.

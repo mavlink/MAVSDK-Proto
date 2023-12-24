@@ -11,14 +11,72 @@ option java_outer_classname = "CameraServerProto";
 service CameraServerService {
     // Sets the camera information. This must be called as soon as the camera server is created.
     rpc SetInformation(SetInformationRequest) returns(SetInformationResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    // Sets video streaming settings.
+    rpc SetVideoStreaming(SetVideoStreamingRequest) returns(SetVideoStreamingResponse) { option (mavsdk.options.async_type) = SYNC; }
+
     // Sets image capture in progress status flags. This should be set to true when the camera is busy taking a photo and false when it is done.
     rpc SetInProgress(SetInProgressRequest) returns(SetInProgressResponse) { option (mavsdk.options.async_type) = SYNC; }
 
     // Subscribe to image capture requests. Each request received should respond to using RespondTakePhoto.
     rpc SubscribeTakePhoto(SubscribeTakePhotoRequest) returns(stream TakePhotoResponse) { option (mavsdk.options.async_type) = ASYNC; }
-    
+
     // Respond to an image capture request from SubscribeTakePhoto.
     rpc RespondTakePhoto(RespondTakePhotoRequest) returns(RespondTakePhotoResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    // Subscribe to start video requests. Each request received should respond to using RespondStartVideo
+    rpc SubscribeStartVideo(SubscribeStartVideoRequest) returns(stream StartVideoResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    // Subscribe to stop video requests. Each request received should respond using StopVideoResponse
+    rpc RespondStartVideo(RespondStartVideoRequest) returns(RespondStartVideoResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    // Subscribe to stop video requests. Each request received should response to using RespondStopVideo
+    rpc SubscribeStopVideo(SubscribeStopVideoRequest) returns(stream StopVideoResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    // Respond to stop video request from SubscribeStopVideo.
+    rpc RespondStopVideo(RespondStopVideoRequest) returns(RespondStopVideoResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    // Subscribe to start video streaming requests. Each request received should response to using RespondStartVideoStreaming
+    rpc SubscribeStartVideoStreaming(SubscribeStartVideoStreamingRequest) returns(stream StartVideoStreamingResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    // Respond to start video streaming from SubscribeStartVideoStreaming.
+    rpc RespondStartVideoStreaming(RespondStartVideoStreamingRequest) returns(RespondStartVideoStreamingResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    // Subscribe to stop video streaming requests. Each request received should response to using RespondStopVideoStreaming
+    rpc SubscribeStopVideoStreaming(SubscribeStopVideoStreamingRequest) returns(stream StopVideoStreamingResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    // Respond to stop video streaming from SubscribeStopVideoStreaming.
+    rpc RespondStopVideoStreaming(RespondStopVideoStreamingRequest) returns(RespondStopVideoStreamingResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    // Subscribe to set camera mode requests. Each request received should response to using RespondSetMode
+    rpc SubscribeSetMode(SubscribeSetModeRequest) returns(stream SetModeResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    // Respond to set camera mode from SubscribeSetMode.
+    rpc RespondSetMode(RespondSetModeRequest) returns(RespondSetModeResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    // Subscribe to camera storage information requests. Each request received should response to using RespondStorageInformation
+    rpc SubscribeStorageInformation(SubscribeStorageInformationRequest) returns(stream StorageInformationResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    // Respond to camera storage information from SubscribeStorageInformation.
+    rpc RespondStorageInformation(RespondStorageInformationRequest) returns(RespondStorageInformationResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    // Subscribe to camera capture status requests. Each request received should response to using RespondCaptureStatus
+    rpc SubscribeCaptureStatus(SubscribeCaptureStatusRequest) returns(stream CaptureStatusResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    // Respond to camera capture status from SubscribeCaptureStatus.
+    rpc RespondCaptureStatus(RespondCaptureStatusRequest) returns(RespondCaptureStatusResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    // Subscribe to format storage requests. Each request received should response to using RespondFormatStorage
+    rpc SubscribeFormatStorage(SubscribeFormatStorageRequest) returns(stream FormatStorageResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    // Respond to format storage from SubscribeFormatStorage.
+    rpc RespondFormatStorage(RespondFormatStorageRequest) returns(RespondFormatStorageResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    // Subscribe to reset settings requests. Each request received should response to using RespondResetSettings
+    rpc SubscribeResetSettings(SubscribeResetSettingsRequest) returns(stream ResetSettingsResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    // Respond to reset settings from SubscribeResetSettings.
+    rpc RespondResetSettings(RespondResetSettingsRequest) returns(RespondResetSettingsResponse) { option (mavsdk.options.async_type) = SYNC; }
 }
 
 message SetInformationRequest {
@@ -26,6 +84,14 @@ message SetInformationRequest {
 }
 
 message SetInformationResponse {
+    CameraServerResult camera_server_result = 1;
+}
+
+message SetVideoStreamingRequest {
+    VideoStreaming video_streaming = 1; // information about the video stream
+}
+
+message SetVideoStreamingResponse {
     CameraServerResult camera_server_result = 1;
 }
 
@@ -38,26 +104,134 @@ message SetInProgressResponse {
 }
 
 message SubscribeTakePhotoRequest {}
-
 message TakePhotoResponse {
     int32 index = 1;
 }
 
-// Possible results when taking a photo.
-enum TakePhotoFeedback {
-    TAKE_PHOTO_FEEDBACK_UNKNOWN = 0; // Unknown
-    TAKE_PHOTO_FEEDBACK_OK = 1; // Ok
-    TAKE_PHOTO_FEEDBACK_BUSY = 2; // Busy
-    TAKE_PHOTO_FEEDBACK_FAILED = 3; // Failed
-}
-
 message RespondTakePhotoRequest {
-    TakePhotoFeedback take_photo_feedback = 1; // The feedback
-    CaptureInfo capture_info = 2; // The capture information
+    CameraFeedback take_photo_feedback = 1; // the feedback
+    CaptureInfo capture_info = 2; // the capture information
 }
-
 message RespondTakePhotoResponse {
     CameraServerResult camera_server_result = 1;
+}
+
+message SubscribeStartVideoRequest {}
+message StartVideoResponse {
+    int32 stream_id = 1;    // video stream id
+}
+
+message RespondStartVideoRequest {
+    CameraFeedback start_video_feedback = 1; // the feedback
+}
+message RespondStartVideoResponse {
+    CameraServerResult camera_server_result = 1;
+}
+
+message SubscribeStopVideoRequest {}
+message StopVideoResponse {
+    int32 stream_id = 1;    // video stream id
+}
+
+message RespondStopVideoRequest {
+    CameraFeedback stop_video_feedback = 1; // the feedback
+}
+message RespondStopVideoResponse {
+    CameraServerResult camera_server_result = 1;
+}
+
+message SubscribeStartVideoStreamingRequest {}
+message StartVideoStreamingResponse {
+    int32 stream_id = 1;    // video stream id
+}
+
+message RespondStartVideoStreamingRequest {
+    CameraFeedback start_video_streaming_feedback = 1; // the feedback
+}
+message RespondStartVideoStreamingResponse {
+    CameraServerResult camera_server_result = 1;
+}
+
+message SubscribeStopVideoStreamingRequest {}
+message StopVideoStreamingResponse {
+    int32 stream_id = 1;    // video stream id
+}
+
+message RespondStopVideoStreamingRequest {
+    CameraFeedback stop_video_streaming_feedback = 1; // the feedback
+}
+message RespondStopVideoStreamingResponse {
+    CameraServerResult camera_server_result = 1;
+}
+
+message SubscribeSetModeRequest {}
+message SetModeResponse {
+    Mode mode = 1;
+}
+
+message RespondSetModeRequest {
+    CameraFeedback set_mode_feedback = 1; // the feedback
+}
+message RespondSetModeResponse {
+    CameraServerResult camera_server_result = 1;
+}
+
+message SubscribeStorageInformationRequest {}
+message StorageInformationResponse {
+    int32 storage_id = 1;
+}
+
+message RespondStorageInformationRequest {
+    CameraFeedback storage_information_feedback = 1; // the feedback
+    StorageInformation storage_information = 2; // the storage information
+}
+message RespondStorageInformationResponse {
+    CameraServerResult camera_server_result = 1;
+}
+
+message SubscribeCaptureStatusRequest {}
+message CaptureStatusResponse {
+    int32 reserved = 1;    // reserved, just make protoc-gen-mavsdk working
+}
+
+message RespondCaptureStatusRequest {
+    CameraFeedback capture_status_feedback = 1; // the feedback
+    CaptureStatus capture_status = 2; // the capture status
+}
+message RespondCaptureStatusResponse {
+    CameraServerResult camera_server_result = 1;
+}
+
+message SubscribeFormatStorageRequest {}
+message FormatStorageResponse {
+    int32 storage_id = 1;   // the storage id to format
+}
+
+message RespondFormatStorageRequest {
+    CameraFeedback format_storage_feedback = 1; // the feedback
+}
+message RespondFormatStorageResponse {
+    CameraServerResult camera_server_result = 1;
+}
+
+message SubscribeResetSettingsRequest {}
+message ResetSettingsResponse {
+    int32 reserved = 1;    // reserved, just make protoc-gen-mavsdk working
+}
+
+message RespondResetSettingsRequest {
+    CameraFeedback reset_settings_feedback = 1; // the feedback
+}
+message RespondResetSettingsResponse {
+    CameraServerResult camera_server_result = 1;
+}
+
+// Possible feedback results for camera respond command.
+enum CameraFeedback {
+    CAMERA_FEEDBACK_UNKNOWN = 0; // Unknown
+    CAMERA_FEEDBACK_OK = 1; // Ok
+    CAMERA_FEEDBACK_BUSY = 2; // Busy
+    CAMERA_FEEDBACK_FAILED = 3; // Failed
 }
 
 // Type to represent a camera information.
@@ -73,6 +247,12 @@ message Information {
     uint32 lens_id = 9; // Lens ID
     uint32 definition_file_version = 10; // Camera definition file version (iteration)
     string definition_file_uri = 11; // Camera definition URI (http or mavlink ftp)
+}
+
+// Type to represent video streaming settings
+message VideoStreaming {
+    bool has_rtsp_server = 1; // True if the capture was successful
+    string rtsp_uri = 2; // RTSP URI (e.g. rtsp://192.168.1.42:8554/live)
 }
 
 // Position type in global coordinates.
@@ -127,4 +307,64 @@ message CameraServerResult {
 
     Result result = 1; // Result enum value
     string result_str = 2; // Human-readable English string describing the result
+}
+
+// Camera mode type.
+enum Mode {
+    MODE_UNKNOWN = 0; // Unknown mode
+    MODE_PHOTO = 1; // Photo mode
+    MODE_VIDEO = 2; // Video mode
+}
+
+// Information about the camera storage.
+message StorageInformation {
+    // Storage status type.
+    enum StorageStatus {
+        STORAGE_STATUS_NOT_AVAILABLE = 0; // Storage not available
+        STORAGE_STATUS_UNFORMATTED = 1; // Storage is not formatted (i.e. has no recognized file system)
+        STORAGE_STATUS_FORMATTED = 2; // Storage is formatted (i.e. has recognized a file system)
+        STORAGE_STATUS_NOT_SUPPORTED = 3; // Storage status is not supported
+    }
+
+    // Storage type.
+    enum StorageType {
+        STORAGE_TYPE_UNKNOWN = 0; // Storage type unknown
+        STORAGE_TYPE_USB_STICK = 1; // Storage type USB stick
+        STORAGE_TYPE_SD = 2; // Storage type SD card
+        STORAGE_TYPE_MICROSD = 3; // Storage type MicroSD card
+        STORAGE_TYPE_HD = 7; // Storage type HD mass storage
+        STORAGE_TYPE_OTHER = 254; // Storage type other, not listed
+    }
+
+    float used_storage_mib = 1; // Used storage (in MiB)
+    float available_storage_mib = 2; // Available storage (in MiB)
+    float total_storage_mib = 3; // Total storage (in MiB)
+
+    StorageStatus storage_status = 4; // Storage status
+
+    uint32 storage_id = 5; // Storage ID starting at 1
+
+    StorageType storage_type = 6; // Storage type
+
+    float read_speed_mib_s = 7; // Read speed [MiB/s]
+    float write_speed_mib_s = 8; // Write speed [MiB/s]
+}
+
+message CaptureStatus {
+    enum ImageStatus {
+        IMAGE_STATUS_IDLE = 0; // idle
+        IMAGE_STATUS_CAPTURE_IN_PROGRESS = 1; // capture in progress
+        IMAGE_STATUS_INTERVAL_IDLE = 2; // interval set but idle
+        IMAGE_STATUS_INTERVAL_IN_PROGRESS = 3; // interval set and capture in progress)
+    }
+    enum VideoStatus {
+        VIDEO_STATUS_IDLE = 0;  // idle
+        VIDEO_STATUS_CAPTURE_IN_PROGRESS = 1;   // capture in progress
+    }
+    float image_interval_s = 1; // Image capture interval (in s)
+    float recording_time_s = 2; // Elapsed time since recording started (in s)
+    float available_capacity_mib = 3; // Available storage capacity. (in MiB)
+    ImageStatus image_status = 4; // Current status of image capturing
+    VideoStatus video_status = 5; // Current status of video capturing
+    int32 image_count = 6; // Total number of images captured ('forever', or until reset using MAV_CMD_STORAGE_FORMAT)
 }

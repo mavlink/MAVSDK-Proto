@@ -49,6 +49,15 @@ service ParamServerService {
      * Retrieve all parameters.
      */
     rpc RetrieveAllParams(RetrieveAllParamsRequest) returns(RetrieveAllParamsResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    // Subscribe to changed int param.
+    rpc SubscribeChangedParamInt(SubscribeChangedParamIntRequest) returns(stream ChangedParamIntResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    // Subscribe to changed float param.
+    rpc SubscribeChangedParamFloat(SubscribeChangedParamFloatRequest) returns(stream ChangedParamFloatResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    // Subscribe to changed custom param.
+    rpc SubscribeChangedParamCustom(SubscribeChangedParamCustomRequest) returns(stream ChangedParamCustomResponse) { option (mavsdk.options.async_type) = ASYNC; }
 }
 
 message RetrieveParamIntRequest {
@@ -106,6 +115,21 @@ message RetrieveAllParamsRequest {}
 
 message RetrieveAllParamsResponse {
     AllParams params = 1; // Collection of all parameters
+}
+
+message SubscribeChangedParamIntRequest {}
+message ChangedParamIntResponse {
+    IntParam param = 1; // Param that changed
+}
+
+message SubscribeChangedParamFloatRequest {}
+message ChangedParamFloatResponse {
+    FloatParam param = 1; // Param that changed
+}
+
+message SubscribeChangedParamCustomRequest {}
+message ChangedParamCustomResponse {
+    CustomParam param = 1; // Param that changed
 }
 
 /*

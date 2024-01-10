@@ -9,6 +9,15 @@ option java_outer_classname = "GimbalProto";
 service GimbalService {
     /*
      *
+     * Set gimbal pitch, yaw and roll angles.
+     *
+     * This sets the desired pitch, yaw and roll angles of a gimbal.
+     * Will return when the command is accepted, however, it might
+     * take the gimbal longer to actually be set to the new angles.
+     */
+    rpc SetAngles(SetAnglesRequest) returns(SetAnglesResponse) {}
+    /*
+     *
      * Set gimbal pitch and yaw angles.
      *
      * This sets the desired pitch and yaw angles of a gimbal.
@@ -71,6 +80,15 @@ service GimbalService {
      rpc SubscribeControl(SubscribeControlRequest) returns(stream ControlResponse) {}
 }
 
+message SetAnglesRequest {
+    float pitch_deg = 1; // Pitch angle in degrees (negative points down)
+    float yaw_deg = 2; // Yaw angle in degrees (positive is clock-wise, range: -180 to 180 or 0 to 360)
+    float roll_deg = 3; // Roll angle in degrees
+}
+message SetAnglesResponse {
+    GimbalResult gimbal_result = 1;
+}
+
 message SetPitchAndYawRequest {
     float pitch_deg = 1; // Pitch angle in degrees (negative points down)
     float yaw_deg = 2; // Yaw angle in degrees (positive is clock-wise, range: -180 to 180 or 0 to 360)
@@ -123,7 +141,7 @@ message ControlResponse {
 // Gimbal mode type.
 enum GimbalMode {
     GIMBAL_MODE_YAW_FOLLOW = 0; // Yaw follow will point the gimbal to the vehicle heading
-    GIMBAL_MODE_YAW_LOCK = 1; // Yaw lock will fix the gimbal pointing to an absolute direction
+    GIMBAL_MODE_YAW_LOCK = 1; // Yaw lock will fix the gimbal poiting to an absolute direction
 }
 
 // Control mode

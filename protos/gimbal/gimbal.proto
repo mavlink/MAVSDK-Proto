@@ -141,7 +141,7 @@ message ControlResponse {
 // Gimbal mode type.
 enum GimbalMode {
     GIMBAL_MODE_YAW_FOLLOW = 0; // Yaw follow will point the gimbal to the vehicle heading
-    GIMBAL_MODE_YAW_LOCK = 1; // Yaw lock will fix the gimbal poiting to an absolute direction
+    GIMBAL_MODE_YAW_LOCK = 1; // Yaw lock will fix the gimbal pointing to an absolute direction
 }
 
 // Control mode

@@ -9,6 +9,15 @@ option java_outer_classname = "GimbalProto";
 service GimbalService {
     /*
      *
+     * Set gimbal roll, pitch and yaw angles.
+     *
+     * This sets the desired roll, pitch and yaw angles of a gimbal.
+     * Will return when the command is accepted, however, it might
+     * take the gimbal longer to actually be set to the new angles.
+     */
+    rpc SetAngles(SetAnglesRequest) returns(SetAnglesResponse) {}
+    /*
+     *
      * Set gimbal pitch and yaw angles.
      *
      * This sets the desired pitch and yaw angles of a gimbal.
@@ -69,6 +78,15 @@ service GimbalService {
       * of the other components in control (if any).
       */
      rpc SubscribeControl(SubscribeControlRequest) returns(stream ControlResponse) {}
+}
+
+message SetAnglesRequest {
+    float roll_deg = 1; // Roll angle in degrees
+    float pitch_deg = 2; // Pitch angle in degrees (negative points down)
+    float yaw_deg = 3; // Yaw angle in degrees (positive is clock-wise, range: -180 to 180 or 0 to 360)
+}
+message SetAnglesResponse {
+    GimbalResult gimbal_result = 1;
 }
 
 message SetPitchAndYawRequest {

@@ -317,8 +317,9 @@ message Information {
     uint32 horizontal_resolution_px = 7; // Horizontal image resolution in pixels
     uint32 vertical_resolution_px = 8; // Vertical image resolution in pixels
     uint32 lens_id = 9; // Lens ID
-    uint32 definition_file_version = 10; // Camera definition file version (iteration)
-    string definition_file_uri = 11; // Camera definition URI (http or mavlink ftp)
+    uint32 flags = 10; // Bitmap of camera capability flags
+    uint32 definition_file_version = 11; // Camera definition file version (iteration)
+    string definition_file_uri = 12; // Camera definition URI (http or mavlink ftp)
 }
 
 // Type to represent video streaming settings

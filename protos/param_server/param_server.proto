@@ -22,6 +22,12 @@ service ParamServerService {
      */
     rpc ProvideParamInt(ProvideParamIntRequest) returns(ProvideParamIntResponse) { option (mavsdk.options.async_type) = SYNC; }
     /*
+     * Change an int parameter internally.
+     *
+     * If the type is wrong, the result will be `WRONG_TYPE`.
+     */
+    rpc ChangeParamInt(ChangeParamIntRequest) returns(ChangeParamIntResponse) { option (mavsdk.options.async_type) = SYNC; }
+    /*
      * Retrieve a float parameter.
      *
      * If the type is wrong, the result will be `WRONG_TYPE`.
@@ -34,6 +40,12 @@ service ParamServerService {
      */
     rpc ProvideParamFloat(ProvideParamFloatRequest) returns(ProvideParamFloatResponse) { option (mavsdk.options.async_type) = SYNC; }
     /*
+     * Change a float parameter internally.
+     *
+     * If the type is wrong, the result will be `WRONG_TYPE`.
+     */
+    rpc ChangeParamFloat(ChangeParamFloatRequest) returns(ChangeParamFloatResponse) { option (mavsdk.options.async_type) = SYNC; }
+    /*
      * Retrieve a custom parameter.
      *
      * If the type is wrong, the result will be `WRONG_TYPE`.
@@ -45,6 +57,12 @@ service ParamServerService {
      * If the type is wrong, the result will be `WRONG_TYPE`.
      */
     rpc ProvideParamCustom(ProvideParamCustomRequest) returns(ProvideParamCustomResponse) { option (mavsdk.options.async_type) = SYNC; }
+    /*
+     * Change a custom parameter internally.
+     *
+     * If the type is wrong, the result will be `WRONG_TYPE`.
+     */
+    rpc ChangeParamCustom(ChangeParamCustomRequest) returns(ChangeParamCustomResponse) { option (mavsdk.options.async_type) = SYNC; }
     /*
      * Retrieve all parameters.
      */
@@ -63,7 +81,6 @@ service ParamServerService {
 message RetrieveParamIntRequest {
     string name = 1; // Name of the parameter
 }
-
 message RetrieveParamIntResponse {
     ParamServerResult param_server_result = 1;
     int32 value = 2; // Value of the requested parameter
@@ -74,6 +91,14 @@ message ProvideParamIntRequest {
     int32 value = 2; // Value the parameter should be set to
 }
 message ProvideParamIntResponse {
+    ParamServerResult param_server_result = 1;
+}
+
+message ChangeParamIntRequest {
+    string name = 1; // Name of the parameter to change
+    int32 value = 2; // Value the parameter should be set to
+}
+message ChangeParamIntResponse {
     ParamServerResult param_server_result = 1;
 }
 
@@ -93,10 +118,17 @@ message ProvideParamFloatResponse {
     ParamServerResult param_server_result = 1;
 }
 
+message ChangeParamFloatRequest {
+    string name = 1; // Name of the parameter to change
+    float value = 2; // Value the parameter should be set to
+}
+message ChangeParamFloatResponse {
+    ParamServerResult param_server_result = 1;
+}
+
 message RetrieveParamCustomRequest {
     string name = 1; // Name of the parameter
 }
-
 message RetrieveParamCustomResponse {
     ParamServerResult param_server_result = 1;
     string value = 2; // Value of the requested parameter
@@ -107,6 +139,14 @@ message ProvideParamCustomRequest {
     string value = 2; // Value the parameter should be set to
 }
 message ProvideParamCustomResponse {
+    ParamServerResult param_server_result = 1;
+}
+
+message ChangeParamCustomRequest {
+    string name = 1; // Name of the parameter to change
+    string value = 2; // Value the parameter should be set to
+}
+message ChangeParamCustomResponse {
     ParamServerResult param_server_result = 1;
 }
 

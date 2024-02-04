@@ -306,6 +306,28 @@ enum CameraFeedback {
     CAMERA_FEEDBACK_FAILED = 3; // Failed
 }
 
+/*
+ * Camera capability flags as defined in MavLink: 
+ * https://mavlink.io/en/messages/common.html#CAMERA_CAP_FLAGS
+ *
+ * Multiple status fields can be set simultaneously. Mavlink does
+ * not specify which states are mutually exclusive.
+ */
+message CameraCapFlags {
+    bool capture_video = 1; // Camera is able to record video
+    bool capture_image = 2; // Camera is able to capture images
+    bool has_modes = 3; // Camera has separate Video and Image/Photo modes
+    bool can_capture_image_in_video_mode = 4; // Camera can capture images while in video mode
+    bool can_capture_video_in_image_mode = 5; // Camera can capture videos while in Photo/Image mode
+    bool has_image_survey_mode = 6; // Camera has image survey mode
+    bool has_basic_zoom = 7; // Camera has basic zoom control 
+    bool has_basic_focus = 8; // Camera has basic focus control
+    bool has_video_stream = 9; // Camera has video streaming capabilities
+    bool has_tracking_point = 10; // Camera supports tracking of a point on the camera view
+    bool has_tracking_rectangle = 11; // Camera supports tracking of a selection rectangle on the camera view
+    bool has_tracking_geo_status = 12; // Camera supports tracking geo status
+}
+
 // Type to represent a camera information.
 message Information {
     string vendor_name = 1; // Name of the camera vendor
@@ -317,7 +339,7 @@ message Information {
     uint32 horizontal_resolution_px = 7; // Horizontal image resolution in pixels
     uint32 vertical_resolution_px = 8; // Vertical image resolution in pixels
     uint32 lens_id = 9; // Lens ID
-    uint32 flags = 10; // Bitmap of camera capability flags
+    CameraCapFlags flags = 10; // Camera capability flags
     uint32 definition_file_version = 11; // Camera definition file version (iteration)
     string definition_file_uri = 12; // Camera definition URI (http or mavlink ftp)
 }

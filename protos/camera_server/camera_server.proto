@@ -7,7 +7,7 @@ import "mavsdk_options.proto";
 option java_package = "io.mavsdk.camera_server";
 option java_outer_classname = "CameraServerProto";
 
-// Provides handling of camera trigger commands.
+// Provides handling of camera interface
 service CameraServerService {
     // Sets the camera information. This must be called as soon as the camera server is created.
     rpc SetInformation(SetInformationRequest) returns(SetInformationResponse) { option (mavsdk.options.async_type) = SYNC; }
@@ -101,7 +101,32 @@ service CameraServerService {
 
     // Respond to zoom range.
     rpc RespondZoomRange(RespondZoomRangeRequest) returns(RespondZoomRangeResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    // Set/update the current rectangle tracking status.
+    rpc SetTrackingRectangleStatus(SetTrackingRectangleStatusRequest) returns(SetTrackingRectangleStatusResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    // Set the current tracking status to off.
+    rpc SetTrackingOffStatus(SetTrackingOffStatusRequest) returns(SetTrackingOffStatusResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    // Subscribe to incoming tracking point command.
+    rpc SubscribeTrackingPointCommand(SubscribeTrackingPointCommandRequest) returns(stream TrackingPointCommandResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    // Subscribe to incoming tracking rectangle command.
+    rpc SubscribeTrackingRectangleCommand(SubscribeTrackingRectangleCommandRequest) returns(stream TrackingRectangleCommandResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    // Subscribe to incoming tracking off command.
+    rpc SubscribeTrackingOffCommand(SubscribeTrackingOffCommandRequest) returns(stream TrackingOffCommandResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    // Respond to an incoming tracking point command.
+    rpc RespondTrackingPointCommand(RespondTrackingPointCommandRequest) returns(RespondTrackingPointCommandResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    // Respond to an incoming tracking rectangle command.
+    rpc RespondTrackingRectangleCommand(RespondTrackingRectangleCommandRequest) returns(RespondTrackingRectangleCommandResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    // Respond to an incoming tracking off command.
+    rpc RespondTrackingOffCommand(RespondTrackingOffCommandRequest) returns(RespondTrackingOffCommandResponse) { option (mavsdk.options.async_type) = SYNC; }
 }
+
 
 message SetInformationRequest {
     Information information = 1; // information about the camera
@@ -306,28 +331,6 @@ enum CameraFeedback {
     CAMERA_FEEDBACK_FAILED = 3; // Failed
 }
 
-/*
- * Camera capability flags as defined in MavLink: 
- * https://mavlink.io/en/messages/common.html#CAMERA_CAP_FLAGS
- *
- * Multiple status fields can be set simultaneously. Mavlink does
- * not specify which states are mutually exclusive.
- */
-message CameraCapFlags {
-    bool capture_video = 1; // Camera is able to record video
-    bool capture_image = 2; // Camera is able to capture images
-    bool has_modes = 3; // Camera has separate Video and Image/Photo modes
-    bool can_capture_image_in_video_mode = 4; // Camera can capture images while in video mode
-    bool can_capture_video_in_image_mode = 5; // Camera can capture videos while in Photo/Image mode
-    bool has_image_survey_mode = 6; // Camera has image survey mode
-    bool has_basic_zoom = 7; // Camera has basic zoom control 
-    bool has_basic_focus = 8; // Camera has basic focus control
-    bool has_video_stream = 9; // Camera has video streaming capabilities
-    bool has_tracking_point = 10; // Camera supports tracking of a point on the camera view
-    bool has_tracking_rectangle = 11; // Camera supports tracking of a selection rectangle on the camera view
-    bool has_tracking_geo_status = 12; // Camera supports tracking geo status
-}
-
 // Type to represent a camera information.
 message Information {
     string vendor_name = 1; // Name of the camera vendor
@@ -339,9 +342,8 @@ message Information {
     uint32 horizontal_resolution_px = 7; // Horizontal image resolution in pixels
     uint32 vertical_resolution_px = 8; // Vertical image resolution in pixels
     uint32 lens_id = 9; // Lens ID
-    CameraCapFlags flags = 10; // Camera capability flags
-    uint32 definition_file_version = 11; // Camera definition file version (iteration)
-    string definition_file_uri = 12; // Camera definition URI (http or mavlink ftp)
+    uint32 definition_file_version = 10; // Camera definition file version (iteration)
+    string definition_file_uri = 11; // Camera definition URI (http or mavlink ftp)
 }
 
 // Type to represent video streaming settings
@@ -462,4 +464,68 @@ message CaptureStatus {
     ImageStatus image_status = 4; // Current status of image capturing
     VideoStatus video_status = 5; // Current status of video capturing
     int32 image_count = 6; // Total number of images captured ('forever', or until reset using MAV_CMD_STORAGE_FORMAT)
+}
+
+message SetTrackingPointStatusRequest {
+    TrackPoint tracked_point = 1; // The tracked point
+}
+message SetTrackingPointStatusResponse {}
+
+message SetTrackingRectangleStatusRequest {
+    TrackRectangle tracked_rectangle = 1; // The tracked rectangle
+}
+message SetTrackingRectangleStatusResponse {}
+
+message SetTrackingOffStatusRequest {}
+message SetTrackingOffStatusResponse {}
+
+message SubscribeTrackingPointCommandRequest {}
+message TrackingPointCommandResponse {
+    TrackPoint track_point = 1; // The point to track if a point is to be tracked
+}
+
+message SubscribeTrackingRectangleCommandRequest {}
+message TrackingRectangleCommandResponse {
+    TrackRectangle track_rectangle = 1; // The point to track if a point is to be tracked
+}
+
+message SubscribeTrackingOffCommandRequest {}
+message TrackingOffCommandResponse {
+    int32 dummy = 1; // Unused
+}
+
+message RespondTrackingPointCommandRequest {
+    CameraFeedback stop_video_feedback = 1; // the feedback
+}
+message RespondTrackingPointCommandResponse {
+    CameraServerResult camera_server_result = 1; // The result of sending the response.
+}
+
+message RespondTrackingRectangleCommandRequest {
+    CameraFeedback stop_video_feedback = 1; // the feedback
+}
+message RespondTrackingRectangleCommandResponse {
+    CameraServerResult camera_server_result = 1; // The result of sending the response.
+}
+
+message RespondTrackingOffCommandRequest {
+    CameraFeedback stop_video_feedback = 1; // the feedback
+}
+message RespondTrackingOffCommandResponse {
+    CameraServerResult camera_server_result = 1; // The result of sending the response.
+}
+
+// Point description type
+message TrackPoint {
+    float point_x = 1; // Point to track x value (normalized 0..1, 0 is left, 1 is right).
+    float point_y = 2; // Point to track y value (normalized 0..1, 0 is top, 1 is bottom).
+    float radius = 3; // Point to track y value (normalized 0..1, 0 is top, 1 is bottom).
+}
+
+// Rectangle description type
+message TrackRectangle {
+    float top_left_corner_x = 1; // Top left corner of rectangle x value (normalized 0..1, 0 is left, 1 is right).
+    float top_left_corner_y = 2; // Top left corner of rectangle y value (normalized 0..1, 0 is top, 1 is bottom).
+    float bottom_right_corner_x = 3; // Bottom right corner of rectangle x value (normalized 0..1, 0 is left, 1 is right).
+    float bottom_right_corner_y = 4; // Bottom right corner of rectangle y value (normalized 0..1, 0 is top, 1 is bottom).
 }

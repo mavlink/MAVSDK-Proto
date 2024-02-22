@@ -12,8 +12,8 @@ service CameraServerService {
     // Sets the camera information. This must be called as soon as the camera server is created.
     rpc SetInformation(SetInformationRequest) returns(SetInformationResponse) { option (mavsdk.options.async_type) = SYNC; }
 
-    // Sets video streaming settings.
-    rpc SetVideoStreaming(SetVideoStreamingRequest) returns(SetVideoStreamingResponse) { option (mavsdk.options.async_type) = SYNC; }
+    // Sets video stream info.
+    rpc SetVideoStreamInfo(SetVideoStreamInfoRequest) returns(SetVideoStreamInfoResponse) { option (mavsdk.options.async_type) = SYNC; }
 
     // Sets image capture in progress status flags. This should be set to true when the camera is busy taking a photo and false when it is done.
     rpc SetInProgress(SetInProgressRequest) returns(SetInProgressResponse) { option (mavsdk.options.async_type) = SYNC; }
@@ -87,11 +87,11 @@ message SetInformationResponse {
     CameraServerResult camera_server_result = 1;
 }
 
-message SetVideoStreamingRequest {
-    VideoStreaming video_streaming = 1; // information about the video stream
+message SetVideoStreamInfoRequest {
+    repeated VideoStreamInfo video_stream_infos = 1;  // Video stream infos
 }
 
-message SetVideoStreamingResponse {
+message SetVideoStreamInfoResponse {
     CameraServerResult camera_server_result = 1;
 }
 
@@ -249,10 +249,36 @@ message Information {
     string definition_file_uri = 11; // Camera definition URI (http or mavlink ftp)
 }
 
-// Type to represent video streaming settings
-message VideoStreaming {
-    bool has_rtsp_server = 1; // True if the capture was successful
-    string rtsp_uri = 2; // RTSP URI (e.g. rtsp://192.168.1.42:8554/live)
+// Type for video stream settings.
+message VideoStreamSettings {
+    float frame_rate_hz = 1; // Frames per second
+    uint32 horizontal_resolution_pix = 2; // Horizontal resolution (in pixels)
+    uint32 vertical_resolution_pix = 3; // Vertical resolution (in pixels)
+    uint32 bit_rate_b_s = 4; // Bit rate (in bits per second)
+    uint32 rotation_deg = 5; // Video image rotation (clockwise, 0-359 degrees)
+    string uri = 6; // Video stream URI
+    float horizontal_fov_deg = 7; // Horizontal fov in degrees
+}
+
+// Information about the video stream.
+message VideoStreamInfo {
+    // Video stream status type.
+    enum VideoStreamStatus {
+      VIDEO_STREAM_STATUS_NOT_RUNNING = 0; // Video stream is not running
+      VIDEO_STREAM_STATUS_IN_PROGRESS = 1; // Video stream is running
+    }
+
+    // Video stream light spectrum type
+    enum VideoStreamSpectrum {
+      VIDEO_STREAM_SPECTRUM_UNKNOWN = 0; // Unknown
+      VIDEO_STREAM_SPECTRUM_VISIBLE_LIGHT = 1; // Visible light
+      VIDEO_STREAM_SPECTRUM_INFRARED = 2; // Infrared
+    }
+
+    int32 stream_id = 1; // stream unique id
+    VideoStreamSettings settings = 2; // Video stream settings
+    VideoStreamStatus status = 3; // Current status of video streaming
+    VideoStreamSpectrum spectrum = 4; // Light-spectrum of the video stream
 }
 
 // Position type in global coordinates.

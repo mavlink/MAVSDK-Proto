@@ -190,7 +190,7 @@ message ModeResponse {
 
 message SubscribeVideoStreamInfoRequest {}
 message VideoStreamInfoResponse {
-    VideoStreamInfo video_stream_info = 1; // Video stream info
+    repeated VideoStreamInfo video_stream_infos = 1; // Video stream infos
 }
 
 message SubscribeCaptureInfoRequest {}
@@ -356,9 +356,10 @@ message VideoStreamInfo {
         VIDEO_STREAM_SPECTRUM_INFRARED = 2; // Infrared
     }
 
-    VideoStreamSettings settings = 1; // Video stream settings
-    VideoStreamStatus status = 2; // Current status of video streaming
-    VideoStreamSpectrum spectrum = 3; // Light-spectrum of the video stream
+    int32 stream_id = 1; // stream unique id
+    VideoStreamSettings settings = 2; // Video stream settings
+    VideoStreamStatus status = 3; // Current status of video streaming
+    VideoStreamSpectrum spectrum = 4; // Light-spectrum of the video stream
 }
 
 // Information about the camera status.

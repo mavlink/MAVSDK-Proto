@@ -422,11 +422,50 @@ message SettingOptions {
 
 // Type to represent a camera information.
 message Information {
-    string vendor_name = 1; // Name of the camera vendor
-    string model_name = 2; // Name of the camera model
-    float focal_length_mm = 3; // Focal length
-    float horizontal_sensor_size_mm = 4; // Horizontal sensor size
-    float vertical_sensor_size_mm = 5; // Vertical sensor size
-    uint32 horizontal_resolution_px = 6; // Horizontal image resolution in pixels
-    uint32 vertical_resolution_px = 7; // Vertical image resolution in pixels
+    enum CameraCapFlags {
+        CAMERA_CAP_FLAGS_CAPTURE_VIDEO = 0;  // Camera is able to record video
+        CAMERA_CAP_FLAGS_CAPTURE_IMAGE = 1;  // Camera is able to capture images
+        CAMERA_CAP_FLAGS_HAS_MODES =
+            2;  // Camera has separate Video and Image/Photo modes
+                // (MAV_CMD_SET_CAMERA_MODE)
+        CAMERA_CAP_FLAGS_CAN_CAPTURE_IMAGE_IN_VIDEO_MODE =
+            3;  // Camera can capture images while in video mode
+        CAMERA_CAP_FLAGS_CAN_CAPTURE_VIDEO_IN_IMAGE_MODE =
+            4;  // Camera can capture videos while in Photo/Image mode
+        CAMERA_CAP_FLAGS_HAS_IMAGE_SURVEY_MODE =
+            5;  // Camera has image survey mode (MAV_CMD_SET_CAMERA_MODE)
+        CAMERA_CAP_FLAGS_HAS_BASIC_ZOOM =
+            6;  // Camera has basic zoom control (MAV_CMD_SET_CAMERA_ZOOM)
+        CAMERA_CAP_FLAGS_HAS_BASIC_FOCUS =
+            7;  // Camera has basic focus control (MAV_CMD_SET_CAMERA_FOCUS)
+        CAMERA_CAP_FLAGS_HAS_VIDEO_STREAM =
+            8;  // Camera has video streaming capabilities (request
+                // VIDEO_STREAM_INFORMATION with MAV_CMD_REQUEST_MESSAGE for
+                // video streaming info)
+        CAMERA_CAP_FLAGS_HAS_TRACKING_POINT =
+            9;  // Camera supports tracking of a point on the camera view.
+        CAMERA_CAP_FLAGS_HAS_TRACKING_RECTANGLE =
+            10;  // Camera supports tracking of a selection rectangle on the
+                 // camera view.
+        CAMERA_CAP_FLAGS_HAS_TRACKING_GEO_STATUS =
+            11;  // Camera supports tracking geo status
+                 // (CAMERA_TRACKING_GEO_STATUS).
+    };
+    string vendor_name = 1;  // Name of the camera vendor
+    string model_name = 2;   // Name of the camera model
+    string firmware_version =
+        3;  // Camera firmware version in major[.minor[.patch[.dev]]] format
+    float focal_length_mm = 4;            // Focal length
+    float horizontal_sensor_size_mm = 5;  // Horizontal sensor size
+    float vertical_sensor_size_mm = 6;    // Vertical sensor size
+    uint32 horizontal_resolution_px =
+        7;                              // Horizontal image resolution in pixels
+    uint32 vertical_resolution_px = 8;  // Vertical image resolution in pixels
+    uint32 lens_id = 9;                 // Lens ID
+    uint32 definition_file_version =
+        10;  // Camera definition file version (iteration)
+    string definition_file_uri =
+        11;  // Camera definition URI (http or mavlink ftp)
+    repeated CameraCapFlags camera_cap_flags =
+        12;  // Camera capability flags (Array)
 }

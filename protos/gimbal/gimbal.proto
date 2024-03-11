@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package mavsdk.rpc.gimbal;
 
+import "mavsdk_options.proto";
+
 option java_package = "io.mavsdk.gimbal";
 option java_outer_classname = "GimbalProto";
 
@@ -78,6 +80,12 @@ service GimbalService {
       * of the other components in control (if any).
       */
      rpc SubscribeControl(SubscribeControlRequest) returns(stream ControlResponse) {}
+     /*
+      * Subscribe to attitude updates.
+      *
+      * This gets you the gimbal's attitude and angular rate.
+      */
+     rpc SubscribeAttitude(SubscribeAttitudeRequest) returns(stream AttitudeResponse) {}
 }
 
 message SetAnglesRequest {
@@ -136,6 +144,60 @@ message ReleaseControlResponse {
 message SubscribeControlRequest {}
 message ControlResponse {
     ControlStatus control_status = 1; // Control status
+}
+
+/*
+ * Quaternion type.
+ *
+ * All rotations and axis systems follow the right-hand rule.
+ * The Hamilton quaternion product definition is used.
+ * A zero-rotation quaternion is represented by (1,0,0,0).
+ * The quaternion could also be written as w + xi + yj + zk.
+ *
+ * For more info see: https://en.wikipedia.org/wiki/Quaternion
+ */
+message Quaternion {
+    float w = 1 [(mavsdk.options.default_value)="NaN"]; // Quaternion entry 0, also denoted as a
+    float x = 2 [(mavsdk.options.default_value)="NaN"]; // Quaternion entry 1, also denoted as b
+    float y = 3 [(mavsdk.options.default_value)="NaN"]; // Quaternion entry 2, also denoted as c
+    float z = 4 [(mavsdk.options.default_value)="NaN"]; // Quaternion entry 3, also denoted as d
+}
+
+/*
+ * Euler angle type.
+ *
+ * All rotations and axis systems follow the right-hand rule.
+ * The Euler angles are converted using the 3-1-2 sequence instead of standard 3-2-1 in order
+ * to avoid the gimbal lock at 90 degrees down.
+ *
+ * For more info see https://en.wikipedia.org/wiki/Euler_angles
+ */
+message EulerAngle {
+    float roll_deg = 1 [(mavsdk.options.default_value)="NaN"]; // Roll angle in degrees, positive is banking to the right
+    float pitch_deg = 2 [(mavsdk.options.default_value)="NaN"]; // Pitch angle in degrees, positive is pitching nose up
+    float yaw_deg = 3 [(mavsdk.options.default_value)="NaN"]; // Yaw angle in degrees, positive is clock-wise seen from above
+}
+
+// Gimbal angular rate type
+message AngularVelocityBody {
+    float roll_rad_s = 1 [(mavsdk.options.default_value)="NaN"]; // Roll angular velocity
+    float pitch_rad_s = 2 [(mavsdk.options.default_value)="NaN"]; // Pitch angular velocity
+    float yaw_rad_s = 3 [(mavsdk.options.default_value)="NaN"]; // Yaw angular velocity
+}
+
+// Gimbal attitude type
+message Attitude {
+    EulerAngle euler_angle_forward = 1; // Euler angle relative to forward
+    Quaternion quaternion_forward = 2; // Quaternion relative to forward
+    EulerAngle euler_angle_north = 3; // Euler angle relative to North
+    Quaternion quaternion_north = 4; // Quaternion relative to North
+    AngularVelocityBody angular_velocity = 5; // The angular rate
+    uint64 timestamp_us = 6; // Timestamp in microseconds
+}
+
+message SubscribeAttitudeRequest {}
+message AttitudeResponse {
+    Attitude attitude = 1; // The attitude
 }
 
 // Gimbal mode type.

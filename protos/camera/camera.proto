@@ -106,7 +106,7 @@ service CameraService {
     /*
      * Select current camera .
      *
-     * Bind the plugin instance to a specific camera_id 
+     * Bind the plugin instance to a specific camera_id
      */
     rpc SelectCamera(SelectCameraRequest) returns(SelectCameraResponse) { option (mavsdk.options.async_type) = SYNC; }
     /*
@@ -115,6 +115,50 @@ service CameraService {
      * This will reset all camera settings to default value
      */
     rpc ResetSettings(ResetSettingsRequest) returns(ResetSettingsResponse) {}
+    /*
+     * Start zooming in.
+     */
+    rpc ZoomInStart(ZoomInStartRequest) returns(ZoomInStartResponse) {}
+    /*
+     * Start zooming out.
+     */
+    rpc ZoomOutStart(ZoomOutStartRequest) returns(ZoomOutStartResponse) {}
+    /*
+     * Stop zooming.
+     */
+    rpc ZoomStop(ZoomStopRequest) returns(ZoomStopResponse) {}
+    /*
+     * Zoom to value as proportion of full camera range (percentage between 0.0 and 100.0).
+     */
+    rpc ZoomRange(ZoomRangeRequest) returns(ZoomRangeResponse) {}
+    /*
+     * Track point.
+     */
+    rpc TrackPoint(TrackPointRequest) returns(TrackPointResponse) {}
+    /*
+     * Track rectangle.
+     */
+    rpc TrackRectangle(TrackRectangleRequest) returns(TrackRectangleResponse) {}
+    /*
+     * Stop tracking.
+     */
+    rpc TrackStop(TrackStopRequest) returns(TrackStopResponse) {}
+    /*
+     * Start focusing in.
+     */
+    rpc FocusInStart(FocusInStartRequest) returns(FocusInStartResponse) {}
+    /*
+     * Start focusing out.
+     */
+    rpc FocusOutStart(FocusOutStartRequest) returns(FocusOutStartResponse) {}
+    /*
+     * Stop focus.
+     */
+    rpc FocusStop(FocusStopRequest) returns(FocusStopResponse) {}
+    /*
+     * Focus with range value of full range (value between 0.0 and 100.0).
+     */
+    rpc FocusRange(FocusRangeRequest) returns(FocusRangeResponse) {}
 }
 
 message PrepareRequest {}
@@ -246,6 +290,76 @@ message ResetSettingsRequest {}
 message ResetSettingsResponse {
     CameraResult camera_result = 1;
 }
+
+message ZoomInStartRequest {}
+message ZoomInStartResponse {
+   CameraResult camera_result = 1;
+}
+
+message ZoomOutStartRequest {}
+message ZoomOutStartResponse {
+   CameraResult camera_result = 1;
+}
+
+message ZoomStopRequest {}
+message ZoomStopResponse {
+   CameraResult camera_result = 1;
+}
+
+message ZoomRangeRequest {
+    float range = 1; // Range must be between 0.0 and 100.0
+}
+message ZoomRangeResponse {
+   CameraResult camera_result = 1;
+}
+
+message TrackPointRequest {
+    float point_x = 1; // Point in X axis (0..1, 0 is left, 1 is right)
+    float point_y = 2; // Point in Y axis (0..1, 0 is top, 1 is bottom)
+    float radius = 3; // Radius (0 is one pixel, 1 is full image width)
+}
+message TrackPointResponse {
+   CameraResult camera_result = 1;
+}
+
+message TrackRectangleRequest {
+    float top_left_x = 1; // Top left corner of rectangle x value (normalized 0..1, 0 is left, 1 is right)
+    float top_left_y = 2; // Top left corner of rectangle y value (normalized 0..1, 0 is top, 1 is bottom)
+    float bottom_right_x = 3; // Bottom right corner of rectangle x value (normalized 0..1, 0 is left, 1 is right)
+    float bottom_right_y = 4; // Bottom right corner of rectangle y value (normalized 0..1, 0 is top, 1 is bottom)
+
+}
+message TrackRectangleResponse {
+   CameraResult camera_result = 1;
+}
+
+message TrackStopRequest {}
+message TrackStopResponse {
+   CameraResult camera_result = 1;
+}
+
+message FocusInStartRequest {}
+message FocusInStartResponse {
+   CameraResult camera_result = 1;
+}
+
+message FocusOutStartRequest {}
+message FocusOutStartResponse {
+   CameraResult camera_result = 1;
+}
+
+message FocusStopRequest {}
+message FocusStopResponse {
+   CameraResult camera_result = 1;
+}
+
+message FocusRangeRequest {
+    float range = 1; // Range must be between 0.0 - 100.0
+}
+message FocusRangeResponse {
+   CameraResult camera_result = 1;
+}
+
 
 // Result type.
 message CameraResult {

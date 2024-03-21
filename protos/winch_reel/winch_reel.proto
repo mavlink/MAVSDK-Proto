@@ -1,0 +1,177 @@
+syntax = "proto3";
+
+package mavsdk.rpc.winch_reel;
+
+import "mavsdk_options.proto";
+
+option java_package = "io.mavsdk.winch_reel";
+option java_outer_classname = "WinchReelProto";
+
+/*
+ * Allows users to send Reel winch actions, as well as receive status information from winch systems.
+ *
+ */
+service WinchReelService {
+    // Subscribe to 'winch status' updates.
+    rpc SubscribeStatus(SubscribeStatusRequest) returns(stream StatusResponse) {}
+
+    /*
+     * Allow motor to freewheel.
+     */
+    rpc Relax(RelaxRequest) returns(RelaxResponse) {}
+    
+    /*
+     * Perform the locking sequence to relieve motor while in the fully retracted position.
+     */
+    rpc Lock(LockRequest) returns(LockResponse) {}
+
+    /*
+     * Sequence of drop, slow down, touch down, reel up, lock.
+     */
+    rpc Deliver(DeliverRequest) returns(DeliverResponse) {}
+
+    /*
+     * Engage motor and hold current position.
+     */
+    rpc Hold(HoldRequest) returns(HoldResponse) {}
+
+    /*
+     * Return the reel to the fully retracted position.
+     */
+    rpc Retract(RetractRequest) returns(RetractResponse) {}
+
+    /*
+     * Load the reel with line.
+     *
+     * The winch will calculate the total loaded length and stop when the tension exceeds a threshold.
+     */
+    rpc LoadLine(LoadLineRequest) returns(LoadLineResponse) {}
+
+    /*
+     * Spools out just enough to present the hook to the user to load the payload.
+     */
+    rpc LoadPayload(LoadPayloadRequest) returns(LoadPayloadResponse) {}
+
+}
+
+message SubscribeStatusRequest {}
+message StatusResponse {
+    Status status = 1; // The next 'winch status' state
+}
+
+// Reel Winch status enum.
+enum StatusEnum {
+    WINCH_STATUS_UNDEFINED = 0;
+    WINCH_STATUS_BOOTUP = 1;          // Winch is booting up
+    WINCH_STATUS_LOCKED = 2;          // Winch is locked by locking mechanism
+    WINCH_STATUS_FREEWHEEL = 3;       // Winch is gravity dropping payload
+    WINCH_STATUS_HOLD = 4;            // Winch is holding
+    WINCH_STATUS_REEL_UP = 5;         // Winch is winding reel up
+    WINCH_STATUS_REEL_DOWN = 6;       // Winch is winding reel down
+    WINCH_STATUS_DROP_AND_ARREST = 7; // Winch is delivering the payload
+    WINCH_STATUS_GROUND_SENSE = 8;    // Winch is using torque measurements to sense the ground
+    WINCH_STATUS_RETURN_TO_HOME = 9;  // Winch is returning to home position.
+    WINCH_STATUS_REDELIVER = 10;      // Winch is redelivering the payload. This is a failover state if the line tension goes above a threshold during RETRACTING.
+    WINCH_STATUS_ABANDON_LINE = 11;   // Winch is abandoning the line and possibly payload. Winch unspools the entire calculated line length. This is a failover state from REDELIVER if the number of attempts exceeds a threshold.
+    WINCH_STATUS_LOCKING = 12;        // Winch is engaging the locking mechanism
+    WINCH_STATUS_LOAD_PACKAGE = 13;   // Winch is loading a payload
+    WINCH_STATUS_LOAD_LINE = 14;      // Winch is spooling on line
+    WINCH_STATUS_FAILSAFE = 15;       // Winch is in a failsafe state
+    WINCH_STATUS_UNLOCKING = 16;      // Winch is disengaging the locking mechanism
+}
+
+// Status type.
+message Status {
+    uint64 time_usec = 1; // Time in usec
+    float line_length_m = 2; // Length of the line in meters
+    float speed_m_s = 3; // Speed in meters per second
+    float tension_kg = 4; // Tension in kilograms
+    float voltage_v = 5; // Voltage in volts
+    float current_a = 6; // Current in amperes
+    int32 temperature_c = 7; // Temperature in Celsius
+    StatusEnum status_enum = 8; // Status enum
+}
+
+// Winch Action type.
+enum WinchAction {
+    WINCH_ACTION_RELAXED = 0;       // Allow motor to freewheel
+    WINCH_ACTION_LOCK = 1;          // Perform the locking sequence to relieve motor while in the fully retracted position
+    WINCH_ACTION_DELIVER = 2;       // Sequence of drop, slow down, touch down, reel up, lock
+    WINCH_ACTION_HOLD = 3;          // Engage motor and hold current position
+    WINCH_ACTION_RETRACT = 4;       // Return the reel to the fully retracted position
+    WINCH_ACTION_LOAD_LINE = 5;     // Load the reel with line. The winch will calculate the total loaded length and stop when the tension exceeds a threshold
+    WINCH_ACTION_LOAD_PAYLOAD = 6;  // Spools out just enough to present the hook to the user to load the payload
+}
+
+message RelaxRequest {
+    uint32 instance = 1;
+}
+
+message RelaxResponse {
+    WinchResult winch_result = 1;
+}
+
+message LockRequest {
+    uint32 instance = 1;
+}
+
+message LockResponse {
+    WinchResult winch_result = 1;
+}
+
+message DeliverRequest {
+    uint32 instance = 1;
+}
+
+message DeliverResponse {
+    WinchResult winch_result = 1;
+}
+
+message HoldRequest {
+    uint32 instance = 1;
+}
+
+message HoldResponse {
+    WinchResult winch_result = 1;
+}
+
+message RetractRequest {
+    uint32 instance = 1;
+}
+
+message RetractResponse {
+    WinchResult winch_result = 1;
+}
+
+message LoadLineRequest {
+    uint32 instance = 1;
+}
+
+message LoadLineResponse {
+    WinchResult winch_result = 1;
+}
+
+message LoadPayloadRequest {
+    uint32 instance = 1;
+}
+
+message LoadPayloadResponse {
+    WinchResult winch_result = 1;
+}
+
+// Result type.
+message WinchResult {
+    // Possible results returned for winch action requests.
+    enum Result {
+        RESULT_UNKNOWN = 0; // Unknown result
+        RESULT_SUCCESS = 1; // Request was successful
+        RESULT_NO_SYSTEM = 2; // No system is connected
+        RESULT_BUSY = 3; // Temporarily rejected
+        RESULT_TIMEOUT = 4; // Request timed out
+        RESULT_UNSUPPORTED = 5; // Action not supported
+        RESULT_FAILED = 6; // Action failed
+    }
+
+    Result result = 1; // Result enum value
+    string result_str = 2; // Human-readable English string describing the result
+}

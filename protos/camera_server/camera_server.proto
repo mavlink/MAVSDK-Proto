@@ -77,6 +77,30 @@ service CameraServerService {
 
     // Respond to reset settings from SubscribeResetSettings.
     rpc RespondResetSettings(RespondResetSettingsRequest) returns(RespondResetSettingsResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    // Subscribe to zoom in start command
+    rpc SubscribeZoomInStart(SubscribeZoomInStartRequest) returns(stream ZoomInStartResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    // Respond to zoom in start.
+    rpc RespondZoomInStart(RespondZoomInStartRequest) returns(RespondZoomInStartResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    // Subscribe to zoom out start command
+    rpc SubscribeZoomOutStart(SubscribeZoomOutStartRequest) returns(stream ZoomOutStartResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    // Respond to zoom out start.
+    rpc RespondZoomOutStart(RespondZoomOutStartRequest) returns(RespondZoomOutStartResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    // Subscribe to zoom stop command
+    rpc SubscribeZoomStop(SubscribeZoomStopRequest) returns(stream ZoomStopResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    // Respond to zoom stop.
+    rpc RespondZoomStop(RespondZoomStopRequest) returns(RespondZoomStopResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    // Subscribe to zoom range command
+    rpc SubscribeZoomRange(SubscribeZoomRangeRequest) returns(stream ZoomRangeResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    // Respond to zoom range.
+    rpc RespondZoomRange(RespondZoomRangeRequest) returns(RespondZoomRangeResponse) { option (mavsdk.options.async_type) = SYNC; }
 }
 
 message SetInformationRequest {
@@ -223,6 +247,54 @@ message RespondResetSettingsRequest {
     CameraFeedback reset_settings_feedback = 1; // the feedback
 }
 message RespondResetSettingsResponse {
+    CameraServerResult camera_server_result = 1;
+}
+
+message SubscribeZoomInStartRequest {}
+message ZoomInStartResponse {
+    int32 reserved = 1;    // reserved, just make protoc-gen-mavsdk working
+}
+
+message RespondZoomInStartRequest {
+    CameraFeedback zoom_in_start_feedback = 1; // the feedback
+}
+message RespondZoomInStartResponse {
+    CameraServerResult camera_server_result = 1;
+}
+
+message SubscribeZoomOutStartRequest {}
+message ZoomOutStartResponse {
+    int32 reserved = 1;    // reserved, just make protoc-gen-mavsdk working
+}
+
+message RespondZoomOutStartRequest {
+    CameraFeedback zoom_out_start_feedback = 1; // the feedback
+}
+message RespondZoomOutStartResponse {
+    CameraServerResult camera_server_result = 1;
+}
+
+message SubscribeZoomStopRequest {}
+message ZoomStopResponse {
+    int32 reserved = 1;    // reserved, just make protoc-gen-mavsdk working
+}
+
+message RespondZoomStopRequest {
+    CameraFeedback zoom_stop_feedback = 1; // the feedback
+}
+message RespondZoomStopResponse {
+    CameraServerResult camera_server_result = 1;
+}
+
+message SubscribeZoomRangeRequest {}
+message ZoomRangeResponse {
+    float factor = 1; // The zoom factor, starting at 1x.
+}
+
+message RespondZoomRangeRequest {
+    CameraFeedback zoom_range_feedback = 1; // the feedback
+}
+message RespondZoomRangeResponse {
     CameraServerResult camera_server_result = 1;
 }
 

@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+package mavsdk.rpc.log_streaming;
+
+option java_package = "io.mavsdk.log_streaming";
+option java_outer_classname = "LogStreamingProto";
+
+// Provide log streaming data.
+service LogStreamingService {
+    // Start streaming logging data.
+    rpc StartLogStreaming(StartLogStreamingRequest) returns(StartLogStreamingResponse) {}
+    // Stop streaming logging data.
+    rpc StopLogStreaming(StopLogStreamingRequest) returns(StopLogStreamingResponse) {}
+    // Subscribe to logging messages
+    rpc SubscribeLogStreamingRaw(SubscribeLogStreamingRawRequest) returns(stream LogStreamingRawResponse) {}
+}
+
+message StartLogStreamingRequest {}
+message StartLogStreamingResponse {
+    LogStreamingResult log_streaming_result = 1;
+}
+
+message StopLogStreamingRequest {}
+message StopLogStreamingResponse {
+    LogStreamingResult log_streaming_result = 1;
+}
+
+message SubscribeLogStreamingRawRequest {}
+message LogStreamingRawResponse {
+    LogStreamingRaw logging_raw = 1; // A message containing logged data
+}
+
+// Raw logging data type
+message LogStreamingRaw {
+    uint32 first_message_offset = 1; // Offset into data where first message starts
+    bytes data = 2; // Logged data
+}
+
+// Result type.
+message LogStreamingResult {
+    // Possible results returned for logging requests
+    enum Result {
+        RESULT_SUCCESS = 0; // Request succeeded
+        RESULT_NO_SYSTEM = 1; // No system connected
+        RESULT_CONNECTION_ERROR = 2; // Connection error
+        RESULT_BUSY = 3; // System busy
+        RESULT_COMMAND_DENIED = 4; // Command denied
+        RESULT_TIMEOUT = 5; // Timeout
+        RESULT_UNKNOWN = 6; // Unknown error
+    }
+
+    Result result = 1; // Result enum value
+    string result_str = 2; // Human-readable English string describing the result
+}

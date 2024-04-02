@@ -26,12 +26,12 @@ message SubscribeArmAuthorizationResponse {
 
 // Messages for RespondArmAuthorization
 message AcceptArmAuthorizationRequest {
-    int32 valid_time = 1; // Time in seconds for which this authorization is valid
+    int32 valid_time_s = 1; // Time in seconds for which this authorization is valid
 }
 
 // Result type
 message AcceptArmAuthorizationResponse {
-    CommandAnswer command_answer = 1; // Result enum value
+    ArmAutorizerServerResult arm_authorizer_server_result = 1; // Result enum value
 }
 
 // Messages for RespondArmAuthorization
@@ -43,12 +43,17 @@ message RejectArmAuthorizationRequest {
 
 // Result type
 message RejectArmAuthorizationResponse {
-    CommandAnswer command_answer = 1; // Result enum value
+    ArmAutorizerServerResult arm_authorizer_server_result = 1; // Result enum value
 }
 
-enum CommandAnswer {
-    COMMAND_ANSWER_ACCEPTED = 0; // Command accepted
-    COMMAND_ANSWER_FAILED = 1; // Command failed
+message ArmAutorizerServerResult {
+    enum Result {
+        RESULT_SUCCESS = 0; // Command accepted
+        RESULT_FAILED = 1; // Command failed
+    }
+
+    Result result = 1; // Result enum value
+    string result_str = 2; // Human-readable English string describing the result
 }
 
 enum RejectionReason {

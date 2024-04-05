@@ -1,0 +1,66 @@
+syntax = "proto3";
+
+package mavsdk.rpc.arm_authorizer;
+
+import "mavsdk_options.proto";
+
+option java_package = "io.mavsdk.arm_authorizer";
+option java_outer_classname = "ArmAuthorizerProto";
+
+service ArmAuthorizerServerService {
+    // Subscribe to arm authorization request messages. Each request received should respond to using RespondArmAuthorization
+    rpc SubscribeArmAuthorization(SubscribeArmAuthorizationRequest) returns(stream SubscribeArmAuthorizationResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    // Authorize arm for the specific time
+    rpc AcceptArmAuthorization(AcceptArmAuthorizationRequest) returns(AcceptArmAuthorizationResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    // Reject arm authorization request
+    rpc RejectArmAuthorization(RejectArmAuthorizationRequest) returns(RejectArmAuthorizationResponse) { option (mavsdk.options.async_type) = SYNC; }
+}
+
+// Messages for SubscribeArmAuthorization
+message SubscribeArmAuthorizationRequest {}
+message SubscribeArmAuthorizationResponse {
+    uint32 system_id = 1; // vehicle system id
+}
+
+// Messages for RespondArmAuthorization
+message AcceptArmAuthorizationRequest {
+    int32 valid_time_s = 1; // Time in seconds for which this authorization is valid
+}
+
+// Result type
+message AcceptArmAuthorizationResponse {
+    ArmAutorizerServerResult arm_authorizer_server_result = 1; // Result enum value
+}
+
+// Messages for RespondArmAuthorization
+message RejectArmAuthorizationRequest {
+    bool temporarily = 1; // True if the answer should be TEMPORARILY_REJECTED, false for DENIED
+    RejectionReason reason = 2; // Reason for the arm to be rejected
+    int32 extra_info = 3; // Extra information specific to the rejection reason (see https://mavlink.io/en/services/arm_authorization.html)
+}
+
+// Result type
+message RejectArmAuthorizationResponse {
+    ArmAutorizerServerResult arm_authorizer_server_result = 1; // Result enum value
+}
+
+message ArmAutorizerServerResult {
+    enum Result {
+        RESULT_SUCCESS = 0; // Command accepted
+        RESULT_FAILED = 1; // Command failed
+    }
+
+    Result result = 1; // Result enum value
+    string result_str = 2; // Human-readable English string describing the result
+}
+
+enum RejectionReason {
+    REJECTION_REASON_GENERIC = 0; // Not a specific reason
+    REJECTION_REASON_NONE = 1; // Authorizer will send the error as string to GCS
+    REJECTION_REASON_INVALID_WAYPOINT = 2; // At least one waypoint have a invalid value
+    REJECTION_REASON_TIMEOUT = 3; // Timeout in the authorizer process(in case it depends on network)
+    REJECTION_REASON_AIRSPACE_IN_USE = 4; // Airspace of the mission in use by another vehicle, second result parameter can have the waypoint id that caused it to be denied.
+    REJECTION_REASON_BAD_WEATHER = 5; // Weather is not good to fly
+}

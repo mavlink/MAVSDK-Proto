@@ -1,11 +1,11 @@
 syntax = "proto3";
 
-package mavsdk.rpc.arm_authorizer;
+package mavsdk.rpc.arm_authorizer_server;
 
 import "mavsdk_options.proto";
 
 option java_package = "io.mavsdk.arm_authorizer";
-option java_outer_classname = "ArmAuthorizerProto";
+option java_outer_classname = "ArmAuthorizerServerProto";
 
 service ArmAuthorizerServerService {
     // Subscribe to arm authorization request messages. Each request received should respond to using RespondArmAuthorization

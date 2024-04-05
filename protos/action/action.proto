@@ -100,6 +100,8 @@ service ActionService {
     rpc Hold(HoldRequest) returns(HoldResponse) {}
     /*
      * Send command to set the value of an actuator.
+     *
+     * Note that the index of the actuator starts at 1 and that the value goes from -1 to 1.
      */
     rpc SetActuator(SetActuatorRequest) returns(SetActuatorResponse) {}
     /*
@@ -314,6 +316,7 @@ message ActionResult {
         RESULT_PARAMETER_ERROR = 11; // Error getting or setting parameter
         RESULT_UNSUPPORTED = 12; // Action not supported
         RESULT_FAILED = 13; // Action failed
+        RESULT_INVALID_ARGUMENT = 14; // Invalid argument
     }
 
     Result result = 1; // Result enum value

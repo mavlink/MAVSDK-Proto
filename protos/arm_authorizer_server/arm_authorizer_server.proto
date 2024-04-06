@@ -48,8 +48,9 @@ message RejectArmAuthorizationResponse {
 
 message ArmAuthorizerServerResult {
     enum Result {
-        RESULT_SUCCESS = 0; // Command accepted
-        RESULT_FAILED = 1; // Command failed
+        RESULT_UNKNOWN = 0; // Unknown result
+        RESULT_SUCCESS = 1; // Command accepted
+        RESULT_FAILED = 2; // Command failed
     }
 
     Result result = 1; // Result enum value

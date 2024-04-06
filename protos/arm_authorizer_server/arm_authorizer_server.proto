@@ -9,7 +9,7 @@ option java_outer_classname = "ArmAuthorizerServerProto";
 
 service ArmAuthorizerServerService {
     // Subscribe to arm authorization request messages. Each request received should respond to using RespondArmAuthorization
-    rpc SubscribeArmAuthorization(SubscribeArmAuthorizationRequest) returns(stream SubscribeArmAuthorizationResponse) { option (mavsdk.options.async_type) = ASYNC; }
+    rpc SubscribeArmAuthorization(SubscribeArmAuthorizationRequest) returns(stream ArmAuthorizationResponse) { option (mavsdk.options.async_type) = ASYNC; }
 
     // Authorize arm for the specific time
     rpc AcceptArmAuthorization(AcceptArmAuthorizationRequest) returns(AcceptArmAuthorizationResponse) { option (mavsdk.options.async_type) = SYNC; }
@@ -20,7 +20,7 @@ service ArmAuthorizerServerService {
 
 // Messages for SubscribeArmAuthorization
 message SubscribeArmAuthorizationRequest {}
-message SubscribeArmAuthorizationResponse {
+message ArmAuthorizationResponse {
     uint32 system_id = 1; // vehicle system id
 }
 

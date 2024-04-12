@@ -17,6 +17,15 @@ service ActionService {
      */
     rpc Arm(ArmRequest) returns(ArmResponse) {}
     /*
+     * Send command to force-arm the drone without any checks.
+     *
+     * Attention: this is not to be used for normal flying but only bench tests!
+     *
+     * Arming a drone normally causes motors to spin at idle.
+     * Before arming take all safety precautions and stand clear of the drone!
+     */
+    rpc ArmForce(ArmForceRequest) returns(ArmForceResponse) {}
+    /*
      * Send command to disarm the drone.
      *
      * This will disarm a drone that considers itself landed. If flying, the drone should
@@ -155,6 +164,11 @@ service ActionService {
 
 message ArmRequest {}
 message ArmResponse {
+    ActionResult action_result = 1;
+}
+
+message ArmForceRequest {}
+message ArmForceResponse {
     ActionResult action_result = 1;
 }
 

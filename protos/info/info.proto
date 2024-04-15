@@ -55,6 +55,8 @@ message GetSpeedFactorResponse {
 message FlightInfo {
     uint32 time_boot_ms = 1; // Time since system boot
     uint64 flight_uid = 2; // Flight counter. Starts from zero, is incremented at every disarm and is never reset (even after reboot)
+    uint32 duration_since_arming_ms = 3; // Duration since arming in milliseconds
+    uint32 duration_since_takeoff_ms = 4; // Duration since takeoff in milliseconds
 }
 
 // System identification.

@@ -19,6 +19,9 @@ service InfoService {
     rpc GetVersion(GetVersionRequest) returns(GetVersionResponse) { option (mavsdk.options.async_type) = SYNC; }
     // Get the speed factor of a simulation (with lockstep a simulation can run faster or slower than realtime).
     rpc GetSpeedFactor(GetSpeedFactorRequest) returns(GetSpeedFactorResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    // Subscribe to 'flight information' updates.
+    rpc SubscribeFlightInformation(SubscribeFlightInformationRequest) returns(stream FlightInformationResponse) { option (mavsdk.options.async_type) = ASYNC; }
 }
 
 message GetFlightInformationRequest {}
@@ -49,6 +52,11 @@ message GetSpeedFactorRequest {}
 message GetSpeedFactorResponse {
     InfoResult info_result = 1;
     double speed_factor = 2; // Speed factor of simulation
+}
+
+message SubscribeFlightInformationRequest {}
+message FlightInformationResponse {
+    FlightInfo flight_info = 1; // The next flight information
 }
 
 // System flight information.

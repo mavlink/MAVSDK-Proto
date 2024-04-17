@@ -46,7 +46,8 @@ message LogStreamingResult {
         RESULT_BUSY = 3; // System busy
         RESULT_COMMAND_DENIED = 4; // Command denied
         RESULT_TIMEOUT = 5; // Timeout
-        RESULT_UNKNOWN = 6; // Unknown error
+        RESULT_UNSUPPORTED = 6; // Unsupported
+        RESULT_UNKNOWN = 7; // Unknown error
     }
 
     Result result = 1; // Result enum value

@@ -33,7 +33,7 @@ message LogStreamingRawResponse {
 // Raw logging data type
 message LogStreamingRaw {
     uint32 first_message_offset = 1; // Offset into data where first message starts
-    bytes data = 2; // Logged data
+    string data = 2; // Logged data as base64
 }
 
 // Result type.

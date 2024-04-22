@@ -34,8 +34,7 @@ message LogStreamingRawResponse {
 
 // Raw logging data type
 message LogStreamingRaw {
-    uint32 first_message_offset = 1; // Offset into data where first message starts
-    string data = 2; // Logged data as base64
+    string data = 1; // Ulog file stream data encoded as base64
 }
 
 // Result type.

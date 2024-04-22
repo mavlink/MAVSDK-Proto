@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package mavsdk.rpc.log_streaming;
 
+import "mavsdk_options.proto";
+
 option java_package = "io.mavsdk.log_streaming";
 option java_outer_classname = "LogStreamingProto";
 
@@ -12,7 +14,7 @@ service LogStreamingService {
     // Stop streaming logging data.
     rpc StopLogStreaming(StopLogStreamingRequest) returns(StopLogStreamingResponse) {}
     // Subscribe to logging messages
-    rpc SubscribeLogStreamingRaw(SubscribeLogStreamingRawRequest) returns(stream LogStreamingRawResponse) {}
+    rpc SubscribeLogStreamingRaw(SubscribeLogStreamingRawRequest) returns(stream LogStreamingRawResponse) { option (mavsdk.options.async_type) = ASYNC; }
 }
 
 message StartLogStreamingRequest {}

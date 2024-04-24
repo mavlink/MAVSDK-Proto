@@ -157,7 +157,11 @@ service ActionService {
      *
      * Sets the GPS coordinates of the vehicle local origin (0,0,0) position.
      */
+<<<<<<< HEAD
      rpc SetGpsGlobalOrigin(SetGpsGlobalOriginRequest) returns(SetGpsGlobalOriginResponse) {}
+=======
+     rpc SetGpsGlobalOrigin(SetGpsGlobalOriginRequest) returns(SetGpsGlobalOriginResponse) { option (mavsdk.options.async_type) = SYNC; }
+>>>>>>> action: add set_gps_origin
 }
 
 message ArmRequest {}

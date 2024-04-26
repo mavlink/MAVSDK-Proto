@@ -1,0 +1,98 @@
+syntax = "proto3";
+
+package mavsdk.rpc.component_metadata;
+
+import "mavsdk_options.proto";
+
+option java_package = "io.mavsdk.component_metadata";
+option java_outer_classname = "ComponentMetadataProto";
+
+// Access component metadata json definitions, such as parameters.
+service ComponentMetadataService {
+
+    /*
+     * Request metadata from a specific component. This is used to start requesting metadata from a component.
+     * The metadata can later be accessed via subscription (see below) or GetMetadata.
+     */
+    rpc RequestComponent(RequestComponentRequest) returns(RequestComponentResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    /*
+     * Request metadata from the autopilot component. This is used to start requesting metadata from the autopilot.
+     * The metadata can later be accessed via subscription (see below) or GetMetadata.
+     */
+    rpc RequestAutopilotComponent(RequestAutopilotComponentRequest) returns(RequestAutopilotComponentResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    /*
+     * Register a callback that gets called when metadata is available
+     */
+    rpc SubscribeMetadataAvailable(SubscribeMetadataAvailableRequest) returns(stream MetadataAvailableResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    /*
+     * Access metadata. This can be used if you know the metadata is available already, otherwise use
+     * the subscription to get notified when it becomes available.
+     */
+    rpc GetMetadata(GetMetadataRequest) returns(GetMetadataResponse) { option (mavsdk.options.async_type) = SYNC; }
+}
+
+message RequestComponentRequest {
+    uint32 compid = 1; // The component ID to request
+}
+
+message GetMetadataRequest {
+    uint32 compid = 1; // The component ID to request
+    MetadataType metadata_type = 2; // The metadata type
+}
+
+message GetMetadataResponse {
+    ComponentMetadataResult component_metadata_result = 1;
+    MetadataData response = 2;
+}
+
+// Metadata response
+message MetadataData {
+    string json_metadata = 1; // The JSON metadata
+}
+
+// Result type.
+message ComponentMetadataResult {
+    // Possible results returned for GetMetadata
+    enum Result {
+        RESULT_SUCCESS = 0;
+        RESULT_NOT_AVAILABLE = 1;
+        RESULT_CONNECTION_ERROR = 2;
+        RESULT_UNSUPPORTED = 3;
+        RESULT_DENIED = 4;
+        RESULT_FAILED = 5;
+        RESULT_TIMEOUT = 6;
+        RESULT_NO_SYSTEM = 7;
+        RESULT_NOT_REQUESTED = 8;
+    }
+
+    Result result = 1; // Result enum value
+    string result_str = 2; // Human-readable English string describing the result
+}
+
+message RequestComponentResponse {}
+message RequestAutopilotComponentRequest {}
+message RequestAutopilotComponentResponse {}
+
+message SubscribeMetadataAvailableRequest {}
+
+
+message MetadataAvailableResponse {
+    MetadataUpdate data = 1;
+}
+
+// Metadata for a given component and type
+message MetadataUpdate {
+    uint32 compid = 1; // The component ID
+    MetadataType type = 2; // The metadata type
+    string json_metadata = 3; // The JSON metadata
+}
+
+enum MetadataType {
+    METADATA_TYPE_ALL_COMPLETED = 0; // This is set in the subscription callback when all metadata types completed for a given component ID
+    METADATA_TYPE_PARAMETER = 1; // Parameter metadata
+    METADATA_TYPE_EVENTS = 2; // Event definitions
+    METADATA_TYPE_ACTUATORS = 3; // Actuator definitions
+}

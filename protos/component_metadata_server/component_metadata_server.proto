@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package mavsdk.rpc.component_metadata_server;
+
+import "mavsdk_options.proto";
+
+option java_package = "io.mavsdk.component_metadata_server";
+option java_outer_classname = "ComponentMetadataServerProto";
+
+// Provide component metadata json definitions, such as parameters.
+service ComponentMetadataServerService {
+    /*
+     * Provide metadata (can only be called once)
+     */
+    rpc SetMetadata(SetMetadataRequest) returns(SetMetadataResponse) { option (mavsdk.options.async_type) = SYNC; }
+}
+
+message SetMetadataRequest {
+    repeated Metadata metadata = 1; // List of metadata
+}
+message SetMetadataResponse {}
+
+message Metadata {
+    MetadataType type = 1; // The metadata type
+    string json_metadata = 2; // The JSON metadata
+}
+
+enum MetadataType {
+    METADATA_TYPE_PARAMETER = 0; // Parameter metadata
+    METADATA_TYPE_EVENTS = 1; // Event definitions
+    METADATA_TYPE_ACTUATORS = 2; // Actuator definitions
+}

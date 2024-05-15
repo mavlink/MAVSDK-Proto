@@ -48,6 +48,14 @@ service TelemetryService {
     rpc SubscribeHealth(SubscribeHealthRequest) returns(stream HealthResponse) {}
     // Subscribe to 'RC status' updates.
     rpc SubscribeRcStatus(SubscribeRcStatusRequest) returns(stream RcStatusResponse) {}
+    // Subscribe to 'Cellular status' updates.
+    rpc SubscribeCellularStatus(SubscribeCellularStatusRequest) returns(stream CellularStatusResponse) {}
+    // Subscribe to 'MODEM_INFO' updates.
+    rpc SubscribeModemInfo(SubscribeModemInfoRequest) returns(stream ModemInfoResponse) {}
+    // Subscribe to 'Onboard computer status' updates.
+    rpc SubscribeOnboardComputerStatus(SubscribeOnboardComputerStatusRequest) returns(stream OnboardComputerStatusResponse) {}
+    // Subscribe to 'Component info basic' updates.
+    rpc SubscribeComponentInfoBasic(SubscribeComponentInfoBasicRequest) returns(stream ComponentInfoBasicResponse) {}
     // Subscribe to 'status text' updates.
     rpc SubscribeStatusText(SubscribeStatusTextRequest) returns(stream StatusTextResponse) {}
     // Subscribe to 'actuator control target' updates.
@@ -105,6 +113,14 @@ service TelemetryService {
     rpc SetRateBattery(SetRateBatteryRequest) returns(SetRateBatteryResponse) {}
     // Set rate to 'RC status' updates.
     rpc SetRateRcStatus(SetRateRcStatusRequest) returns(SetRateRcStatusResponse) {}
+    // Set rate to 'Cellular status' updates.
+    rpc SetRateCellularStatus(SetRateCellularStatusRequest) returns(SetRateCellularStatusResponse) {}
+    // Set rate to 'MODEM_INFO' updates.
+    rpc SetRateModemInfo(SetRateModemInfoRequest) returns(SetRateModemInfoResponse) {}
+    // Set rate to 'Onboard computer status' updates.
+    rpc SetRateOnboardComputerStatus(SetRateOnboardComputerStatusRequest) returns(SetRateOnboardComputerStatusResponse) {}
+    // Set rate to 'Component info basic' updates.
+    rpc SetRateComponentInfoBasic(SetRateComponentInfoBasicRequest) returns(SetRateComponentInfoBasicResponse) {}
     // Set rate to 'actuator control target' updates.
     rpc SetRateActuatorControlTarget(SetRateActuatorControlTargetRequest) returns(SetRateActuatorControlTargetResponse) {}
     // Set rate to 'actuator output status' updates.
@@ -224,6 +240,26 @@ message HealthResponse {
 message SubscribeRcStatusRequest {}
 message RcStatusResponse {
     RcStatus rc_status = 1; // The next RC status
+}
+
+message SubscribeCellularStatusRequest {}
+message CellularStatusResponse {
+    CellularStatus cellular_status = 1; // The next cellular status
+}
+
+message SubscribeModemInfoRequest {}
+message ModemInfoResponse {
+    ModemInfo modem_info = 1; // The next modem info
+}
+
+message SubscribeOnboardComputerStatusRequest {}
+message OnboardComputerStatusResponse {
+    OnboardComputerStatus onboard_computer_status = 1; // The next 'onboard computer status'
+}
+
+message SubscribeComponentInfoBasicRequest {}
+message ComponentInfoBasicResponse {
+    ComponentInfoBasic component_info_basic = 1; // The next 'component info basic'
 }
 
 message SubscribeStatusTextRequest {}
@@ -404,7 +440,40 @@ message SetRateBatteryResponse {
 message SetRateRcStatusRequest {
     double rate_hz = 1; // The requested rate (in Hertz)
 }
+
+message SetRateCellularStatusRequest {
+    double rate_hz = 1; // The requested rate (in Hertz)
+}
+
+message SetRateModemInfoRequest {
+    double rate_hz = 1; // The requested rate (in Hertz)
+}
+
+message SetRateOnboardComputerStatusRequest {
+    double rate_hz = 1; // The requested rate (in Hertz)
+}
+
+message SetRateComponentInfoBasicRequest {
+    double rate_hz = 1; // The requested rate (in Hertz)
+}
+
 message SetRateRcStatusResponse {
+    TelemetryResult telemetry_result = 1;
+}
+
+message SetRateCellularStatusResponse {
+    TelemetryResult telemetry_result = 1;
+}
+
+message SetRateModemInfoResponse {
+    TelemetryResult telemetry_result = 1;
+}
+
+message SetRateOnboardComputerStatusResponse {
+    TelemetryResult telemetry_result = 1;
+}
+
+message SetRateComponentInfoBasicResponse {
     TelemetryResult telemetry_result = 1;
 }
 
@@ -641,6 +710,72 @@ message RcStatus {
     bool was_available_once = 1 [(mavsdk.options.default_value)="false"]; // True if an RC signal has been available once
     bool is_available = 2 [(mavsdk.options.default_value)="false"]; // True if the RC signal is available now
     float signal_strength_percent = 3 [(mavsdk.options.default_value)="NaN"]; // Signal strength (range: 0 to 100, NaN if unknown)
+}
+
+// Cellular modem status type.
+message CellularStatus {
+    uint32 status = 1;
+    uint32 failure_reason = 2; 
+    uint32 type = 3; 
+    uint32 quality = 4;
+    uint32 mcc = 5;
+    uint32 mnc = 6;
+    uint32 lac = 7;
+    uint32 band_number = 8;
+    float band_frequency = 9;
+    uint32 channel_number = 10;
+    float rx_level = 11;
+    float tx_level = 12;
+    float rx_quality = 13;
+    uint32 link_tx_rate = 14; 
+    uint32 link_rx_rate = 15;
+    uint32 bit_error_rate = 16;
+    uint32 instance_number = 17; 
+    string cell_tower_id = 18; 
+}
+
+// Modem information.
+message ModemInfo {
+    uint32 instance_number = 1; 
+    uint64 imei = 2; //Unique Modem International Mobile Equipment Identity Number
+    uint64 imsi = 3; //Current SIM International mobile subscriber identity.
+    string modem_id = 4; 
+    string iccid = 5; //Integrated Circuit Card Identification Number of SIM Card
+    string firmware_version = 6; //The firmware version installed on the modem
+    string modem_model_name = 7;
+}
+
+message OnboardComputerStatus{
+    uint64 time_usec = 1;
+    uint32 uptime  = 2;
+    uint32 type = 3;
+    repeated uint32 cpu_cores = 4;
+    repeated uint32 cpu_combined = 5;
+    repeated uint32 gpu_cores = 6;
+    repeated uint32 gpu_combined = 7;
+    uint32 temperature_board = 8;
+    repeated uint32 temperature_core = 9;
+    repeated uint32 fan_speed = 10;
+    uint32 ram_usage = 11;
+    uint32 ram_total = 12;
+    repeated uint32 storage_type = 13;
+    repeated uint32 storage_usage = 14;
+    repeated uint32 storage_total = 15; 
+    repeated uint32 link_type = 16;
+    repeated uint32 link_tx_rate = 17;
+    repeated uint32 link_rx_rate = 18;
+    repeated uint32 link_tx_max = 19;
+    repeated uint32 link_rx_max = 20;
+}
+
+message ComponentInfoBasic {
+    uint32 time_boot_ms = 1;
+    uint64 capabilities = 2;
+    string vendor_name = 3;
+    string model_name = 4;
+    string software_version = 5;
+    string hardware_version = 6;
+    string serial_number = 7;
 }
 
 // Status types.

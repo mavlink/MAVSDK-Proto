@@ -15,7 +15,7 @@ service RtkService {
 
 // RTCM data type
 message RtcmData {
-    string data = 1; // The data encoded as a string
+    string data_base64 = 1; // The data encoded as a base64 string
 }
 
 message SendRtcmDataRequest {

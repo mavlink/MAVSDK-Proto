@@ -77,9 +77,15 @@ message UploadResponse {
 message ListDirectoryRequest {
     string remote_dir = 1; // The remote directory to list the contents for.
 }
+
+message ListDirectoryData {
+    repeated string dirs = 1; // The found directories.
+    repeated string files = 2; // The found files.
+}
+
 message ListDirectoryResponse {
     FtpResult ftp_result = 1;
-    repeated string paths = 2; // The found directory contents.
+    ListDirectoryData data = 2; // The found directories and files.
 }
 
 message CreateDirectoryRequest {

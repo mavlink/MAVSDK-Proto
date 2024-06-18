@@ -8,7 +8,6 @@ from .utils import (is_request,
                     name_parser_factory,
                     Param,
                     type_info_factory)
-from jinja2.exceptions import TemplateNotFound
 
 
 class Struct(object):

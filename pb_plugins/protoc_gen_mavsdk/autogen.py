@@ -7,10 +7,10 @@ from protoc_gen_mavsdk.pb_enum import Enum
 from protoc_gen_mavsdk.methods import Method
 from protoc_gen_mavsdk.pb_struct import Struct
 from protoc_gen_mavsdk.utils import (get_template_env,
-                    has_result,
-                    is_server,
-                    name_parser_factory,
-                    type_info_factory)
+                                     has_result,
+                                     is_server,
+                                     name_parser_factory,
+                                     type_info_factory)
 
 
 class AutoGen(object):

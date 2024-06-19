@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 from os import environ
 from google.protobuf.compiler import plugin_pb2
-from .autogen_file import File
-from .docs import Docs
-from .enum import Enum
-from .methods import Method
-from .struct import Struct
-from .utils import (get_template_env,
+from protoc_gen_mavsdk.autogen_file import File
+from protoc_gen_mavsdk.docs import Docs
+from protoc_gen_mavsdk.pb_enum import Enum
+from protoc_gen_mavsdk.methods import Method
+from protoc_gen_mavsdk.pb_struct import Struct
+from protoc_gen_mavsdk.utils import (get_template_env,
                     has_result,
                     is_server,
                     name_parser_factory,

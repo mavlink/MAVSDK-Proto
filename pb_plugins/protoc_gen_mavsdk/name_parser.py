@@ -1,8 +1,6 @@
 import json
 import re
 
-from os import environ
-
 
 class NameParserFactory:
     _initialisms = []

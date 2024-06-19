@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
-
-
-from .enum import Enum
-from .utils import (is_request,
-                    is_response,
-                    is_struct,
-                    name_parser_factory,
-                    Param,
-                    type_info_factory)
+from protoc_gen_mavsdk.pb_enum import Enum
+from protoc_gen_mavsdk.utils import (is_request,
+                                     is_response,
+                                     is_struct,
+                                     name_parser_factory,
+                                     Param,
+                                     type_info_factory)
 
 
 class Struct(object):

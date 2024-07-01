@@ -20,6 +20,10 @@ service CoreService {
      * need to be increased to prevent timeouts.
      */
     rpc SetMavlinkTimeout(SetMavlinkTimeoutRequest) returns(SetMavlinkTimeoutResponse) {}
+    /*
+     * List all components (computers, cameras, servos, gimbals, etc.) connected to the system.
+     */
+    rpc ListComponents (ListComponentsRequest) returns (ListComponentsResponse) {}
 }
 
 message SubscribeConnectionStateRequest {}
@@ -35,4 +39,19 @@ message SetMavlinkTimeoutResponse {}
 // Connection state type.
 message ConnectionState {
     bool is_connected = 2; // Whether the vehicle got connected or disconnected
+}
+
+// Defines a request to list components of all systems.
+message ListComponentsRequest {}
+
+// Defines a single system's components.
+message SystemComponents {
+  uint32 system_id = 1; // System ID
+  repeated uint32 component_ids = 2; // List of component IDs for this system
+}
+
+// Defines the response for a request to list components of all systems.
+// It includes a list of systems, each with their own list of component IDs.
+message ListComponentsResponse {
+  repeated SystemComponents systems = 1; // List of systems with their components
 }

@@ -1,0 +1,114 @@
+syntax = "proto3";
+
+package mavsdk.rpc.events;
+
+import "mavsdk_options.proto";
+
+option java_package = "io.mavsdk.events";
+option java_outer_classname = "EventsProto";
+
+// Get event notifications, such as takeoff, or arming checks
+service EventsService {
+
+    /*
+     * Subscribe to event updates.
+     */
+    rpc SubscribeEvents(SubscribeEventsRequest) returns(stream EventsResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    /*
+     * Subscribe to arming check updates.
+     */
+    rpc SubscribeHealthAndArmingChecks(SubscribeHealthAndArmingChecksRequest) returns(stream HealthAndArmingChecksResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    /*
+     * Get the latest report.
+     */
+    rpc GetHealthAndArmingChecksReport(GetHealthAndArmingChecksReportRequest) returns(GetHealthAndArmingChecksReportResponse) { option (mavsdk.options.async_type) = SYNC; }
+}
+
+enum LogLevel {
+    LOG_LEVEL_EMERGENCY = 0;
+    LOG_LEVEL_ALERT = 1;
+    LOG_LEVEL_CRITICAL = 2;
+    LOG_LEVEL_ERROR = 3;
+    LOG_LEVEL_WARNING = 4;
+    LOG_LEVEL_NOTICE = 5;
+    LOG_LEVEL_INFO = 6;
+    LOG_LEVEL_DEBUG = 7;
+}
+
+message Event {
+    uint32 compid = 1; // The source component ID of the event
+    string message = 2; // Short, single-line message
+    string description = 3; // Detailed description (optional, might be multiple lines)
+    LogLevel log_level = 4;
+
+    string event_namespace = 5; // Namespace, e.g. "px4"
+    string event_name = 6; // Event name (unique within the namespace)
+}
+
+message HealthAndArmingCheckProblem {
+    string message = 1; // Short, single-line message
+    string description = 2; // Detailed description (optional, might be multiple lines)
+    LogLevel log_level = 3;
+    string health_component = 4; // Associated health component, e.g. "gps"
+}
+
+// Arming checks for a specific mode
+message HealthAndArmingCheckMode {
+    string mode_name = 1; // Mode name, e.g. "Position"
+    bool can_arm_or_run = 2; // If disarmed: indicates if arming is possible. If armed: indicates if the mode can be selected
+    repeated HealthAndArmingCheckProblem problems = 3; // List of reported problems for the mode
+}
+
+message HealthComponentReport {
+    string name = 1; // Unique component name, e.g. "gps"
+    string label = 2; // Human readable label of the component, e.g. "GPS" or "Accelerometer"
+    bool is_present = 3; // If the component is present
+    bool has_error = 4; // If the component has errors
+    bool has_warning = 5; // If the component has warnings
+}
+
+message HealthAndArmingCheckReport {
+    HealthAndArmingCheckMode current_mode_intention = 1; // Report for currently intended mode
+    // TODO: we can add reports for different modes here too (e.g. Takeoff or Mission)
+
+    repeated HealthComponentReport health_components = 2; // Health components list (e.g. for "gps")
+    repeated HealthAndArmingCheckProblem all_problems = 3; // Complete list of problems
+}
+
+// Result type.
+message EventsResult {
+    enum Result {
+        RESULT_SUCCESS = 0;
+        RESULT_NOT_AVAILABLE = 1;
+        RESULT_CONNECTION_ERROR = 2;
+        RESULT_UNSUPPORTED = 3;
+        RESULT_DENIED = 4;
+        RESULT_FAILED = 5;
+        RESULT_TIMEOUT = 6;
+        RESULT_NO_SYSTEM = 7;
+    }
+
+    Result result = 1; // Result enum value
+    string result_str = 2; // Human-readable English string describing the result
+}
+
+
+message SubscribeEventsRequest {}
+
+message EventsResponse {
+    Event event = 1;
+}
+
+message SubscribeHealthAndArmingChecksRequest {}
+
+message HealthAndArmingChecksResponse {
+    HealthAndArmingCheckReport report = 1;
+}
+
+message GetHealthAndArmingChecksReportRequest {}
+message GetHealthAndArmingChecksReportResponse {
+    EventsResult events_result = 1;
+    HealthAndArmingCheckReport report = 2;
+}

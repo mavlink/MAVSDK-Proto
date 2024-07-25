@@ -30,10 +30,6 @@ service TelemetryService {
     rpc SubscribeAttitudeEuler(SubscribeAttitudeEulerRequest) returns(stream AttitudeEulerResponse) {}
     // Subscribe to 'attitude' updates (angular velocity)
     rpc SubscribeAttitudeAngularVelocityBody(SubscribeAttitudeAngularVelocityBodyRequest) returns(stream AttitudeAngularVelocityBodyResponse) {}
-    // Subscribe to 'camera attitude' updates (quaternion).
-    rpc SubscribeCameraAttitudeQuaternion(SubscribeCameraAttitudeQuaternionRequest) returns(stream CameraAttitudeQuaternionResponse) {}
-    // Subscribe to 'camera attitude' updates (Euler).
-    rpc SubscribeCameraAttitudeEuler(SubscribeCameraAttitudeEulerRequest) returns(stream CameraAttitudeEulerResponse) {}
     // Subscribe to 'ground speed' updates (NED).
     rpc SubscribeVelocityNed(SubscribeVelocityNedRequest) returns(stream VelocityNedResponse) {}
     // Subscribe to 'GPS info' updates.
@@ -96,7 +92,6 @@ service TelemetryService {
     // Set rate to 'attitude quaternion' updates.
     rpc SetRateAttitudeEuler(SetRateAttitudeEulerRequest) returns(SetRateAttitudeEulerResponse) {}
     // Set rate of camera attitude updates.
-    rpc SetRateCameraAttitude(SetRateCameraAttitudeRequest) returns(SetRateCameraAttitudeResponse) {}
     // Set rate to 'ground speed' updates (NED).
     rpc SetRateVelocityNed(SetRateVelocityNedRequest) returns(SetRateVelocityNedResponse) {}
     // Set rate to 'GPS info' updates.
@@ -179,16 +174,6 @@ message AttitudeEulerResponse {
 message SubscribeAttitudeAngularVelocityBodyRequest {}
 message AttitudeAngularVelocityBodyResponse {
     AngularVelocityBody attitude_angular_velocity_body = 1; // The next angular velocity (rad/s)
-}
-
-message SubscribeCameraAttitudeQuaternionRequest {}
-message CameraAttitudeQuaternionResponse {
-    Quaternion attitude_quaternion = 1; // The next camera attitude (quaternion)
-}
-
-message SubscribeCameraAttitudeEulerRequest {}
-message CameraAttitudeEulerResponse {
-    EulerAngle attitude_euler = 1; // The next camera attitude (Euler)
 }
 
 message SubscribeVelocityNedRequest {}
@@ -359,20 +344,6 @@ message SetRateAttitudeAngularVelocityBodyRequest {
     double rate_hz = 1; // The requested rate (in Hertz)
 }
 message SetRateAttitudeAngularVelocityBodyResponse {
-    TelemetryResult telemetry_result = 1;
-}
-
-message SetRateCameraAttitudeQuaternionRequest {
-    double rate_hz = 1; // The requested rate (in Hertz)
-}
-message SetRateCameraAttitudeQuaternionResponse {
-    TelemetryResult telemetry_result = 1;
-}
-
-message SetRateCameraAttitudeRequest {
-    double rate_hz = 1; // The requested rate (in Hertz)
-}
-message SetRateCameraAttitudeResponse {
     TelemetryResult telemetry_result = 1;
 }
 

@@ -9,41 +9,29 @@ option java_outer_classname = "GimbalProto";
 
 // Provide control over a gimbal.
 service GimbalService {
+
     /*
-     *
      * Set gimbal roll, pitch and yaw angles.
      *
      * This sets the desired roll, pitch and yaw angles of a gimbal.
      * Will return when the command is accepted, however, it might
      * take the gimbal longer to actually be set to the new angles.
+     *
+     * Note that the roll angle needs to be set to 0 when send_mode is Once.
      */
     rpc SetAngles(SetAnglesRequest) returns(SetAnglesResponse) {}
+
     /*
+     * Set gimbal angular rates.
      *
-     * Set gimbal pitch and yaw angles.
-     *
-     * This sets the desired pitch and yaw angles of a gimbal.
-     * Will return when the command is accepted, however, it might
-     * take the gimbal longer to actually be set to the new angles.
-     */
-    rpc SetPitchAndYaw(SetPitchAndYawRequest) returns(SetPitchAndYawResponse) {}
-    /*
-     *
-     * Set gimbal angular rates around pitch and yaw axes.
-     *
-     * This sets the desired angular rates around pitch and yaw axes of a gimbal.
+     * This sets the desired angular rates around roll, pitch and yaw axes of a gimbal.
      * Will return when the command is accepted, however, it might
      * take the gimbal longer to actually reach the angular rate.
-     */
-    rpc SetPitchRateAndYawRate(SetPitchRateAndYawRateRequest) returns(SetPitchRateAndYawRateResponse) {}
-    /*
-     * Set gimbal mode.
      *
-     * This sets the desired yaw mode of a gimbal.
-     * Will return when the command is accepted. However, it might
-     * take the gimbal longer to actually be set to the new angles.
+     * Note that the roll angle needs to be set to 0 when send_mode is Once.
      */
-    rpc SetMode(SetModeRequest) returns(SetModeResponse) {}
+    rpc SetAngularRates(SetAngularRatesRequest) returns(SetAngularRatesResponse) {}
+
     /*
      * Set gimbal region of interest (ROI).
      *
@@ -54,6 +42,7 @@ service GimbalService {
      * take the gimbal longer to actually rotate to the ROI.
      */
      rpc SetRoiLocation(SetRoiLocationRequest) returns(SetRoiLocationResponse) {}
+
      /*
       * Take control.
       *
@@ -66,12 +55,14 @@ service GimbalService {
       * override each other and should therefore do it carefully.
       */
      rpc TakeControl(TakeControlRequest) returns(TakeControlResponse) {}
+
      /*
       * Release control.
       *
       * Release control, such that other components can control the gimbal.
       */
      rpc ReleaseControl(ReleaseControlRequest) returns(ReleaseControlResponse) {}
+
      /*
       * Subscribe to control status updates.
       *
@@ -80,6 +71,7 @@ service GimbalService {
       * of the other components in control (if any).
       */
      rpc SubscribeControl(SubscribeControlRequest) returns(stream ControlResponse) {}
+
      /*
       * Subscribe to attitude updates.
       *
@@ -89,34 +81,24 @@ service GimbalService {
 }
 
 message SetAnglesRequest {
-    float roll_deg = 1; // Roll angle in degrees
+    float roll_deg = 1; // Roll angle in degrees (negative down on the right)
     float pitch_deg = 2; // Pitch angle in degrees (negative points down)
     float yaw_deg = 3; // Yaw angle in degrees (positive is clock-wise, range: -180 to 180 or 0 to 360)
+    GimbalMode gimbal_mode = 4; // Gimbal mode to use
+    SendMode send_mode = 5; // Send mode of command/setpoint
 }
 message SetAnglesResponse {
     GimbalResult gimbal_result = 1;
 }
 
-message SetPitchAndYawRequest {
-    float pitch_deg = 1; // Pitch angle in degrees (negative points down)
-    float yaw_deg = 2; // Yaw angle in degrees (positive is clock-wise, range: -180 to 180 or 0 to 360)
+message SetAngularRatesRequest {
+    float roll_rate_deg_s = 1; // Angular rate around roll axis in degrees/second (negative down on the right)
+    float pitch_rate_deg_s = 2; // Angular rate around pitch axis in degrees/second (negative downward)
+    float yaw_rate_deg_s = 3; // Angular rate around yaw axis in degrees/second (positive is clock-wise)
+    GimbalMode gimbal_mode = 4; // Gimbal mode to use
+    SendMode send_mode = 5; // Send mode of command/setpoint
 }
-message SetPitchAndYawResponse {
-    GimbalResult gimbal_result = 1;
-}
-
-message SetPitchRateAndYawRateRequest {
-    float pitch_rate_deg_s = 1; // Angular rate around pitch axis in degrees/second (negative downward)
-    float yaw_rate_deg_s = 2; // Angular rate around yaw axis in degrees/second (positive is clock-wise)
-}
-message SetPitchRateAndYawRateResponse {
-    GimbalResult gimbal_result = 1;
-}
-
-message SetModeRequest {
-    GimbalMode gimbal_mode = 1; // The mode to be set.
-}
-message SetModeResponse {
+message SetAngularRatesResponse {
     GimbalResult gimbal_result = 1;
 }
 
@@ -213,6 +195,11 @@ enum ControlMode {
     CONTROL_MODE_SECONDARY = 2; // To take secondary control over the gimbal
 }
 
+enum SendMode {
+    SEND_MODE_ONCE = 0; // Send command exactly once with quality of service (use for sporadic commands slower than 1 Hz)
+    SEND_MODE_STREAM = 1; // Stream setpoint without quality of service (use for setpoints faster than 1 Hz).
+}
+
 // Control status
 message ControlStatus {
     ControlMode control_mode = 1; // Control mode (none, primary or secondary)
@@ -232,6 +219,7 @@ message GimbalResult {
         RESULT_TIMEOUT = 3; // Command timed out
         RESULT_UNSUPPORTED = 4; // Functionality not supported
         RESULT_NO_SYSTEM = 5; // No system connected
+        RESULT_INVALID_ARGUMENT = 6; // Invalid argument
     }
 
     Result result = 1; // Result enum value

@@ -250,7 +250,7 @@ enum SendMode {
 message GimbalItem {
     int32 gimbal_id = 1; // ID to address it, starting at 1 (0 means all gimbals)
     string vendor_name = 2; // Vendor name
-    string product_name = 3; // Product name
+    string model_name = 3; // Model name
     string custom_name = 4; // Custom name name
     int32 gimbal_manager_component_id = 5; // MAVLink component of gimbal manager, for debugging purposes
     int32 gimbal_device_id = 6; // MAVLink component of gimbal device

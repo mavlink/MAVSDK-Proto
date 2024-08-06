@@ -2,4 +2,4 @@
 """ Autogenerator for MAVSDK """
 
 
-from .autogen import AutoGen
+from protoc_gen_mavsdk.autogen import AutoGen

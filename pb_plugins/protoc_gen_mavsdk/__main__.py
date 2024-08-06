@@ -3,7 +3,7 @@
 
 import sys
 from google.protobuf.compiler import plugin_pb2
-from . import AutoGen
+from protoc_gen_mavsdk.autogen import AutoGen
 
 
 def main():

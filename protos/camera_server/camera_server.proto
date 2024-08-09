@@ -125,12 +125,6 @@ service CameraServerService {
 
     // Respond to an incoming tracking off command.
     rpc RespondTrackingOffCommand(RespondTrackingOffCommandRequest) returns(RespondTrackingOffCommandResponse) { option (mavsdk.options.async_type) = SYNC; }
-
-    // Set support for capturing images while in video mode. Affects CAMERA_CAP_FLAGS flags sent in CAMERA_INFORMATION.
-    rpc SupportImageInVideoMode(SupportImageInVideoModeRequest) returns(SupportImageInVideoModeResponse) { option (mavsdk.options.async_type) = SYNC; }
-
-    // Set support for capturing video while in image mode. Affects CAMERA_CAP_FLAGS flags sent in CAMERA_INFORMATION.
-    rpc SupportVideoInImageMode(SupportVideoInImageModeRequest) returns(SupportVideoInImageModeResponse) { option (mavsdk.options.async_type) = SYNC; }
 }
 
 
@@ -350,6 +344,8 @@ message Information {
     uint32 lens_id = 9; // Lens ID
     uint32 definition_file_version = 10; // Camera definition file version (iteration)
     string definition_file_uri = 11; // Camera definition URI (http or mavlink ftp)
+    bool image_in_video_mode_supported = 12; // Camera supports taking images while in video mode
+    bool video_in_image_mode_supported = 13; // Camera supports recording video while in image mode
 }
 
 // Type to represent video streaming settings
@@ -519,20 +515,6 @@ message RespondTrackingOffCommandRequest {
 }
 message RespondTrackingOffCommandResponse {
     CameraServerResult camera_server_result = 1; // The result of sending the response.
-}
-
-message SupportImageInVideoModeRequest {
-    bool support = 1; // True if the camera supports capturing images while in video mode
-}
-message SupportImageInVideoModeResponse {
-    CameraServerResult camera_server_result = 1;
-}
-
-message SupportVideoInImageModeRequest {
-    bool support = 1; // True if the camera supports capturing video while in image mode
-}
-message SupportVideoInImageModeResponse {
-    CameraServerResult camera_server_result = 1;
 }
 
 // Point description type

@@ -344,6 +344,8 @@ message Information {
     uint32 lens_id = 9; // Lens ID
     uint32 definition_file_version = 10; // Camera definition file version (iteration)
     string definition_file_uri = 11; // Camera definition URI (http or mavlink ftp)
+    bool image_in_video_mode_supported = 12; // Camera supports taking images while in video mode
+    bool video_in_image_mode_supported = 13; // Camera supports recording video while in image mode
 }
 
 // Type to represent video streaming settings

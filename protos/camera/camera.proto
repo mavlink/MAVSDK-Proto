@@ -18,10 +18,6 @@ option java_outer_classname = "CameraProto";
  */
 service CameraService {
     /*
-     * Prepare the camera plugin (e.g. download the camera definition, etc).
-     */
-    rpc Prepare(PrepareRequest) returns(PrepareResponse) {}
-    /*
      * Take one photo.
      */
     rpc TakePhoto(TakePhotoRequest) returns(TakePhotoResponse) {}
@@ -54,37 +50,60 @@ service CameraService {
      */
     rpc SetMode(SetModeRequest) returns(SetModeResponse) {}
     /*
-     * List photos available on the camera.
+     * List photos available on the camera (currently not implemented).
      */
     rpc ListPhotos(ListPhotosRequest) returns(ListPhotosResponse) {}
     /*
+     * Subscribe to list of cameras.
+     *
+     * This allows to find out what cameras are connected to the system.
+     * Based on the camera ID, we can then address a specific camera.
+     */
+    rpc SubscribeCameraList(SubscribeCameraListRequest) returns(stream CameraListResponse) {}
+    /*
      * Subscribe to camera mode updates.
      */
-    rpc SubscribeMode(SubscribeModeRequest) returns(stream ModeResponse) {}
+    rpc SubscribeMode(SubscribeModeRequest) returns(stream ModeResponse) { option (mavsdk.options.async_type) = ASYNC; }
     /*
-     * Subscribe to camera information updates.
+     * Get camera mode.
      */
-    rpc SubscribeInformation(SubscribeInformationRequest) returns(stream InformationResponse) {}
+    rpc GetMode(GetModeRequest) returns(GetModeResponse) { option (mavsdk.options.async_type) = SYNC; }
     /*
      * Subscribe to video stream info updates.
      */
-    rpc SubscribeVideoStreamInfo(SubscribeVideoStreamInfoRequest) returns(stream VideoStreamInfoResponse) {}
+    rpc SubscribeVideoStreamInfo(SubscribeVideoStreamInfoRequest) returns(stream VideoStreamInfoResponse) { option (mavsdk.options.async_type) = ASYNC; }
+    /*
+     * Get video stream info.
+     */
+    rpc GetVideoStreamInfo(GetVideoStreamInfoRequest) returns(GetVideoStreamInfoResponse) { option (mavsdk.options.async_type) = SYNC; }
     /*
      * Subscribe to capture info updates.
      */
     rpc SubscribeCaptureInfo(SubscribeCaptureInfoRequest) returns(stream CaptureInfoResponse) { option (mavsdk.options.async_type) = ASYNC; }
     /*
-     * Subscribe to camera status updates.
+     * Subscribe to camera's storage status updates.
      */
-    rpc SubscribeStatus(SubscribeStatusRequest) returns(stream StatusResponse) {}
+    rpc SubscribeStorage(SubscribeStorageRequest) returns(stream StorageResponse) { option (mavsdk.options.async_type) = ASYNC; }
+    /*
+     * Get camera's storage status.
+     */
+    rpc GetStorage(GetStorageRequest) returns(GetStorageResponse) { option (mavsdk.options.async_type) = SYNC; }
     /*
      * Get the list of current camera settings.
      */
     rpc SubscribeCurrentSettings(SubscribeCurrentSettingsRequest) returns(stream CurrentSettingsResponse) { option (mavsdk.options.async_type) = ASYNC; }
     /*
+     * Get current settings.
+     */
+    rpc GetCurrentSettings(GetCurrentSettingsRequest) returns(GetCurrentSettingsResponse) { option (mavsdk.options.async_type) = SYNC; }
+    /*
      * Get the list of settings that can be changed.
      */
-    rpc SubscribePossibleSettingOptions(SubscribePossibleSettingOptionsRequest) returns(stream PossibleSettingOptionsResponse) {}
+    rpc SubscribePossibleSettingOptions(SubscribePossibleSettingOptionsRequest) returns(stream PossibleSettingOptionsResponse) { option (mavsdk.options.async_type) = ASYNC; }
+    /*
+     * Get possible setting options.
+     */
+    rpc GetPossibleSettingOptions(GetPossibleSettingOptionsRequest) returns(GetPossibleSettingOptionsResponse) { option (mavsdk.options.async_type) = SYNC; }
     /*
      * Set a setting to some value.
      *
@@ -103,12 +122,6 @@ service CameraService {
      * This will delete all content of the camera storage!
      */
      rpc FormatStorage(FormatStorageRequest) returns(FormatStorageResponse) {}
-    /*
-     * Select current camera .
-     *
-     * Bind the plugin instance to a specific camera_id
-     */
-    rpc SelectCamera(SelectCameraRequest) returns(SelectCameraResponse) { option (mavsdk.options.async_type) = SYNC; }
     /*
      * Reset all settings in camera.
      *
@@ -161,80 +174,153 @@ service CameraService {
     rpc FocusRange(FocusRangeRequest) returns(FocusRangeResponse) {}
 }
 
-message PrepareRequest {}
-message PrepareResponse {
-    CameraResult camera_result = 1;
+// Type to represent a setting option.
+message Option {
+    string option_id = 1; // Name of the option (machine readable)
+    string option_description = 2; // Description of the option (human readable)
 }
 
-message TakePhotoRequest {}
+// Type to represent a setting with a selected option.
+message Setting {
+    string setting_id = 1; // Name of a setting (machine readable)
+    string setting_description = 2; // Description of the setting (human readable). This field is meant to be read from the drone, ignore it when setting.
+    Option option = 3; // Selected option
+    bool is_range = 4; // If option is given as a range. This field is meant to be read from the drone, ignore it when setting.
+}
+
+// Type to represent a setting with a list of options to choose from.
+message SettingOptions {
+    int32 component_id = 1; // Component ID
+    string setting_id = 2; // Name of the setting (machine readable)
+    string setting_description = 3; // Description of the setting (human readable)
+    repeated Option options = 4; // List of options or if range [min, max] or [min, max, interval]
+    bool is_range = 5; // If option is given as a range
+}
+
+// Type for video stream settings.
+message VideoStreamSettings {
+    float frame_rate_hz = 1; // Frames per second
+    uint32 horizontal_resolution_pix = 2; // Horizontal resolution (in pixels)
+    uint32 vertical_resolution_pix = 3; // Vertical resolution (in pixels)
+    uint32 bit_rate_b_s = 4; // Bit rate (in bits per second)
+    uint32 rotation_deg = 5; // Video image rotation (clockwise, 0-359 degrees)
+    string uri = 6; // Video stream URI
+    float horizontal_fov_deg = 7; // Horizontal fov in degrees
+}
+
+// Information about the video stream.
+message VideoStreamInfo {
+    // Video stream status type.
+    enum VideoStreamStatus {
+        VIDEO_STREAM_STATUS_NOT_RUNNING = 0; // Video stream is not running
+        VIDEO_STREAM_STATUS_IN_PROGRESS = 1; // Video stream is running
+    }
+
+    // Video stream light spectrum type
+    enum VideoStreamSpectrum {
+        VIDEO_STREAM_SPECTRUM_UNKNOWN = 0; // Unknown
+        VIDEO_STREAM_SPECTRUM_VISIBLE_LIGHT = 1; // Visible light
+        VIDEO_STREAM_SPECTRUM_INFRARED = 2; // Infrared
+    }
+
+    int32 stream_id = 1; // Stream ID
+    VideoStreamSettings settings = 2; // Video stream settings
+    VideoStreamStatus status = 3; // Current status of video streaming
+    VideoStreamSpectrum spectrum = 4; // Light-spectrum of the video stream
+}
+
+message TakePhotoRequest {
+    int32 component_id = 1; // Component ID
+}
 message TakePhotoResponse {
     CameraResult camera_result = 1;
 }
 
 message StartPhotoIntervalRequest {
-    float interval_s = 1; // Interval between photos (in seconds)
+    int32 component_id = 1; // Component ID
+    float interval_s = 2; // Interval between photos (in seconds)
 }
 message StartPhotoIntervalResponse {
     CameraResult camera_result = 1;
 }
 
-message StopPhotoIntervalRequest {}
+message StopPhotoIntervalRequest {
+    int32 component_id = 1; // Component ID
+}
 message StopPhotoIntervalResponse {
     CameraResult camera_result = 1;
 }
 
-message StartVideoRequest {}
+message StartVideoRequest {
+    int32 component_id = 1; // Component ID
+}
 message StartVideoResponse {
     CameraResult camera_result = 1;
 }
 
-message StopVideoRequest {}
+message StopVideoRequest {
+    int32 component_id = 1; // Component ID
+}
 message StopVideoResponse {
     CameraResult camera_result = 1;
 }
 
 message StartVideoStreamingRequest {
-    int32 stream_id = 1;    // video stream id
+    int32 component_id = 1; // Component ID
+    int32 stream_id = 2; // video stream id
 }
 message StartVideoStreamingResponse {
     CameraResult camera_result = 1;
 }
 
 message StopVideoStreamingRequest {
-    int32 stream_id = 1;    // video stream id
+    int32 component_id = 1; // Component ID
+    int32 stream_id = 2; // video stream id
 }
 message StopVideoStreamingResponse {
     CameraResult camera_result = 1;
 }
 
 message SetModeRequest {
-    Mode mode = 1; // Camera mode to set
+    int32 component_id = 1; // Component ID
+    Mode mode = 2; // Camera mode to set
 }
 message SetModeResponse {
     CameraResult camera_result = 1;
 }
 
 message ListPhotosRequest {
-    PhotosRange photos_range = 1; // Which photos should be listed (all or since connection)
+    int32 component_id = 1; // Component ID
+    PhotosRange photos_range = 2; // Which photos should be listed (all or since connection)
 }
 message ListPhotosResponse {
     CameraResult camera_result = 1;
     repeated CaptureInfo capture_infos = 2; // List of capture infos (representing the photos)
 }
 
-message SubscribeInformationRequest {}
-message InformationResponse {
-    Information information = 1; // Camera information
+message SubscribeCameraListRequest {}
+message CameraListResponse {
+    CameraList camera_list = 1; // Camera list
+}
+
+message ModeUpdate {
+    int32 component_id = 1; // Component ID
+    Mode mode = 2; // Camera mode
 }
 
 message SubscribeModeRequest {}
 message ModeResponse {
-    Mode mode = 1; // Camera mode
+    ModeUpdate update = 1; // Mode update for camera
+}
+
+message VideoStreamUpdate {
+    int32 component_id = 1; // Component ID
+    VideoStreamInfo video_stream_info = 2; // Video stream info
 }
 
 message SubscribeVideoStreamInfoRequest {}
 message VideoStreamInfoResponse {
-    VideoStreamInfo video_stream_info = 1; // Video stream info
+    VideoStreamUpdate update = 1; // Video stream update for camera
 }
 
 message SubscribeCaptureInfoRequest {}
@@ -242,30 +328,124 @@ message CaptureInfoResponse {
     CaptureInfo capture_info = 1; // Capture info
 }
 
-message SubscribeStatusRequest {}
-message StatusResponse {
-    Status camera_status = 1; // Camera status
+// Information about the camera's storage status.
+message Storage {
+    // Storage status type.
+    enum StorageStatus {
+        STORAGE_STATUS_NOT_AVAILABLE = 0; // Status not available
+        STORAGE_STATUS_UNFORMATTED = 1; // Storage is not formatted (i.e. has no recognized file system)
+        STORAGE_STATUS_FORMATTED = 2; // Storage is formatted (i.e. has recognized a file system)
+        STORAGE_STATUS_NOT_SUPPORTED = 3; // Storage status is not supported
+    }
+
+    // Storage type.
+    enum StorageType {
+        STORAGE_TYPE_UNKNOWN = 0; // Storage type unknown
+        STORAGE_TYPE_USB_STICK = 1; // Storage type USB stick
+        STORAGE_TYPE_SD = 2; // Storage type SD card
+        STORAGE_TYPE_MICROSD = 3; // Storage type MicroSD card
+        STORAGE_TYPE_HD = 7; // Storage type HD mass storage
+        STORAGE_TYPE_OTHER = 254; // Storage type other, not listed
+    }
+
+    int32 component_id = 1; // Component ID
+    bool video_on = 2; // Whether video recording is currently in process
+    bool photo_interval_on = 3; // Whether a photo interval is currently in process
+
+    float used_storage_mib = 4; // Used storage (in MiB)
+    float available_storage_mib = 5; // Available storage (in MiB)
+    float total_storage_mib = 6; // Total storage (in MiB)
+    float recording_time_s = 7; // Elapsed time since starting the video recording (in seconds)
+    string media_folder_name = 8; // Current folder name where media are saved
+
+    StorageStatus storage_status = 9; // Storage status
+
+    uint32 storage_id = 10; // Storage ID starting at 1
+
+    StorageType storage_type = 11; // Storage type
+}
+
+message StorageUpdate {
+    int32 component_id = 1; // Component ID
+    Storage storage = 2; // Storage
+}
+
+message SubscribeStorageRequest {}
+message StorageResponse {
+    StorageUpdate update = 1; // Camera's storage status
+}
+
+message CurrentSettingsUpdate {
+    int32 component_id = 1; // Component ID
+    repeated Setting current_settings = 2; // List of current settings
 }
 
 message SubscribeCurrentSettingsRequest {}
 message CurrentSettingsResponse {
-    repeated Setting current_settings = 1; // List of current settings
+    CurrentSettingsUpdate update = 1; // Current setting update per camera
+}
+
+message PossibleSettingOptionsUpdate {
+    int32 component_id = 1; // Component ID
+    repeated SettingOptions setting_options = 2; // List of settings that can be changed
 }
 
 message SubscribePossibleSettingOptionsRequest {}
 message PossibleSettingOptionsResponse {
-    repeated SettingOptions setting_options = 1; // List of settings that can be changed
+    PossibleSettingOptionsUpdate update = 1; // Possible setting update per camera
 }
 
 message SetSettingRequest {
-    Setting setting = 1; // Desired setting
+    int32 component_id = 1; // Component ID
+    Setting setting = 2; // Desired setting
 }
 message SetSettingResponse {
     CameraResult camera_result = 1;
 }
 
+message GetModeRequest {
+    int32 component_id = 1; // Component ID
+}
+message GetModeResponse {
+    CameraResult camera_result = 1;
+    Mode mode = 2; // Mode
+}
+
+message GetVideoStreamInfoRequest {
+    int32 component_id = 1; // Component ID
+}
+message GetVideoStreamInfoResponse {
+    CameraResult camera_result = 1;
+    VideoStreamInfo video_stream_info = 2; // Video stream info
+}
+
+message GetStorageRequest {
+    int32 component_id = 1; // Component ID
+}
+message GetStorageResponse {
+    CameraResult camera_result = 1;
+    Storage storage = 2; // Camera's storage status
+}
+
+message GetCurrentSettingsRequest {
+    int32 component_id = 1; // Component ID
+}
+message GetCurrentSettingsResponse {
+    CameraResult camera_result = 1;
+    repeated Setting current_settings = 2; // List of current settings
+}
+
+message GetPossibleSettingOptionsRequest {
+    int32 component_id = 1; // Component ID
+}
+message GetPossibleSettingOptionsResponse {
+    CameraResult camera_result = 1;
+    repeated SettingOptions setting_options = 2; // List of settings that can be changed
+}
+
 message GetSettingRequest {
-    Setting setting = 1; // Requested setting
+    int32 component_id = 1; // Component ID (0/all not available)
+    Setting setting = 2; // Requested setting
 }
 message GetSettingResponse {
     CameraResult camera_result = 1;
@@ -273,91 +453,105 @@ message GetSettingResponse {
 }
 
 message FormatStorageRequest {
-    int32 storage_id = 1;   //Storage identify to be format
+    int32 component_id = 1; // Component ID
+    int32 storage_id = 2;   //Storage identify to be format
 }
 message FormatStorageResponse {
     CameraResult camera_result = 1;
 }
 
-message SelectCameraResponse {
-    CameraResult camera_result = 1;
+message ResetSettingsRequest {
+    int32 component_id = 1; // Component ID
 }
-message SelectCameraRequest {
-    int32 camera_id = 1; // Id of camera to be selected
-}
-
-message ResetSettingsRequest {}
 message ResetSettingsResponse {
     CameraResult camera_result = 1;
 }
 
-message ZoomInStartRequest {}
+message ZoomInStartRequest {
+    int32 component_id = 1; // Component ID
+}
 message ZoomInStartResponse {
-   CameraResult camera_result = 1;
+    CameraResult camera_result = 1;
 }
 
-message ZoomOutStartRequest {}
+message ZoomOutStartRequest {
+    int32 component_id = 1; // Component ID
+}
 message ZoomOutStartResponse {
-   CameraResult camera_result = 1;
+    CameraResult camera_result = 1;
 }
 
-message ZoomStopRequest {}
+message ZoomStopRequest {
+    int32 component_id = 1; // Component ID
+}
 message ZoomStopResponse {
-   CameraResult camera_result = 1;
+    CameraResult camera_result = 1;
 }
 
 message ZoomRangeRequest {
-    float range = 1; // Range must be between 0.0 and 100.0
+    int32 component_id = 1; // Component ID
+    float range = 2; // Range must be between 0.0 and 100.0
 }
 message ZoomRangeResponse {
-   CameraResult camera_result = 1;
+    CameraResult camera_result = 1;
 }
 
 message TrackPointRequest {
-    float point_x = 1; // Point in X axis (0..1, 0 is left, 1 is right)
-    float point_y = 2; // Point in Y axis (0..1, 0 is top, 1 is bottom)
-    float radius = 3; // Radius (0 is one pixel, 1 is full image width)
+    int32 component_id = 1; // Component ID
+    float point_x = 2; // Point in X axis (0..1, 0 is left, 1 is right)
+    float point_y = 3; // Point in Y axis (0..1, 0 is top, 1 is bottom)
+    float radius = 4; // Radius (0 is one pixel, 1 is full image width)
 }
 message TrackPointResponse {
-   CameraResult camera_result = 1;
+    CameraResult camera_result = 1;
 }
 
 message TrackRectangleRequest {
-    float top_left_x = 1; // Top left corner of rectangle x value (normalized 0..1, 0 is left, 1 is right)
-    float top_left_y = 2; // Top left corner of rectangle y value (normalized 0..1, 0 is top, 1 is bottom)
-    float bottom_right_x = 3; // Bottom right corner of rectangle x value (normalized 0..1, 0 is left, 1 is right)
-    float bottom_right_y = 4; // Bottom right corner of rectangle y value (normalized 0..1, 0 is top, 1 is bottom)
+    int32 component_id = 1; // Component ID
+    float top_left_x = 2; // Top left corner of rectangle x value (normalized 0..1, 0 is left, 1 is right)
+    float top_left_y = 3; // Top left corner of rectangle y value (normalized 0..1, 0 is top, 1 is bottom)
+    float bottom_right_x = 4; // Bottom right corner of rectangle x value (normalized 0..1, 0 is left, 1 is right)
+    float bottom_right_y = 5; // Bottom right corner of rectangle y value (normalized 0..1, 0 is top, 1 is bottom)
 
 }
 message TrackRectangleResponse {
-   CameraResult camera_result = 1;
+    CameraResult camera_result = 1;
 }
 
-message TrackStopRequest {}
+message TrackStopRequest {
+    int32 component_id = 1; // Component ID
+}
 message TrackStopResponse {
-   CameraResult camera_result = 1;
+    CameraResult camera_result = 1;
 }
 
-message FocusInStartRequest {}
+message FocusInStartRequest {
+    int32 component_id = 1; // Component ID
+}
 message FocusInStartResponse {
-   CameraResult camera_result = 1;
+    CameraResult camera_result = 1;
 }
 
-message FocusOutStartRequest {}
+message FocusOutStartRequest {
+    int32 component_id = 1; // Component ID
+}
 message FocusOutStartResponse {
-   CameraResult camera_result = 1;
+    CameraResult camera_result = 1;
 }
 
-message FocusStopRequest {}
+message FocusStopRequest {
+    int32 component_id = 1; // Component ID
+}
 message FocusStopResponse {
-   CameraResult camera_result = 1;
+    CameraResult camera_result = 1;
 }
 
 message FocusRangeRequest {
-    float range = 1; // Range must be between 0.0 - 100.0
+    int32 component_id = 1; // Component ID
+    float range = 2; // Range must be between 0.0 - 100.0
 }
 message FocusRangeResponse {
-   CameraResult camera_result = 1;
+    CameraResult camera_result = 1;
 }
 
 
@@ -375,6 +569,9 @@ message CameraResult {
         RESULT_WRONG_ARGUMENT = 7; // Command has wrong argument(s)
         RESULT_NO_SYSTEM = 8; // No system connected
         RESULT_PROTOCOL_UNSUPPORTED = 9; // Definition file protocol not supported
+        RESULT_UNAVAILABLE = 10; // Not available (yet)
+        RESULT_CAMERA_ID_INVALID = 11; // Camera with camera ID not found
+        RESULT_ACTION_UNSUPPORTED = 12; // Camera action not supported
     }
 
     Result result = 1; // Result enum value
@@ -435,111 +632,29 @@ message EulerAngle {
 
 // Information about a picture just captured.
 message CaptureInfo {
-    Position position = 1; // Location where the picture was taken
-    Quaternion attitude_quaternion = 2; // Attitude of the camera when the picture was taken (quaternion)
-    EulerAngle attitude_euler_angle = 3; // Attitude of the camera when the picture was taken (euler angle)
-    uint64 time_utc_us = 4; // Timestamp in UTC (since UNIX epoch) in microseconds
-    bool is_success = 5; // True if the capture was successful
-    int32 index = 6; // Zero-based index of this image since vehicle was armed
-    string file_url = 7; // Download URL of this image
-}
-
-// Type for video stream settings.
-message VideoStreamSettings {
-    float frame_rate_hz = 1; // Frames per second
-    uint32 horizontal_resolution_pix = 2; // Horizontal resolution (in pixels)
-    uint32 vertical_resolution_pix = 3; // Vertical resolution (in pixels)
-    uint32 bit_rate_b_s = 4; // Bit rate (in bits per second)
-    uint32 rotation_deg = 5; // Video image rotation (clockwise, 0-359 degrees)
-    string uri = 6; // Video stream URI
-    float horizontal_fov_deg = 7; // Horizontal fov in degrees
-}
-
-// Information about the video stream.
-message VideoStreamInfo {
-    // Video stream status type.
-    enum VideoStreamStatus {
-        VIDEO_STREAM_STATUS_NOT_RUNNING = 0; // Video stream is not running
-        VIDEO_STREAM_STATUS_IN_PROGRESS = 1; // Video stream is running
-    }
-
-    // Video stream light spectrum type
-    enum VideoStreamSpectrum {
-        VIDEO_STREAM_SPECTRUM_UNKNOWN = 0; // Unknown
-        VIDEO_STREAM_SPECTRUM_VISIBLE_LIGHT = 1; // Visible light
-        VIDEO_STREAM_SPECTRUM_INFRARED = 2; // Infrared
-    }
-
-    VideoStreamSettings settings = 1; // Video stream settings
-    VideoStreamStatus status = 2; // Current status of video streaming
-    VideoStreamSpectrum spectrum = 3; // Light-spectrum of the video stream
-}
-
-// Information about the camera status.
-message Status {
-    // Storage status type.
-    enum StorageStatus {
-        STORAGE_STATUS_NOT_AVAILABLE = 0; // Status not available
-        STORAGE_STATUS_UNFORMATTED = 1; // Storage is not formatted (i.e. has no recognized file system)
-        STORAGE_STATUS_FORMATTED = 2; // Storage is formatted (i.e. has recognized a file system)
-        STORAGE_STATUS_NOT_SUPPORTED = 3; // Storage status is not supported
-    }
-
-    // Storage type.
-    enum StorageType {
-        STORAGE_TYPE_UNKNOWN = 0; // Storage type unknown
-        STORAGE_TYPE_USB_STICK = 1; // Storage type USB stick
-        STORAGE_TYPE_SD = 2; // Storage type SD card
-        STORAGE_TYPE_MICROSD = 3; // Storage type MicroSD card
-        STORAGE_TYPE_HD = 7; // Storage type HD mass storage
-        STORAGE_TYPE_OTHER = 254; // Storage type other, not listed
-    }
-
-    bool video_on = 1; // Whether video recording is currently in process
-    bool photo_interval_on = 2; // Whether a photo interval is currently in process
-
-    float used_storage_mib = 3; // Used storage (in MiB)
-    float available_storage_mib = 4; // Available storage (in MiB)
-    float total_storage_mib = 5; // Total storage (in MiB)
-    float recording_time_s = 6; // Elapsed time since starting the video recording (in seconds)
-    string media_folder_name = 7; // Current folder name where media are saved
-
-    StorageStatus storage_status = 8; // Storage status
-
-    uint32 storage_id = 9; // Storage ID starting at 1
-
-    StorageType storage_type = 10; // Storage type
-}
-
-// Type to represent a setting option.
-message Option {
-    string option_id = 1; // Name of the option (machine readable)
-    string option_description = 2; // Description of the option (human readable)
-}
-
-// Type to represent a setting with a selected option.
-message Setting {
-    string setting_id = 1; // Name of a setting (machine readable)
-    string setting_description = 2; // Description of the setting (human readable). This field is meant to be read from the drone, ignore it when setting.
-    Option option = 3; // Selected option
-    bool is_range = 4; // If option is given as a range. This field is meant to be read from the drone, ignore it when setting.
-}
-
-// Type to represent a setting with a list of options to choose from.
-message SettingOptions {
-    string setting_id = 1; // Name of the setting (machine readable)
-    string setting_description = 2; // Description of the setting (human readable)
-    repeated Option options = 3; // List of options or if range [min, max] or [min, max, interval]
-    bool is_range = 4; // If option is given as a range
+    int32 component_id = 1; // Component ID
+    Position position = 2; // Location where the picture was taken
+    Quaternion attitude_quaternion = 3; // Attitude of the camera when the picture was taken (quaternion)
+    EulerAngle attitude_euler_angle = 4; // Attitude of the camera when the picture was taken (euler angle)
+    uint64 time_utc_us = 5; // Timestamp in UTC (since UNIX epoch) in microseconds
+    bool is_success = 6; // True if the capture was successful
+    int32 index = 7; // Zero-based index of this image since vehicle was armed
+    string file_url = 8; // Download URL of this image
 }
 
 // Type to represent a camera information.
 message Information {
-    string vendor_name = 1; // Name of the camera vendor
-    string model_name = 2; // Name of the camera model
-    float focal_length_mm = 3; // Focal length
-    float horizontal_sensor_size_mm = 4; // Horizontal sensor size
-    float vertical_sensor_size_mm = 5; // Vertical sensor size
-    uint32 horizontal_resolution_px = 6; // Horizontal image resolution in pixels
-    uint32 vertical_resolution_px = 7; // Vertical image resolution in pixels
+    int32 component_id = 1; // Component ID
+    string vendor_name = 2; // Name of the camera vendor
+    string model_name = 3; // Name of the camera model
+    float focal_length_mm = 4; // Focal length
+    float horizontal_sensor_size_mm = 5; // Horizontal sensor size
+    float vertical_sensor_size_mm = 6; // Vertical sensor size
+    uint32 horizontal_resolution_px = 7; // Horizontal image resolution in pixels
+    uint32 vertical_resolution_px = 8; // Vertical image resolution in pixels
+}
+
+// Camera list
+message CameraList {
+    repeated Information cameras = 1; // Camera items.
 }

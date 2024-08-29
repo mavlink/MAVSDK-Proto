@@ -258,7 +258,7 @@ message GimbalItem {
 
 // Gimbal list
 message GimbalList {
-    repeated GimbalItem gimbals = 1; // Gimbal item.
+    repeated GimbalItem gimbals = 1; // Gimbal items.
 }
 
 

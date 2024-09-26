@@ -33,13 +33,13 @@ service MissionRawService {
      */
     rpc DownloadMission(DownloadMissionRequest) returns(DownloadMissionResponse) {}    
     /*
-     * Download a list of raw mission items from the system (asynchronous).
+     * Download a list of raw geofence items from the system (asynchronous).
      */
-    rpc DownloadGeofence(DownloadMissionRequest) returns(DownloadMissionResponse) {}
+    rpc DownloadGeofence(DownloadGeofenceRequest) returns(DownloadGeofenceResponse) {}
         /*
-     * Download a list of raw mission items from the system (asynchronous).
+     * Download a list of raw rallypoint items from the system (asynchronous).
      */
-     rpc DownloadRallypoints(DownloadMissionRequest) returns(DownloadMissionResponse) {}
+     rpc DownloadRallypoints(DownloadRallypointsRequest) returns(DownloadRallypointsResponse) {}
     /*
      * Cancel an ongoing mission download.
      */
@@ -135,6 +135,18 @@ message DownloadMissionRequest {}
 message DownloadMissionResponse {
     MissionRawResult mission_raw_result = 1;
     repeated MissionItem mission_items = 2; // The mission items
+}
+
+message DownloadGeofenceRequest {}
+message DownloadGeofenceResponse {
+    MissionRawResult mission_raw_result = 1;
+    repeated MissionItem geofence_items = 2; // The geofence items
+}
+
+message DownloadRallypointsRequest {}
+message DownloadRallypointsResponse {
+    MissionRawResult mission_raw_result = 1;
+    repeated MissionItem rallypoint_items = 2; // The rallypoint items
 }
 
 message CancelMissionDownloadRequest {}

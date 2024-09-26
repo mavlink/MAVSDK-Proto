@@ -31,7 +31,15 @@ service MissionRawService {
     /*
      * Download a list of raw mission items from the system (asynchronous).
      */
-    rpc DownloadMission(DownloadMissionRequest) returns(DownloadMissionResponse) {}
+    rpc DownloadMission(DownloadMissionRequest) returns(DownloadMissionResponse) {}    
+    /*
+     * Download a list of raw mission items from the system (asynchronous).
+     */
+    rpc DownloadGeofence(DownloadMissionRequest) returns(DownloadMissionResponse) {}
+        /*
+     * Download a list of raw mission items from the system (asynchronous).
+     */
+     rpc DownloadRallypoints(DownloadMissionRequest) returns(DownloadMissionResponse) {}
     /*
      * Cancel an ongoing mission download.
      */

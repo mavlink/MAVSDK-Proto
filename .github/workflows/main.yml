@@ -30,7 +30,7 @@ jobs:
         working-directory: ./pb_plugins
         run: python setup.py bdist_wheel
       - name: Upload as CI artefact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: protoc-gen-mavsdk.whl
           path: ./pb_plugins/dist/*.whl

@@ -18,10 +18,6 @@ option java_outer_classname = "CameraProto";
  */
 service CameraService {
     /*
-     * Prepare the camera plugin (e.g. download the camera definition, etc).
-     */
-    rpc Prepare(PrepareRequest) returns(PrepareResponse) {}
-    /*
      * Take one photo.
      */
     rpc TakePhoto(TakePhotoRequest) returns(TakePhotoResponse) {}
@@ -58,17 +54,28 @@ service CameraService {
      */
     rpc ListPhotos(ListPhotosRequest) returns(ListPhotosResponse) {}
     /*
+     * Subscribe to list of cameras.
+     *
+     * This allows to find out what cameras are connected to the system.
+     * Based on the camera ID, we can then address a specific camera.
+     */
+    rpc SubscribeCameraList(SubscribeCameraListRequest) returns(stream CameraListResponse) {}
+    /*
      * Subscribe to camera mode updates.
      */
-    rpc SubscribeMode(SubscribeModeRequest) returns(stream ModeResponse) {}
+    rpc SubscribeMode(SubscribeModeRequest) returns(stream ModeResponse) { option (mavsdk.options.async_type) = ASYNC; }
     /*
-     * Subscribe to camera information updates.
+     * Get camera mode.
      */
-    rpc SubscribeInformation(SubscribeInformationRequest) returns(stream InformationResponse) {}
+    rpc GetMode(GetModeRequest) returns(GetModeResponse) { option (mavsdk.options.async_type) = SYNC; }
     /*
      * Subscribe to video stream info updates.
      */
-    rpc SubscribeVideoStreamInfo(SubscribeVideoStreamInfoRequest) returns(stream VideoStreamInfoResponse) {}
+    rpc SubscribeVideoStreamInfo(SubscribeVideoStreamInfoRequest) returns(stream VideoStreamInfoResponse) { option (mavsdk.options.async_type) = ASYNC; }
+    /*
+     * Get video stream info.
+     */
+    rpc GetVideoStreamInfo(GetVideoStreamInfoRequest) returns(GetVideoStreamInfoResponse) { option (mavsdk.options.async_type) = SYNC; }
     /*
      * Subscribe to capture info updates.
      */
@@ -76,15 +83,27 @@ service CameraService {
     /*
      * Subscribe to camera status updates.
      */
-    rpc SubscribeStatus(SubscribeStatusRequest) returns(stream StatusResponse) {}
+    rpc SubscribeStatus(SubscribeStatusRequest) returns(stream StatusResponse) { option (mavsdk.options.async_type) = ASYNC; }
+    /*
+     * Get camera status.
+     */
+    rpc GetStatus(GetStatusRequest) returns(GetStatusResponse) { option (mavsdk.options.async_type) = SYNC; }
     /*
      * Get the list of current camera settings.
      */
     rpc SubscribeCurrentSettings(SubscribeCurrentSettingsRequest) returns(stream CurrentSettingsResponse) { option (mavsdk.options.async_type) = ASYNC; }
     /*
+     * Get current settings.
+     */
+    rpc GetCurrentSettings(GetCurrentSettingsRequest) returns(GetCurrentSettingsResponse) { option (mavsdk.options.async_type) = SYNC; }
+    /*
      * Get the list of settings that can be changed.
      */
-    rpc SubscribePossibleSettingOptions(SubscribePossibleSettingOptionsRequest) returns(stream PossibleSettingOptionsResponse) {}
+    rpc SubscribePossibleSettingOptions(SubscribePossibleSettingOptionsRequest) returns(stream PossibleSettingOptionsResponse) { option (mavsdk.options.async_type) = ASYNC; }
+    /*
+     * Get possible setting options.
+     */
+    rpc GetPossibleSettingOptions(GetPossibleSettingOptionsRequest) returns(GetPossibleSettingOptionsResponse) { option (mavsdk.options.async_type) = SYNC; }
     /*
      * Set a setting to some value.
      *
@@ -103,12 +122,6 @@ service CameraService {
      * This will delete all content of the camera storage!
      */
      rpc FormatStorage(FormatStorageRequest) returns(FormatStorageResponse) {}
-    /*
-     * Select current camera .
-     *
-     * Bind the plugin instance to a specific camera_id
-     */
-    rpc SelectCamera(SelectCameraRequest) returns(SelectCameraResponse) { option (mavsdk.options.async_type) = SYNC; }
     /*
      * Reset all settings in camera.
      *
@@ -161,75 +174,88 @@ service CameraService {
     rpc FocusRange(FocusRangeRequest) returns(FocusRangeResponse) {}
 }
 
-message PrepareRequest {}
-message PrepareResponse {
-    CameraResult camera_result = 1;
+message TakePhotoRequest {
+    int32 camera_id = 1; // Camera ID
 }
-
-message TakePhotoRequest {}
 message TakePhotoResponse {
     CameraResult camera_result = 1;
 }
 
 message StartPhotoIntervalRequest {
-    float interval_s = 1; // Interval between photos (in seconds)
+    int32 camera_id = 1; // Camera ID
+    float interval_s = 2; // Interval between photos (in seconds)
 }
 message StartPhotoIntervalResponse {
     CameraResult camera_result = 1;
 }
 
-message StopPhotoIntervalRequest {}
+message StopPhotoIntervalRequest {
+    int32 camera_id = 1; // Camera ID
+}
 message StopPhotoIntervalResponse {
     CameraResult camera_result = 1;
 }
 
-message StartVideoRequest {}
+message StartVideoRequest {
+    int32 camera_id = 1; // Camera ID
+}
 message StartVideoResponse {
     CameraResult camera_result = 1;
 }
 
-message StopVideoRequest {}
+message StopVideoRequest {
+    int32 camera_id = 1; // Camera ID
+}
 message StopVideoResponse {
     CameraResult camera_result = 1;
 }
 
 message StartVideoStreamingRequest {
-    int32 stream_id = 1;    // video stream id
+    int32 camera_id = 1; // Camera ID
+    int32 stream_id = 2; // video stream id
 }
 message StartVideoStreamingResponse {
     CameraResult camera_result = 1;
 }
 
 message StopVideoStreamingRequest {
-    int32 stream_id = 1;    // video stream id
+    int32 camera_id = 1; // Camera ID
+    int32 stream_id = 2; // video stream id
 }
 message StopVideoStreamingResponse {
     CameraResult camera_result = 1;
 }
 
 message SetModeRequest {
-    Mode mode = 1; // Camera mode to set
+    int32 camera_id = 1; // Camera ID
+    Mode mode = 2; // Camera mode to set
 }
 message SetModeResponse {
     CameraResult camera_result = 1;
 }
 
 message ListPhotosRequest {
-    PhotosRange photos_range = 1; // Which photos should be listed (all or since connection)
+    int32 camera_id = 1; // Camera ID
+    PhotosRange photos_range = 2; // Which photos should be listed (all or since connection)
 }
 message ListPhotosResponse {
     CameraResult camera_result = 1;
     repeated CaptureInfo capture_infos = 2; // List of capture infos (representing the photos)
 }
 
-message SubscribeInformationRequest {}
-message InformationResponse {
-    Information information = 1; // Camera information
+message SubscribeCameraListRequest {}
+message CameraListResponse {
+    CameraList camera_list = 1; // Camera list
+}
+
+message ModeInfo {
+    int32 camera_id = 1; // Camera ID
+    Mode mode = 2; // Camera mode
 }
 
 message SubscribeModeRequest {}
 message ModeResponse {
-    Mode mode = 1; // Camera mode
+    ModeInfo mode_info = 1; // Camera mode info
 }
 
 message SubscribeVideoStreamInfoRequest {}
@@ -258,14 +284,53 @@ message PossibleSettingOptionsResponse {
 }
 
 message SetSettingRequest {
-    Setting setting = 1; // Desired setting
+    int32 camera_id = 1; // Camera ID
+    Setting setting = 2; // Desired setting
 }
 message SetSettingResponse {
     CameraResult camera_result = 1;
 }
 
+message GetModeRequest {
+    int32 camera_id = 1; // Camera ID
+}
+message GetModeResponse {
+    Mode mode = 1; // Mode
+}
+
+message GetVideoStreamInfoRequest {
+    int32 camera_id = 1; // Camera ID
+}
+message GetVideoStreamInfoResponse {
+    VideoStreamInfo video_stream_info = 1; // Video stream info
+}
+
+message GetStatusRequest {
+    int32 camera_id = 1; // Camera ID
+}
+message GetStatusResponse {
+    Status status = 1; // Camera status
+}
+
+message GetCurrentSettingsRequest {
+    int32 camera_id = 1; // Camera ID
+}
+message GetCurrentSettingsResponse {
+    CameraResult camera_result = 1;
+    repeated Setting current_settings = 2; // List of current settings
+}
+
+message GetPossibleSettingOptionsRequest {
+    int32 camera_id = 1; // Camera ID
+}
+message GetPossibleSettingOptionsResponse {
+    CameraResult camera_result = 1;
+    repeated SettingOptions setting_options = 2; // List of settings that can be changed
+}
+
 message GetSettingRequest {
-    Setting setting = 1; // Requested setting
+    int32 camera_id = 1; // Camera ID
+    Setting setting = 2; // Requested setting
 }
 message GetSettingResponse {
     CameraResult camera_result = 1;
@@ -273,91 +338,105 @@ message GetSettingResponse {
 }
 
 message FormatStorageRequest {
-    int32 storage_id = 1;   //Storage identify to be format
+    int32 camera_id = 1; // Camera ID
+    int32 storage_id = 2;   //Storage identify to be format
 }
 message FormatStorageResponse {
     CameraResult camera_result = 1;
 }
 
-message SelectCameraResponse {
-    CameraResult camera_result = 1;
+message ResetSettingsRequest {
+    int32 camera_id = 1; // Camera ID
 }
-message SelectCameraRequest {
-    int32 camera_id = 1; // Id of camera to be selected
-}
-
-message ResetSettingsRequest {}
 message ResetSettingsResponse {
     CameraResult camera_result = 1;
 }
 
-message ZoomInStartRequest {}
+message ZoomInStartRequest {
+    int32 camera_id = 1; // Camera ID
+}
 message ZoomInStartResponse {
-   CameraResult camera_result = 1;
+    CameraResult camera_result = 1;
 }
 
-message ZoomOutStartRequest {}
+message ZoomOutStartRequest {
+    int32 camera_id = 1; // Camera ID
+}
 message ZoomOutStartResponse {
-   CameraResult camera_result = 1;
+    CameraResult camera_result = 1;
 }
 
-message ZoomStopRequest {}
+message ZoomStopRequest {
+    int32 camera_id = 1; // Camera ID
+}
 message ZoomStopResponse {
-   CameraResult camera_result = 1;
+    CameraResult camera_result = 1;
 }
 
 message ZoomRangeRequest {
-    float range = 1; // Range must be between 0.0 and 100.0
+    int32 camera_id = 1; // Camera ID
+    float range = 2; // Range must be between 0.0 and 100.0
 }
 message ZoomRangeResponse {
-   CameraResult camera_result = 1;
+    CameraResult camera_result = 1;
 }
 
 message TrackPointRequest {
-    float point_x = 1; // Point in X axis (0..1, 0 is left, 1 is right)
-    float point_y = 2; // Point in Y axis (0..1, 0 is top, 1 is bottom)
-    float radius = 3; // Radius (0 is one pixel, 1 is full image width)
+    int32 camera_id = 1; // Camera ID
+    float point_x = 2; // Point in X axis (0..1, 0 is left, 1 is right)
+    float point_y = 3; // Point in Y axis (0..1, 0 is top, 1 is bottom)
+    float radius = 4; // Radius (0 is one pixel, 1 is full image width)
 }
 message TrackPointResponse {
-   CameraResult camera_result = 1;
+    CameraResult camera_result = 1;
 }
 
 message TrackRectangleRequest {
-    float top_left_x = 1; // Top left corner of rectangle x value (normalized 0..1, 0 is left, 1 is right)
-    float top_left_y = 2; // Top left corner of rectangle y value (normalized 0..1, 0 is top, 1 is bottom)
-    float bottom_right_x = 3; // Bottom right corner of rectangle x value (normalized 0..1, 0 is left, 1 is right)
-    float bottom_right_y = 4; // Bottom right corner of rectangle y value (normalized 0..1, 0 is top, 1 is bottom)
+    int32 camera_id = 1; // Camera ID
+    float top_left_x = 2; // Top left corner of rectangle x value (normalized 0..1, 0 is left, 1 is right)
+    float top_left_y = 3; // Top left corner of rectangle y value (normalized 0..1, 0 is top, 1 is bottom)
+    float bottom_right_x = 4; // Bottom right corner of rectangle x value (normalized 0..1, 0 is left, 1 is right)
+    float bottom_right_y = 5; // Bottom right corner of rectangle y value (normalized 0..1, 0 is top, 1 is bottom)
 
 }
 message TrackRectangleResponse {
-   CameraResult camera_result = 1;
+    CameraResult camera_result = 1;
 }
 
-message TrackStopRequest {}
+message TrackStopRequest {
+    int32 camera_id = 1; // Camera ID
+}
 message TrackStopResponse {
-   CameraResult camera_result = 1;
+    CameraResult camera_result = 1;
 }
 
-message FocusInStartRequest {}
+message FocusInStartRequest {
+    int32 camera_id = 1; // Camera ID
+}
 message FocusInStartResponse {
-   CameraResult camera_result = 1;
+    CameraResult camera_result = 1;
 }
 
-message FocusOutStartRequest {}
+message FocusOutStartRequest {
+    int32 camera_id = 1; // Camera ID
+}
 message FocusOutStartResponse {
-   CameraResult camera_result = 1;
+    CameraResult camera_result = 1;
 }
 
-message FocusStopRequest {}
+message FocusStopRequest {
+    int32 camera_id = 1; // Camera ID
+}
 message FocusStopResponse {
-   CameraResult camera_result = 1;
+    CameraResult camera_result = 1;
 }
 
 message FocusRangeRequest {
-    float range = 1; // Range must be between 0.0 - 100.0
+    int32 camera_id = 1; // Camera ID
+    float range = 2; // Range must be between 0.0 - 100.0
 }
 message FocusRangeResponse {
-   CameraResult camera_result = 1;
+    CameraResult camera_result = 1;
 }
 
 
@@ -375,6 +454,10 @@ message CameraResult {
         RESULT_WRONG_ARGUMENT = 7; // Command has wrong argument(s)
         RESULT_NO_SYSTEM = 8; // No system connected
         RESULT_PROTOCOL_UNSUPPORTED = 9; // Definition file protocol not supported
+        RESULT_SETTINGS_UNAVAILABLE = 10; // Settings not available
+        RESULT_SETTINGS_LOADING = 11; // Settings not available yet
+        RESULT_CAMERA_ID_INVALID = 12; // Camera with camera ID not found
+        RESULT_ACTION_UNSUPPORTED = 13; // Camera action not supported
     }
 
     Result result = 1; // Result enum value
@@ -470,9 +553,10 @@ message VideoStreamInfo {
         VIDEO_STREAM_SPECTRUM_INFRARED = 2; // Infrared
     }
 
-    VideoStreamSettings settings = 1; // Video stream settings
-    VideoStreamStatus status = 2; // Current status of video streaming
-    VideoStreamSpectrum spectrum = 3; // Light-spectrum of the video stream
+    int32 camera_id = 1; // Camera ID
+    VideoStreamSettings settings = 2; // Video stream settings
+    VideoStreamStatus status = 3; // Current status of video streaming
+    VideoStreamSpectrum spectrum = 4; // Light-spectrum of the video stream
 }
 
 // Information about the camera status.
@@ -495,20 +579,21 @@ message Status {
         STORAGE_TYPE_OTHER = 254; // Storage type other, not listed
     }
 
-    bool video_on = 1; // Whether video recording is currently in process
-    bool photo_interval_on = 2; // Whether a photo interval is currently in process
+    int32 camera_id = 1; // Camera ID
+    bool video_on = 2; // Whether video recording is currently in process
+    bool photo_interval_on = 3; // Whether a photo interval is currently in process
 
-    float used_storage_mib = 3; // Used storage (in MiB)
-    float available_storage_mib = 4; // Available storage (in MiB)
-    float total_storage_mib = 5; // Total storage (in MiB)
-    float recording_time_s = 6; // Elapsed time since starting the video recording (in seconds)
-    string media_folder_name = 7; // Current folder name where media are saved
+    float used_storage_mib = 4; // Used storage (in MiB)
+    float available_storage_mib = 5; // Available storage (in MiB)
+    float total_storage_mib = 6; // Total storage (in MiB)
+    float recording_time_s = 7; // Elapsed time since starting the video recording (in seconds)
+    string media_folder_name = 8; // Current folder name where media are saved
 
-    StorageStatus storage_status = 8; // Storage status
+    StorageStatus storage_status = 9; // Storage status
 
-    uint32 storage_id = 9; // Storage ID starting at 1
+    uint32 storage_id = 10; // Storage ID starting at 1
 
-    StorageType storage_type = 10; // Storage type
+    StorageType storage_type = 11; // Storage type
 }
 
 // Type to represent a setting option.
@@ -527,10 +612,11 @@ message Setting {
 
 // Type to represent a setting with a list of options to choose from.
 message SettingOptions {
-    string setting_id = 1; // Name of the setting (machine readable)
-    string setting_description = 2; // Description of the setting (human readable)
-    repeated Option options = 3; // List of options or if range [min, max] or [min, max, interval]
-    bool is_range = 4; // If option is given as a range
+    int32 camera_id = 1; // Camera ID
+    string setting_id = 2; // Name of the setting (machine readable)
+    string setting_description = 3; // Description of the setting (human readable)
+    repeated Option options = 4; // List of options or if range [min, max] or [min, max, interval]
+    bool is_range = 5; // If option is given as a range
 }
 
 // Type to represent a camera information.
@@ -542,4 +628,9 @@ message Information {
     float vertical_sensor_size_mm = 5; // Vertical sensor size
     uint32 horizontal_resolution_px = 6; // Horizontal image resolution in pixels
     uint32 vertical_resolution_px = 7; // Vertical image resolution in pixels
+}
+
+// Camera list
+message CameraList {
+    repeated Information cameras = 1; // Camera items.
 }

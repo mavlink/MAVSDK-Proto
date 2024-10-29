@@ -138,14 +138,6 @@ service ActionService {
      */
     rpc SetTakeoffAltitude(SetTakeoffAltitudeRequest) returns(SetTakeoffAltitudeResponse) {}
     /*
-     * Get the vehicle maximum speed (in metres/second).
-     */
-    rpc GetMaximumSpeed(GetMaximumSpeedRequest) returns(GetMaximumSpeedResponse) {}
-    /*
-     * Set vehicle maximum speed (in metres/second).
-     */
-    rpc SetMaximumSpeed(SetMaximumSpeedRequest) returns(SetMaximumSpeedResponse) {}
-    /*
      * Get the return to launch minimum return altitude (in meters).
      */
     rpc GetReturnToLaunchAltitude(GetReturnToLaunchAltitudeRequest) returns(GetReturnToLaunchAltitudeResponse) {}
@@ -276,19 +268,6 @@ message SetTakeoffAltitudeRequest {
     float altitude = 1; // Takeoff altitude relative to ground/takeoff location (in meters)
 }
 message SetTakeoffAltitudeResponse {
-    ActionResult action_result = 1;
-}
-
-message GetMaximumSpeedRequest {}
-message GetMaximumSpeedResponse {
-    ActionResult action_result = 1;
-    float speed = 2; // Maximum speed (in metres/second)
-}
-
-message SetMaximumSpeedRequest {
-    float speed = 1; // Maximum speed (in metres/second)
-}
-message SetMaximumSpeedResponse {
     ActionResult action_result = 1;
 }
 

@@ -1,10 +1,7 @@
 import os
-import subprocess
-import sys
 
-from distutils.command.build import build
-from distutils.spawn import find_executable
 from setuptools import setup
+
 
 def parse_requirements(filename):
     """
@@ -25,6 +22,7 @@ def parse_requirements(filename):
     # Parse install requirements
     with open(filepath, encoding="utf-8") as f:
         return [requires.strip() for requires in f.readlines()]
+
 
 setup(
     name="protoc-gen-mavsdk",

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from jinja2 import Environment, FileSystemLoader
-from .name_parser import NameParserFactory
-from .type_info import TypeInfoFactory
+from protoc_gen_mavsdk.name_parser import NameParserFactory
+from protoc_gen_mavsdk.type_info import TypeInfoFactory
 
 
 name_parser_factory = NameParserFactory()

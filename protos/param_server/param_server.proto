@@ -10,6 +10,14 @@ option java_outer_classname = "ParamServerProto";
 // Provide raw access to retrieve and provide server parameters.
 service ParamServerService {
     /*
+     * Set param protocol.
+     *
+     * The extended param protocol is used by default. This allows to use the previous/normal one.
+     *
+     * Note that camera definition files are meant to implement/use the extended protocol.
+     */
+    rpc SetProtocol(SetProtocolRequest) returns(SetProtocolResponse) { option (mavsdk.options.async_type) = SYNC; }
+    /*
      * Retrieve an int parameter.
      *
      * If the type is wrong, the result will be `WRONG_TYPE`.
@@ -58,6 +66,13 @@ service ParamServerService {
 
     // Subscribe to changed custom param.
     rpc SubscribeChangedParamCustom(SubscribeChangedParamCustomRequest) returns(stream ChangedParamCustomResponse) { option (mavsdk.options.async_type) = ASYNC; }
+}
+
+message SetProtocolRequest {
+    bool extended_protocol = 1; // Use extended protocol
+}
+message SetProtocolResponse {
+    ParamServerResult param_server_result = 1;
 }
 
 message RetrieveParamIntRequest {

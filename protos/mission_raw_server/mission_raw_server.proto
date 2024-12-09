@@ -16,6 +16,11 @@ service MissionRawServerService {
     rpc SubscribeIncomingMission(SubscribeIncomingMissionRequest) returns(stream IncomingMissionResponse) {}
 
     /*
+     * Subscribe to the result of outgoing mission download requests (air to ground)
+     */
+    rpc SubscribeOutgoingMissionResult(SubscribeOutgoingMissionRequest) returns(stream OutgoingMissionResult) {}
+
+    /*
      * Subscribe to when a new current item is set
      */
     rpc SubscribeCurrentItemChanged(SubscribeCurrentItemChangedRequest) returns(stream CurrentItemChangedResponse) {}
@@ -35,6 +40,11 @@ message SubscribeIncomingMissionRequest {}
 message IncomingMissionResponse {
     MissionRawServerResult mission_raw_server_result = 1;
     MissionPlan mission_plan = 2; // The mission plan
+}
+
+message SubscribeOutgoingMissionRequest {}
+message OutgoingMissionResult {
+    MissionRawServerResult mission_raw_server_result = 1;
 }
 
 message SubscribeCurrentItemChangedRequest {}

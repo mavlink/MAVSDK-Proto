@@ -16,6 +16,11 @@ service MissionRawServerService {
     rpc SubscribeIncomingMission(SubscribeIncomingMissionRequest) returns(stream IncomingMissionResponse) {}
 
     /*
+     * Subscribe to when a new mission download request completes (asynchronous)
+     */
+    rpc SubscribeOutgoingMission(SubscribeOutgoingMissionRequest) returns(stream OutgoingMissionResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    /*
      * Subscribe to when a new current item is set
      */
     rpc SubscribeCurrentItemChanged(SubscribeCurrentItemChangedRequest) returns(stream CurrentItemChangedResponse) {}
@@ -35,6 +40,12 @@ message SubscribeIncomingMissionRequest {}
 message IncomingMissionResponse {
     MissionRawServerResult mission_raw_server_result = 1;
     MissionPlan mission_plan = 2; // The mission plan
+}
+
+message SubscribeOutgoingMissionRequest {}
+message OutgoingMissionResponse {
+    MissionRawServerResult mission_raw_server_result = 1;
+    MissionPlan mission_plan = 2; // The mission plan that was requested
 }
 
 message SubscribeCurrentItemChangedRequest {}

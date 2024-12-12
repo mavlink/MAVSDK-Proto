@@ -13,12 +13,12 @@ service MissionRawServerService {
     /*
      * Subscribe to when a new mission is uploaded (asynchronous).
      */
-    rpc SubscribeIncomingMission(SubscribeIncomingMissionRequest) returns(stream IncomingMissionResponse) {}
+    rpc SubscribeIncomingMission(SubscribeIncomingMissionRequest) returns(stream IncomingMissionResponse) { option (mavsdk.options.async_type) = ASYNC; }
 
     /*
      * Subscribe to when a new current item is set
      */
-    rpc SubscribeCurrentItemChanged(SubscribeCurrentItemChangedRequest) returns(stream CurrentItemChangedResponse) {}
+    rpc SubscribeCurrentItemChanged(SubscribeCurrentItemChangedRequest) returns(stream CurrentItemChangedResponse) { option (mavsdk.options.async_type) = ASYNC; }
 
     /*
      *  Set Current item as completed
@@ -28,7 +28,7 @@ service MissionRawServerService {
     /*
      *  Subscribe when a MISSION_CLEAR_ALL is received
      */
-    rpc SubscribeClearAll(SubscribeClearAllRequest) returns(stream ClearAllResponse) {}
+    rpc SubscribeClearAll(SubscribeClearAllRequest) returns(stream ClearAllResponse) { option (mavsdk.options.async_type) = ASYNC; }
 }
 
 message SubscribeIncomingMissionRequest {}

@@ -50,7 +50,11 @@ service CameraService {
      */
     rpc SetMode(SetModeRequest) returns(SetModeResponse) {}
     /*
-     * List photos available on the camera (currently not implemented).
+     * List photos available on the camera.
+     *
+     * Note that this might need to be called initially to set the PhotosRange accordingly.
+     * Once set to 'all' rather than 'since connection', it will try to request the previous
+     * images over time.
      */
     rpc ListPhotos(ListPhotosRequest) returns(ListPhotosResponse) {}
     /*

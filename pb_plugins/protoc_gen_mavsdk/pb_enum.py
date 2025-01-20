@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from .utils import name_parser_factory
+from protoc_gen_mavsdk.utils import name_parser_factory
 
 
 class Enum(object):

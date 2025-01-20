@@ -13,7 +13,7 @@ on:
 jobs:
   prototool:
     name: prototool linter
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v1
       - name: Run prototool
@@ -21,7 +21,7 @@ jobs:
 
   deploy:
     name: deploy
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v1
       - name: Install prerequisites

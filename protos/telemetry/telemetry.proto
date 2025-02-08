@@ -759,7 +759,7 @@ message FixedwingMetrics {
     float climb_rate_m_s = 3 [(mavsdk.options.default_value)="NaN"]; // Current climb rate in metres per second
     float groundspeed_m_s = 4 [(mavsdk.options.default_value)="NaN"]; // Current groundspeed metres per second
     float heading_deg = 5 [(mavsdk.options.default_value)="NaN"]; // Current heading in compass units (0-360, 0=north)
-    float altitude_msl = 6 [(mavsdk.options.default_value)="NaN"]; // Current altitude in metres (MSL)
+    float absolute_altitude_m = 6 [(mavsdk.options.default_value)="NaN"]; // Current altitude in metres (MSL)
 }
 
 // AccelerationFrd message type.

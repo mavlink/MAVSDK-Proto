@@ -11,6 +11,7 @@ from protoc_gen_mavsdk.utils import (get_template_env,
                                      is_server,
                                      name_parser_factory,
                                      type_info_factory)
+from protoc_gen_mavsdk import mavsdk_options_pb2
 
 
 class AutoGen(object):

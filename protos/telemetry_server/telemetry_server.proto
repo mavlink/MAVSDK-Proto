@@ -42,6 +42,10 @@ service TelemetryServerService {
     rpc PublishUnixEpochTime(PublishUnixEpochTimeRequest) returns(PublishUnixEpochTimeResponse) { option (mavsdk.options.async_type) = SYNC; }
     // Publish to "distance sensor" updates.
     rpc PublishDistanceSensor(PublishDistanceSensorRequest) returns(PublishDistanceSensorResponse) { option (mavsdk.options.async_type) = SYNC; }
+    // Publish to "attitude" updates.
+    rpc PublishAttitude(PublishAttitudeRequest) returns(PublishAttitudeResponse) { option (mavsdk.options.async_type) = SYNC; }
+    // Publish to "Visual Flight Rules HUD" updates.
+    rpc PublishVisualFlightRulesHud(PublishVisualFlightRulesHudRequest) returns(PublishVisualFlightRulesHudResponse) { option (mavsdk.options.async_type) = SYNC; }
 }
 
 message PublishPositionRequest {
@@ -125,6 +129,15 @@ message PublishDistanceSensorRequest {
     DistanceSensor distance_sensor = 1; // The next 'Distance Sensor' status
 }
 
+message PublishAttitudeRequest {
+    EulerAngle angle = 1; // roll/pitch/yaw body angles
+    AngularVelocityBody angular_velocity = 2; // roll/pitch/yaw angular velocities
+}
+
+message PublishVisualFlightRulesHudRequest {
+    FixedwingMetrics fixed_wing_metrics = 1;
+}
+
 message PublishPositionResponse {
     TelemetryServerResult telemetry_server_result = 1;
 }
@@ -184,6 +197,14 @@ message PublishUnixEpochTimeResponse {
 }
 
 message PublishDistanceSensorResponse {
+    TelemetryServerResult telemetry_server_result = 1;
+}
+
+message PublishAttitudeResponse {
+    TelemetryServerResult telemetry_server_result = 1;
+}
+
+message PublishVisualFlightRulesHudResponse {
     TelemetryServerResult telemetry_server_result = 1;
 }
 
@@ -437,6 +458,9 @@ message FixedwingMetrics {
     float airspeed_m_s = 1 [(mavsdk.options.default_value)="NaN"]; // Current indicated airspeed (IAS) in metres per second
     float throttle_percentage = 2 [(mavsdk.options.default_value)="NaN"]; // Current throttle setting (0 to 100)
     float climb_rate_m_s = 3 [(mavsdk.options.default_value)="NaN"]; // Current climb rate in metres per second
+    float groundspeed_m_s = 4 [(mavsdk.options.default_value)="NaN"]; // Current groundspeed metres per second
+    float heading_deg = 5 [(mavsdk.options.default_value)="NaN"]; // Current heading in compass units (0-360, 0=north)
+    float absolute_altitude_m = 6 [(mavsdk.options.default_value)="NaN"]; // Current altitude in metres (MSL)
 }
 
 // AccelerationFrd message type.

@@ -38,6 +38,8 @@ message RequestComponentRequest {
     uint32 compid = 1; // The component ID to request
 }
 
+message RequestComponentResponse {}
+
 message GetMetadataRequest {
     uint32 compid = 1; // The component ID to request
     MetadataType metadata_type = 2; // The metadata type
@@ -45,7 +47,7 @@ message GetMetadataRequest {
 
 message GetMetadataResponse {
     ComponentMetadataResult component_metadata_result = 1;
-    MetadataData response = 2;
+    MetadataData response = 2; // The response
 }
 
 // Metadata response
@@ -55,32 +57,31 @@ message MetadataData {
 
 // Result type.
 message ComponentMetadataResult {
-    // Possible results returned for GetMetadata
+    // Possible results returned
     enum Result {
-        RESULT_SUCCESS = 0;
-        RESULT_NOT_AVAILABLE = 1;
-        RESULT_CONNECTION_ERROR = 2;
-        RESULT_UNSUPPORTED = 3;
-        RESULT_DENIED = 4;
-        RESULT_FAILED = 5;
-        RESULT_TIMEOUT = 6;
-        RESULT_NO_SYSTEM = 7;
-        RESULT_NOT_REQUESTED = 8;
+        RESULT_SUCCESS = 0; // Success
+        RESULT_NOT_AVAILABLE = 1; // Not available
+        RESULT_CONNECTION_ERROR = 2; // Connection error
+        RESULT_UNSUPPORTED = 3; // Unsupported
+        RESULT_DENIED = 4; // Denied
+        RESULT_FAILED = 5; // Failed
+        RESULT_TIMEOUT = 6; // Timeout
+        RESULT_NO_SYSTEM = 7; // No system
+        RESULT_NOT_REQUESTED = 8; // Not requested
     }
 
     Result result = 1; // Result enum value
     string result_str = 2; // Human-readable English string describing the result
 }
 
-message RequestComponentResponse {}
 message RequestAutopilotComponentRequest {}
 message RequestAutopilotComponentResponse {}
 
 message SubscribeMetadataAvailableRequest {}
 
-
+// An update about available metadata
 message MetadataAvailableResponse {
-    MetadataUpdate data = 1;
+    MetadataUpdate data = 1; // The metadata data
 }
 
 // Metadata for a given component and type
@@ -90,6 +91,7 @@ message MetadataUpdate {
     string json_metadata = 3; // The JSON metadata
 }
 
+// The metadata type
 enum MetadataType {
     METADATA_TYPE_ALL_COMPLETED = 0; // This is set in the subscription callback when all metadata types completed for a given component ID
     METADATA_TYPE_PARAMETER = 1; // Parameter metadata

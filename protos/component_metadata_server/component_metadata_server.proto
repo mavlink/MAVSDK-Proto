@@ -20,11 +20,13 @@ message SetMetadataRequest {
 }
 message SetMetadataResponse {}
 
+// The metadata type and content
 message Metadata {
     MetadataType type = 1; // The metadata type
     string json_metadata = 2; // The JSON metadata
 }
 
+// The metadata type
 enum MetadataType {
     METADATA_TYPE_PARAMETER = 0; // Parameter metadata
     METADATA_TYPE_EVENTS = 1; // Event definitions

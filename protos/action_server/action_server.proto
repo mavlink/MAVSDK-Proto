@@ -64,7 +64,7 @@ message SetArmedStateRequest {
 }
 
 message SetFlightModeRequest {
-    FlightMode flight_mode = 1;
+    FlightMode flight_mode = 1; // Current vehicle flight mode, e.g. Takeoff/Mission/Land/etc.
 }
 
 message GetAllowableFlightModesRequest {}

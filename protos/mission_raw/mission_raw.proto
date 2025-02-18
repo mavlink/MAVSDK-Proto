@@ -74,7 +74,7 @@ service MissionRawService {
      * Subscribe to mission progress updates.
      */
     rpc SubscribeMissionProgress(SubscribeMissionProgressRequest) returns(stream MissionProgressResponse) {}
-    /**
+    /*
      * Subscribes to mission changed.
      *
      * This notification can be used to be informed if a ground station has

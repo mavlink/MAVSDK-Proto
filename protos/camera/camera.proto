@@ -307,6 +307,7 @@ message CameraListResponse {
     CameraList camera_list = 1; // Camera list
 }
 
+// An update about the current mode
 message ModeUpdate {
     int32 component_id = 1; // Component ID
     Mode mode = 2; // Camera mode
@@ -317,6 +318,7 @@ message ModeResponse {
     ModeUpdate update = 1; // Mode update for camera
 }
 
+// An update about a video stream
 message VideoStreamUpdate {
     int32 component_id = 1; // Component ID
     VideoStreamInfo video_stream_info = 2; // Video stream info
@@ -369,6 +371,7 @@ message Storage {
     StorageType storage_type = 11; // Storage type
 }
 
+// An update about storage
 message StorageUpdate {
     int32 component_id = 1; // Component ID
     Storage storage = 2; // Storage
@@ -379,6 +382,7 @@ message StorageResponse {
     StorageUpdate update = 1; // Camera's storage status
 }
 
+// An update about a current setting
 message CurrentSettingsUpdate {
     int32 component_id = 1; // Component ID
     repeated Setting current_settings = 2; // List of current settings
@@ -389,6 +393,7 @@ message CurrentSettingsResponse {
     CurrentSettingsUpdate update = 1; // Current setting update per camera
 }
 
+// An update about possible setting options
 message PossibleSettingOptionsUpdate {
     int32 component_id = 1; // Component ID
     repeated SettingOptions setting_options = 2; // List of settings that can be changed

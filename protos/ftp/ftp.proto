@@ -78,6 +78,7 @@ message ListDirectoryRequest {
     string remote_dir = 1; // The remote directory to list the contents for.
 }
 
+// The output of a directory list
 message ListDirectoryData {
     repeated string dirs = 1; // The found directories.
     repeated string files = 2; // The found files.

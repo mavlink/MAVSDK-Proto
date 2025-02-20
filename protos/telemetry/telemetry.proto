@@ -76,6 +76,8 @@ service TelemetryService {
     rpc SubscribeHeading(SubscribeHeadingRequest) returns(stream HeadingResponse) {}
     // Subscribe to 'Altitude' updates.
     rpc SubscribeAltitude(SubscribeAltitudeRequest) returns(stream AltitudeResponse){}
+    // Subscribe to 'Wind Estimated' updates.
+    rpc SubscribeWindCov(SubscribeWindCovRequest) returns(stream WindCovResponse){}
 
     // Set rate to 'position' updates.
     rpc SetRatePosition(SetRatePositionRequest) returns(SetRatePositionResponse) {}
@@ -289,6 +291,11 @@ message HeadingResponse {
 message SubscribeAltitudeRequest {}
 message AltitudeResponse {
     Altitude altitude = 1; // The next altitude
+}
+
+message SubscribeWindCovRequest {}
+message WindCovResponse {
+    WindCov wind_cov = 1; // The next altitude
 }
 
 message SetRatePositionRequest {
@@ -807,6 +814,18 @@ message Altitude {
     float altitude_relative_m = 4 [(mavsdk.options.default_value)="NaN"]; // Altitude above home position in meters
     float altitude_terrain_m = 5 [(mavsdk.options.default_value)="NaN"]; // Altitude above terrain in meters
     float bottom_clearance_m = 6 [(mavsdk.options.default_value)="NaN"]; // This is not the altitude, but the clear space below the system according to the fused clearance estimate in meters.
+}
+
+// WindCov message type
+message WindCov {
+    float wind_x_ned_m_s = 1 [(mavsdk.options.default_value)="NaN"]; // Wind in North (NED) direction
+    float wind_y_ned_m_s = 2 [(mavsdk.options.default_value)="NaN"]; //  Wind in East (NED) direction
+    float wind_z_ned_m_s = 3 [(mavsdk.options.default_value)="NaN"]; // Wind in down (NED) direction
+    float var_horiz_m_s = 4 [(mavsdk.options.default_value)="NaN"]; // Variability of wind in XY, 1-STD estimated from a 1 Hz lowpassed wind estimate
+    float var_vert_m_s = 5 [(mavsdk.options.default_value)="NaN"]; // Variability of wind in Z, 1-STD estimated from a 1 Hz lowpassed wind estimate
+    float wind_alt_m = 6 [(mavsdk.options.default_value)="NaN"]; // Altitude (MSL) that this measurement was taken at
+    float horiz_accuracy_m_s = 7 [(mavsdk.options.default_value)="NaN"]; // Horizontal speed 1-STD accuracy 
+    float vert_accuracy_m_s = 8 [(mavsdk.options.default_value)="NaN"]; // Vertical speed 1-STD accuracy
 }
 
 // Result type.

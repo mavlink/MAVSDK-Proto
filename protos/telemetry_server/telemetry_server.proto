@@ -24,6 +24,14 @@ service TelemetryServerService {
     rpc PublishRawGps(PublishRawGpsRequest) returns(PublishRawGpsResponse) { option (mavsdk.options.async_type) = SYNC; }
     // Publish to 'battery' updates.
     rpc PublishBattery(PublishBatteryRequest) returns(PublishBatteryResponse) { option (mavsdk.options.async_type) = SYNC; }
+    // Publish to 'cellular_status' updates.
+    rpc PublishCellularStatus(PublishCellularStatusRequest) returns(PublishCellularStatusResponse) { option (mavsdk.options.async_type) = SYNC; }
+    // Publish to 'modem_info' updates.
+    rpc PublishModemInfo(PublishModemInfoRequest) returns(PublishModemInfoResponse) { option (mavsdk.options.async_type) = SYNC; }
+    // Publish to 'obc_status' updates.
+    rpc PublishOnboardComputerStatus(PublishOnboardComputerStatusRequest) returns(PublishOnboardComputerStatusResponse) { option (mavsdk.options.async_type) = SYNC; }
+    // Publish to 'component_info_basic' updates.
+    rpc PublishComponentInfoBasic(PublishComponentInfoBasicRequest) returns(PublishComponentInfoBasicResponse) { option (mavsdk.options.async_type) = SYNC; }
     // Publish to 'status text' updates.
     rpc PublishStatusText(PublishStatusTextRequest) returns(PublishStatusTextResponse) { option (mavsdk.options.async_type) = SYNC; }
     // Publish to 'odometry' updates.
@@ -87,6 +95,22 @@ message PublishRawGpsRequest {
 
 message PublishBatteryRequest {
     Battery battery = 1; // The next 'battery' state
+}
+
+message PublishCellularStatusRequest {
+    CellularStatus cellular_status = 1; // The next Cellular status
+}
+
+message PublishModemInfoRequest {
+    ModemInfo modem_info = 1; // The next modem info
+}
+
+message PublishOnboardComputerStatusRequest {
+    OnboardComputerStatus obc_status = 1; // The next OBC status
+}
+
+message PublishComponentInfoBasicRequest {
+    ComponentInfoBasic component_info_basic = 1; // The next component info basic
 }
 
 message PublishRcStatusRequest {
@@ -162,6 +186,21 @@ message PublishBatteryResponse {
     TelemetryServerResult telemetry_server_result = 1;
 }
 
+message PublishCellularStatusResponse {
+    TelemetryServerResult telemetry_server_result = 1;
+}
+
+message PublishModemInfoResponse {
+    TelemetryServerResult telemetry_server_result = 1;
+}
+
+message PublishOnboardComputerStatusResponse {
+    TelemetryServerResult telemetry_server_result = 1;
+}
+
+message PublishComponentInfoBasicResponse {
+    TelemetryServerResult telemetry_server_result = 1;
+}
 
 message PublishStatusTextResponse {
     TelemetryServerResult telemetry_server_result = 1;
@@ -323,6 +362,72 @@ message RcStatus {
     bool was_available_once = 1 [(mavsdk.options.default_value)="false"]; // True if an RC signal has been available once
     bool is_available = 2 [(mavsdk.options.default_value)="false"]; // True if the RC signal is available now
     float signal_strength_percent = 3 [(mavsdk.options.default_value)="NaN"]; // Signal strength (range: 0 to 100, NaN if unknown)
+}
+
+// Cellular modem status type.
+message CellularStatus {
+    uint32 status = 1;
+    uint32 failure_reason = 2; 
+    uint32 type = 3; 
+    uint32 quality = 4;
+    uint32 mcc = 5;
+    uint32 mnc = 6;
+    uint32 lac = 7;
+    uint32 band_number = 8;
+    float band_frequency = 9;
+    uint32 channel_number = 10;
+    float rx_level = 11;
+    float tx_level = 12;
+    float rx_quality = 13;
+    uint32 link_tx_rate = 14; 
+    uint32 link_rx_rate = 15;
+    uint32 bit_error_rate = 16;
+    uint32 instance_number = 17; 
+    string cell_tower_id = 18; 
+}
+
+// Modem information.
+message ModemInfo {
+    uint32 instance_number = 1; 
+    uint64 imei = 2; //Unique Modem International Mobile Equipment Identity Number
+    uint64 imsi = 3; //Current SIM International mobile subscriber identity.
+    string modem_id = 4; 
+    string iccid = 5; //Integrated Circuit Card Identification Number of SIM Card
+    string firmware_version = 6; //The firmware version installed on the modem
+    string modem_model_name = 7;
+}
+
+message OnboardComputerStatus{
+    uint64 time_usec = 1;
+    uint32 uptime  = 2;
+    uint32 type = 3;
+    repeated uint32 cpu_cores = 4;
+    repeated uint32 cpu_combined = 5;
+    repeated uint32 gpu_cores = 6;
+    repeated uint32 gpu_combined = 7;
+    uint32 temperature_board = 8;
+    repeated uint32 temperature_core = 9;
+    repeated uint32 fan_speed = 10;
+    uint32 ram_usage = 11;
+    uint32 ram_total = 12;
+    repeated uint32 storage_type = 13;
+    repeated uint32 storage_usage = 14;
+    repeated uint32 storage_total = 15; 
+    repeated uint32 link_type = 16;
+    repeated uint32 link_tx_rate = 17;
+    repeated uint32 link_rx_rate = 18;
+    repeated uint32 link_tx_max = 19;
+    repeated uint32 link_rx_max = 20;
+}
+
+message ComponentInfoBasic {
+    uint32 time_boot_ms = 1;
+    uint64 capabilities = 2;
+    string vendor_name = 3;
+    string model_name = 4;
+    string software_version = 5;
+    string hardware_version = 6;
+    string serial_number = 7;
 }
 
 // Status types.

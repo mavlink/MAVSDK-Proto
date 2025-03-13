@@ -295,7 +295,7 @@ message AltitudeResponse {
 
 message SubscribeWindCovRequest {}
 message WindCovResponse {
-    WindCov wind_cov = 1; // The next altitude
+    Wind wind = 1; // The next altitude
 }
 
 message SetRatePositionRequest {
@@ -816,8 +816,8 @@ message Altitude {
     float bottom_clearance_m = 6 [(mavsdk.options.default_value)="NaN"]; // This is not the altitude, but the clear space below the system according to the fused clearance estimate in meters.
 }
 
-// WindCov message type
-message WindCov {
+// Wind message type
+message Wind {
     float wind_x_ned_m_s = 1 [(mavsdk.options.default_value)="NaN"]; // Wind in North (NED) direction
     float wind_y_ned_m_s = 2 [(mavsdk.options.default_value)="NaN"]; //  Wind in East (NED) direction
     float wind_z_ned_m_s = 3 [(mavsdk.options.default_value)="NaN"]; // Wind in down (NED) direction

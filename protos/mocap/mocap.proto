@@ -15,6 +15,8 @@ option java_outer_classname = "MocapProto";
 service MocapService {
     // Send Global position/attitude estimate from a vision source.
     rpc SetVisionPositionEstimate(SetVisionPositionEstimateRequest) returns(SetVisionPositionEstimateResponse) { option (mavsdk.options.async_type) = SYNC; }
+    // Send Global speed estimate from a vision source.
+    rpc SetVisionSpeedEstimate(SetVisionSpeedEstimateRequest) returns(SetVisionSpeedEstimateResponse) { option (mavsdk.options.async_type) = SYNC; }
     // Send motion capture attitude and position.
     rpc SetAttitudePositionMocap(SetAttitudePositionMocapRequest) returns(SetAttitudePositionMocapResponse) { option (mavsdk.options.async_type) = SYNC; }
     // Send odometry information with an external interface.
@@ -25,6 +27,13 @@ message SetVisionPositionEstimateRequest {
     VisionPositionEstimate vision_position_estimate = 1; // The vision position estimate
 }
 message SetVisionPositionEstimateResponse {
+    MocapResult mocap_result = 1;
+}
+
+message SetVisionSpeedEstimateRequest {
+    VisionSpeedEstimate vision_speed_estimate = 1; // The vision speed estimate
+}
+message SetVisionSpeedEstimateResponse {
     MocapResult mocap_result = 1;
 }
 
@@ -61,6 +70,13 @@ message SpeedBody {
     float x_m_s = 1; // Velocity in X in metres/second.
     float y_m_s = 2; // Velocity in Y in metres/second.
     float z_m_s = 3; // Velocity in Z in metres/second.
+}
+
+// Speed type, represented in NED (North East Down) coordinates.
+message SpeedNed {
+    float north_m_s = 1; // Velocity North in metres/second.
+    float east_m_s = 2; // Velocity East in metres/second.
+    float down_m_s = 3; // Velocity Down in metres/second.
 }
 
 // Angular velocity type
@@ -103,6 +119,13 @@ message VisionPositionEstimate {
     PositionBody position_body = 2; // Global position (m)
     AngleBody angle_body = 3; // Body angle (rad).
     Covariance pose_covariance = 4; // Pose cross-covariance matrix.
+}
+
+// Global speed estimate from a vision source.
+message VisionSpeedEstimate {
+    uint64 time_usec = 1; // Timestamp UNIX Epoch time (0 to use Backend timestamp)
+    SpeedNed speed_ned = 2; // Global speed (m/s)
+    Covariance speed_covariance = 3; // Linear velocity cross-covariance matrix.
 }
 
 // Motion capture attitude and position

@@ -824,7 +824,7 @@ message Wind {
     float var_horiz_m_s = 4 [(mavsdk.options.default_value)="NaN"]; // Variability of wind in XY, 1-STD estimated from a 1 Hz lowpassed wind estimate
     float var_vert_m_s = 5 [(mavsdk.options.default_value)="NaN"]; // Variability of wind in Z, 1-STD estimated from a 1 Hz lowpassed wind estimate
     float wind_alt_m = 6 [(mavsdk.options.default_value)="NaN"]; // Altitude (MSL) that this measurement was taken at
-    float horiz_accuracy_m_s = 7 [(mavsdk.options.default_value)="NaN"]; // Horizontal speed 1-STD accuracy 
+    float wind_speed_horizontal_stddev_m_s = 7 [(mavsdk.options.default_value)="NaN"]; // Horizontal speed 1-STD accuracy 
     float vert_accuracy_m_s = 8 [(mavsdk.options.default_value)="NaN"]; // Vertical speed 1-STD accuracy
 }
 

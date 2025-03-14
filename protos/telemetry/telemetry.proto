@@ -77,7 +77,7 @@ service TelemetryService {
     // Subscribe to 'Altitude' updates.
     rpc SubscribeAltitude(SubscribeAltitudeRequest) returns(stream AltitudeResponse){}
     // Subscribe to 'Wind Estimated' updates.
-    rpc SubscribeWindCov(SubscribeWindCovRequest) returns(stream WindCovResponse){}
+    rpc SubscribeWind(SubscribeWindRequest) returns(stream WindResponse){}
 
     // Set rate to 'position' updates.
     rpc SetRatePosition(SetRatePositionRequest) returns(SetRatePositionResponse) {}
@@ -293,8 +293,8 @@ message AltitudeResponse {
     Altitude altitude = 1; // The next altitude
 }
 
-message SubscribeWindCovRequest {}
-message WindCovResponse {
+message SubscribeWindRequest {}
+message WindResponse {
     Wind wind = 1; // The next altitude
 }
 

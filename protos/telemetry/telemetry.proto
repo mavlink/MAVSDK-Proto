@@ -295,7 +295,7 @@ message AltitudeResponse {
 
 message SubscribeWindRequest {}
 message WindResponse {
-    Wind wind = 1; // The next altitude
+    Wind wind = 1; // The next wind
 }
 
 message SetRatePositionRequest {

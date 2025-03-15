@@ -34,6 +34,10 @@ service ActionServerService {
     rpc SetAllowableFlightModes(SetAllowableFlightModesRequest) returns(SetAllowableFlightModesResponse) { option (mavsdk.options.async_type) = SYNC; }
     // Get which modes the vehicle can transition to (Manual always allowed)
     rpc GetAllowableFlightModes(GetAllowableFlightModesRequest) returns(GetAllowableFlightModesResponse) { option (mavsdk.options.async_type) = SYNC; }
+    // Set/override the armed/disarmed state of the vehicle directly, and notify subscribers
+    rpc SetArmedState(SetArmedStateRequest) returns(SetArmedStateResponse) { option (mavsdk.options.async_type) = SYNC; }
+    // Set/override the flight mode of the vehicle directly, and notify subscribers
+    rpc SetFlightMode(SetFlightModeRequest) returns(SetFlightModeResponse) { option (mavsdk.options.async_type) = SYNC; }
 }
 
 message SetAllowTakeoffRequest {
@@ -53,6 +57,14 @@ message SetDisarmableRequest {
 message SetAllowableFlightModesRequest
 {
     AllowableFlightModes flight_modes = 1;
+}
+
+message SetArmedStateRequest {
+    bool is_armed = 1; // Is armed now?
+}
+
+message SetFlightModeRequest {
+    FlightMode flight_mode = 1; // Current vehicle flight mode, e.g. Takeoff/Mission/Land/etc.
 }
 
 message GetAllowableFlightModesRequest {}
@@ -124,6 +136,14 @@ message SetAllowTakeoffResponse {
 
 message GetAllowableFlightModesResponse {
     AllowableFlightModes flight_modes = 1;
+}
+
+message SetArmedStateResponse {
+    ActionServerResult action_server_result = 1;
+}
+
+message SetFlightModeResponse {
+    ActionServerResult action_server_result = 1;
 }
 
 // State to check if the vehicle can transition to

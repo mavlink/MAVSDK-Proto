@@ -2,6 +2,7 @@
 *.egg-info/
 *__pycache__/
 *.pyc
+.idea/
 pb_plugins/generated/
 build/
 dist/

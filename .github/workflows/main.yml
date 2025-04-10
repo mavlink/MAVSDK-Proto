@@ -13,7 +13,7 @@ on:
 jobs:
   prototool:
     name: prototool linter
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v1
       - name: Run prototool
@@ -21,7 +21,7 @@ jobs:
 
   deploy:
     name: deploy
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v1
       - name: Install prerequisites
@@ -37,8 +37,8 @@ jobs:
           retention-days: 2
       - name: Deploy to PyPi
         env:
-          TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
-          TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
           TWINE_NON_INTERACTIVE: 1
         if: startsWith(github.ref, 'refs/tags/')
         run: |

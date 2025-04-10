@@ -449,13 +449,16 @@ message StorageInformation {
     float write_speed_mib_s = 8; // Write speed [MiB/s]
 }
 
+// Capture status
 message CaptureStatus {
+    // The image status
     enum ImageStatus {
         IMAGE_STATUS_IDLE = 0; // idle
         IMAGE_STATUS_CAPTURE_IN_PROGRESS = 1; // capture in progress
         IMAGE_STATUS_INTERVAL_IDLE = 2; // interval set but idle
         IMAGE_STATUS_INTERVAL_IN_PROGRESS = 3; // interval set and capture in progress)
     }
+    // The video status
     enum VideoStatus {
         VIDEO_STATUS_IDLE = 0;  // idle
         VIDEO_STATUS_CAPTURE_IN_PROGRESS = 1;   // capture in progress

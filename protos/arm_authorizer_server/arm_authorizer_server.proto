@@ -7,6 +7,7 @@ import "mavsdk_options.proto";
 option java_package = "io.mavsdk.arm_authorizer";
 option java_outer_classname = "ArmAuthorizerServerProto";
 
+// Use arm authorization.
 service ArmAuthorizerServerService {
     // Subscribe to arm authorization request messages. Each request received should respond to using RespondArmAuthorization
     rpc SubscribeArmAuthorization(SubscribeArmAuthorizationRequest) returns(stream ArmAuthorizationResponse) { option (mavsdk.options.async_type) = ASYNC; }
@@ -47,6 +48,7 @@ message RejectArmAuthorizationResponse {
 }
 
 message ArmAuthorizerServerResult {
+    // The result
     enum Result {
         RESULT_UNKNOWN = 0; // Unknown result
         RESULT_SUCCESS = 1; // Command accepted
@@ -57,6 +59,7 @@ message ArmAuthorizerServerResult {
     string result_str = 2; // Human-readable English string describing the result
 }
 
+// The rejection reason
 enum RejectionReason {
     REJECTION_REASON_GENERIC = 0; // Not a specific reason
     REJECTION_REASON_NONE = 1; // Authorizer will send the error as string to GCS

@@ -241,6 +241,7 @@ enum ControlMode {
     CONTROL_MODE_SECONDARY = 2; // To take secondary control over the gimbal
 }
 
+// The send mode type
 enum SendMode {
     SEND_MODE_ONCE = 0; // Send command exactly once with quality of service (use for sporadic commands slower than 1 Hz)
     SEND_MODE_STREAM = 1; // Stream setpoint without quality of service (use for setpoints faster than 1 Hz).

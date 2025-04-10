@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-from .utils import (filter_out_result,
-                    is_stream,
-                    name_parser_factory,
-                    no_return,
-                    Param,
-                    remove_subscribe,
-                    type_info_factory)
+from protoc_gen_mavsdk.utils import (filter_out_result,
+                                     is_stream,
+                                     name_parser_factory,
+                                     no_return,
+                                     Param,
+                                     remove_subscribe,
+                                     type_info_factory)
 
 
 class Method(object):

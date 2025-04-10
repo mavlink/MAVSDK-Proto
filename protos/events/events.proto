@@ -26,31 +26,34 @@ service EventsService {
     rpc GetHealthAndArmingChecksReport(GetHealthAndArmingChecksReportRequest) returns(GetHealthAndArmingChecksReportResponse) { option (mavsdk.options.async_type) = SYNC; }
 }
 
+// Log level type
 enum LogLevel {
-    LOG_LEVEL_EMERGENCY = 0;
-    LOG_LEVEL_ALERT = 1;
-    LOG_LEVEL_CRITICAL = 2;
-    LOG_LEVEL_ERROR = 3;
-    LOG_LEVEL_WARNING = 4;
-    LOG_LEVEL_NOTICE = 5;
-    LOG_LEVEL_INFO = 6;
-    LOG_LEVEL_DEBUG = 7;
+    LOG_LEVEL_EMERGENCY = 0; // Emergency
+    LOG_LEVEL_ALERT = 1; // Alert
+    LOG_LEVEL_CRITICAL = 2; // Critical
+    LOG_LEVEL_ERROR = 3; // Error
+    LOG_LEVEL_WARNING = 4; // Warning
+    LOG_LEVEL_NOTICE = 5; // Notice
+    LOG_LEVEL_INFO = 6; // Info
+    LOG_LEVEL_DEBUG = 7; // Debug
 }
 
+// Event type
 message Event {
     uint32 compid = 1; // The source component ID of the event
     string message = 2; // Short, single-line message
     string description = 3; // Detailed description (optional, might be multiple lines)
-    LogLevel log_level = 4;
+    LogLevel log_level = 4; // Log level of message
 
     string event_namespace = 5; // Namespace, e.g. "px4"
     string event_name = 6; // Event name (unique within the namespace)
 }
 
+// Health and arming check problem type
 message HealthAndArmingCheckProblem {
     string message = 1; // Short, single-line message
     string description = 2; // Detailed description (optional, might be multiple lines)
-    LogLevel log_level = 3;
+    LogLevel log_level = 3; // Log level of message
     string health_component = 4; // Associated health component, e.g. "gps"
 }
 
@@ -61,6 +64,7 @@ message HealthAndArmingCheckMode {
     repeated HealthAndArmingCheckProblem problems = 3; // List of reported problems for the mode
 }
 
+// Health component report type
 message HealthComponentReport {
     string name = 1; // Unique component name, e.g. "gps"
     string label = 2; // Human readable label of the component, e.g. "GPS" or "Accelerometer"
@@ -69,6 +73,7 @@ message HealthComponentReport {
     bool has_warning = 5; // If the component has warnings
 }
 
+// Health and arming check report type
 message HealthAndArmingCheckReport {
     HealthAndArmingCheckMode current_mode_intention = 1; // Report for currently intended mode
     // TODO: we can add reports for different modes here too (e.g. Takeoff or Mission)
@@ -79,15 +84,17 @@ message HealthAndArmingCheckReport {
 
 // Result type.
 message EventsResult {
+    // Possible results returned
     enum Result {
-        RESULT_SUCCESS = 0;
-        RESULT_NOT_AVAILABLE = 1;
-        RESULT_CONNECTION_ERROR = 2;
-        RESULT_UNSUPPORTED = 3;
-        RESULT_DENIED = 4;
-        RESULT_FAILED = 5;
-        RESULT_TIMEOUT = 6;
-        RESULT_NO_SYSTEM = 7;
+        RESULT_SUCCESS = 0; // Successful result
+        RESULT_NOT_AVAILABLE = 1; // Not available
+        RESULT_CONNECTION_ERROR = 2; // Connection error
+        RESULT_UNSUPPORTED = 3; // Unsupported
+        RESULT_DENIED = 4; // Denied
+        RESULT_FAILED = 5; // Failed
+        RESULT_TIMEOUT = 6; // Timeout
+        RESULT_NO_SYSTEM = 7; // No system available
+        RESULT_UNKNOWN = 8; // Unknown result
     }
 
     Result result = 1; // Result enum value
@@ -98,17 +105,17 @@ message EventsResult {
 message SubscribeEventsRequest {}
 
 message EventsResponse {
-    Event event = 1;
+    Event event = 1; // The event
 }
 
 message SubscribeHealthAndArmingChecksRequest {}
 
 message HealthAndArmingChecksResponse {
-    HealthAndArmingCheckReport report = 1;
+    HealthAndArmingCheckReport report = 1; // The report
 }
 
 message GetHealthAndArmingChecksReportRequest {}
 message GetHealthAndArmingChecksReportResponse {
-    EventsResult events_result = 1;
-    HealthAndArmingCheckReport report = 2;
+    EventsResult events_result = 1; // The events result
+    HealthAndArmingCheckReport report = 2; // The report
 }

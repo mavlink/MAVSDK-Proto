@@ -76,6 +76,8 @@ service TelemetryService {
     rpc SubscribeHeading(SubscribeHeadingRequest) returns(stream HeadingResponse) {}
     // Subscribe to 'Altitude' updates.
     rpc SubscribeAltitude(SubscribeAltitudeRequest) returns(stream AltitudeResponse){}
+    // Subscribe to 'Wind Estimated' updates.
+    rpc SubscribeWind(SubscribeWindRequest) returns(stream WindResponse){}
 
     // Set rate to 'position' updates.
     rpc SetRatePosition(SetRatePositionRequest) returns(SetRatePositionResponse) {}
@@ -289,6 +291,11 @@ message HeadingResponse {
 message SubscribeAltitudeRequest {}
 message AltitudeResponse {
     Altitude altitude = 1; // The next altitude
+}
+
+message SubscribeWindRequest {}
+message WindResponse {
+    Wind wind = 1; // The next wind
 }
 
 message SetRatePositionRequest {
@@ -757,6 +764,9 @@ message FixedwingMetrics {
     float airspeed_m_s = 1 [(mavsdk.options.default_value)="NaN"]; // Current indicated airspeed (IAS) in metres per second
     float throttle_percentage = 2 [(mavsdk.options.default_value)="NaN"]; // Current throttle setting (0 to 100)
     float climb_rate_m_s = 3 [(mavsdk.options.default_value)="NaN"]; // Current climb rate in metres per second
+    float groundspeed_m_s = 4 [(mavsdk.options.default_value)="NaN"]; // Current groundspeed metres per second
+    float heading_deg = 5 [(mavsdk.options.default_value)="NaN"]; // Current heading in compass units (0-360, 0=north)
+    float absolute_altitude_m = 6 [(mavsdk.options.default_value)="NaN"]; // Current altitude in metres (MSL)
 }
 
 // AccelerationFrd message type.
@@ -804,6 +814,18 @@ message Altitude {
     float altitude_relative_m = 4 [(mavsdk.options.default_value)="NaN"]; // Altitude above home position in meters
     float altitude_terrain_m = 5 [(mavsdk.options.default_value)="NaN"]; // Altitude above terrain in meters
     float bottom_clearance_m = 6 [(mavsdk.options.default_value)="NaN"]; // This is not the altitude, but the clear space below the system according to the fused clearance estimate in meters.
+}
+
+// Wind message type
+message Wind {
+    float wind_x_ned_m_s = 1 [(mavsdk.options.default_value)="NaN"]; // Wind in North (NED) direction
+    float wind_y_ned_m_s = 2 [(mavsdk.options.default_value)="NaN"]; //  Wind in East (NED) direction
+    float wind_z_ned_m_s = 3 [(mavsdk.options.default_value)="NaN"]; // Wind in down (NED) direction
+    float horizontal_variability_stddev_m_s = 4 [(mavsdk.options.default_value)="NaN"]; // Variability of wind in XY, 1-STD estimated from a 1 Hz lowpassed wind estimate
+    float vertical_variability_stddev_m_s = 5 [(mavsdk.options.default_value)="NaN"]; // Variability of wind in Z, 1-STD estimated from a 1 Hz lowpassed wind estimate
+    float wind_altitude_msl_m = 6 [(mavsdk.options.default_value)="NaN"]; // Altitude (MSL) that this measurement was taken at
+    float horizontal_wind_speed_accuracy_m_s = 7 [(mavsdk.options.default_value)="NaN"]; // Horizontal speed 1-STD accuracy 
+    float vertical_wind_speed_accuracy_m_s = 8 [(mavsdk.options.default_value)="NaN"]; // Vertical speed 1-STD accuracy
 }
 
 // Result type.

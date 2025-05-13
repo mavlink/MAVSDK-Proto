@@ -126,6 +126,8 @@ service TelemetryService {
     rpc SetRateDistanceSensor(SetRateDistanceSensorRequest) returns(SetRateDistanceSensorResponse) {}
     // Set rate to 'Altitude' updates.
     rpc SetRateAltitude(SetRateAltitudeRequest) returns(SetRateAltitudeResponse){}
+    // Set rate to 'Health' updates.
+    rpc SetRateHealth(SetRateHealthRequest) returns(SetRateHealthResponse){}
 
     // Get the GPS location of where the estimator has been initialized.
     rpc GetGpsGlobalOrigin(GetGpsGlobalOriginRequest) returns(GetGpsGlobalOriginResponse) {}
@@ -473,6 +475,13 @@ message SetRateAltitudeRequest {
     double rate_hz = 1;  // The requested rate (in Hertz)
 }
 message SetRateAltitudeResponse {
+    TelemetryResult telemetry_result = 1;
+}
+
+message SetRateHealthRequest {
+    double rate_hz = 1;  // The requested rate (in Hertz)
+}
+message SetRateHealthResponse {
     TelemetryResult telemetry_result = 1;
 }
 

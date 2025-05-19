@@ -1,0 +1,294 @@
+syntax = "proto3";
+
+package mavsdk.rpc.remote_id;
+
+import "mavsdk_options.proto";
+
+option java_package = "io.mavsdk.remote_id";
+option java_outer_classname = "RemoteIdProto";
+
+service RemoteIdService {
+    /*
+     * Update the BasicId structure sent with the basic_id packet
+     */
+    rpc SetBasicId(SetBasicIdRequest) returns(SetBasicIdResponse) { option (mavsdk.options.async_type) = SYNC; }
+    /*
+     * Update the Location structure sent with the location packet
+     */
+    rpc SetLocation(SetLocationRequest) returns(SetLocationResponse) { option (mavsdk.options.async_type) = SYNC; }
+    /*
+     * Update the LocationAccuracy structure sent with the location_accuracy packet
+     */
+    rpc SetLocationAccuracy(SetLocationAccuracyRequest) returns(SetLocationAccuracyResponse) { option (mavsdk.options.async_type) = SYNC; }
+    /*
+     * Update the System structure sent with the system packet
+     */
+    rpc SetSystem(SetSystemRequest) returns(SetSystemResponse) { option (mavsdk.options.async_type) = SYNC; }
+    /*
+     * Update the OperatorId structure sent with the operator_id packet
+     */
+    rpc SetOperatorId(SetOperatorIdRequest) returns(SetOperatorIdResponse) { option (mavsdk.options.async_type) = SYNC; }
+    /*
+     * Update the SetSelfId structure sent with the self_id packet
+     */
+    rpc SetSelfId(SetSelfIdRequest) returns(SetSelfIdResponse) { option (mavsdk.options.async_type) = SYNC; }
+    /*
+     * Subscribe to arm status updates.
+     */
+    rpc SubscribeArmStatus(SubscribeArmStatusRequest) returns(stream ArmStatusResponse) {}
+}
+
+message SetBasicIdRequest {
+    BasicId basic_id = 1; // Desired basic_id
+}
+message SetBasicIdResponse {
+    RemoteIdResult remote_id_result = 1;
+}
+
+message SetLocationRequest {
+    Location location = 1; // Desired location
+}
+message SetLocationResponse {
+    RemoteIdResult remote_id_result = 1;
+}
+
+message SetLocationAccuracyRequest {
+    LocationAccuracy location_accuracy = 1; // Desidered location
+}
+message SetLocationAccuracyResponse {
+    RemoteIdResult remote_id_result = 1;
+}
+
+message SetSystemRequest {
+    SystemId system = 1; // Desired system
+}
+message SetSystemResponse {
+    RemoteIdResult remote_id_result = 1;
+}
+
+message SetOperatorIdRequest {
+    OperatorId system = 1; // Desired operator_id
+}
+message SetOperatorIdResponse {
+    RemoteIdResult remote_id_result = 1;
+}
+
+message SetSelfIdRequest {
+    SelfId self_id = 1; // Desired self_id
+}
+message SetSelfIdResponse {
+    RemoteIdResult remote_id_result = 1;
+}
+
+message SubscribeArmStatusRequest { }
+message ArmStatusResponse {
+    ArmStatus arm_status = 1;
+}
+
+message BasicId {
+    enum IdType {
+        ID_TYPE_NONE = 0; // No type defined.
+        ID_TYPE_SERIAL_NUMBER = 1; // Manufacturer Serial Number (ANSI/CTA-2063 format).
+        ID_TYPE_CAA_REGISTRATION_ID = 2; // CAA (Civil Aviation Authority) registered ID. Format: [ICAO Country Code].[CAA Assigned ID].
+        ID_TYPE_UTM_ASSIGNED_UUID = 3; // UTM (Unmanned Traffic Management) assigned UUID (RFC4122).
+        ID_TYPE_SPECIFIC_SESSION_ID = 4; // A 20 byte ID for a specific flight/session.
+    }
+
+    enum UasType {
+        UAS_TYPE_NONE = 0; // No UA (Unmanned Aircraft) type defined.
+        UAS_TYPE_AEROPLANE = 1; // Aeroplane/Airplane. Fixed wing.
+        UAS_TYPE_HELICOPTER_OR_MULTIROTOR = 2; // Helicopter or multirotor.
+        UAS_TYPE_GYROPLANE = 3; // Gyroplane.
+        UAS_TYPE_HYBRID_LIFT = 4; // VTOL (Vertical Take-Off and Landing). Fixed wing aircraft that can take off vertically.
+        UAS_TYPE_ORNITHOPTER = 5; // Ornithopter.
+        UAS_TYPE_GLIDER = 6; // Glider.
+        UAS_TYPE_KITE = 7; // Kite.
+        UAS_TYPE_FREE_BALLOON = 8; // Free Balloon.
+        UAS_TYPE_CAPTIVE_BALLOON = 9; // Captive Balloon.
+        UAS_TYPE_AIRSHIP = 10; // Airship. E.g. a blimp.
+        UAS_TYPE_FREE_FALL_PARACHUTE = 11; // Free Fall/Parachute (unpowered).
+        UAS_TYPE_ROCKET = 12; // Rocket.
+        UAS_TYPE_TETHERED_POWERED_AIRCRAFT = 13; // Tethered powered aircraft.
+        UAS_TYPE_GROUND_OBSTACLE = 14; // Ground Obstacle.
+        UAS_TYPE_OTHER = 15; // Other type of aircraft not listed earlier.
+    }
+
+    IdType id_type = 1; // Indicates the format for the uas_id field of this message.
+    UasType ua_type = 2; // Indicates the type of UA (Unmanned Aircraft).
+    string uas_id = 3; // UAS ID following the format specified by id_type.
+}
+
+message Location {
+    enum Status {
+        STATUS_UNDECLARED = 0; // The status of the (UA) Unmanned Aircraft is undefined.
+        STATUS_GROUND = 1; // The UA is on the ground.
+        STATUS_AIRBORNE = 2; // The UA is in the air.
+        STATUS_EMERGENCY = 3; // The UA is having an emergency.
+        STATUS_REMOTE_ID_SYSTEM_FAILURE = 4; // The remote ID system is failing or unreliable in some way.
+    }
+
+    enum HeightRef {
+        HEIGHT_REF_OVER_TAKEOFF = 0; // The height field is relative to the take-off location.
+        HEIGHT_REF_OVER_GROUND = 1; // The height field is relative to ground.
+    }
+
+    Status status = 1; // Indicates whether the unmanned aircraft is on the ground or in the air.
+    uint32 direction_deg = 2; // Direction over ground measured clockwise from true North: 0 - 359 deg.
+    float speed_horizontal_m_s = 3; // Ground speed in meters per second. Positive only.
+    float speed_vertical_m_s = 4; // The vertical speed in meters per second. Up is positive.
+    double latitude_deg = 5; // Current latitude of the unmanned aircraft
+    double longitude_deg = 6; // Current longitude of the unmanned aircraft
+    float altitude_barometric_m = 7; // The altitude calculated from the barometric pressure.
+    float altitude_geodetic_m = 8; // The geodetic altitude as defined by WGS84.
+    HeightRef height_reference = 9; // Indicates the reference point for the height field.
+    float height_m = 10; // The current height of the unmanned aircraft. As indicated by height_reference.
+    uint64 time_utc_us = 11; // Timestamp in UTC (since UNIX epoch) in microseconds
+}
+
+message LocationAccuracy {
+    enum HorAcc {
+        HOR_ACC_UNKNOWN = 0; // The horizontal accuracy is unknown.
+        HOR_ACC_NM_10 = 1; // The horizontal accuracy is smaller than 10 Nautical Miles. 18.52 km.
+        HOR_ACC_NM_4 = 2; // The horizontal accuracy is smaller than 4 Nautical Miles. 7.408 km.
+        HOR_ACC_NM_2 = 3; // The horizontal accuracy is smaller than 2 Nautical Miles. 3.704 km.
+        HOR_ACC_NM_1 = 4; // The horizontal accuracy is smaller than 1 Nautical Miles. 1.852 km.
+        HOR_ACC_NM_0_5 = 5; // The horizontal accuracy is smaller than 0.5 Nautical Miles. 926 m.
+        HOR_ACC_NM_0_3 = 6; // The horizontal accuracy is smaller than 0.3 Nautical Miles. 555.6 m.
+        HOR_ACC_NM_0_1 = 7; // The horizontal accuracy is smaller than 0.1 Nautical Miles. 185.2 m.
+        HOR_ACC_NM_0_05 = 8; // The horizontal accuracy is smaller than 0.05 Nautical Miles. 92.6 m.
+        HOR_ACC_METER_30 = 9; // The horizontal accuracy is smaller than 30 meter.
+        HOR_ACC_METER_10 = 10; // The horizontal accuracy is smaller than 10 meter.
+        HOR_ACC_METER_3 = 11; // The horizontal accuracy is smaller than 3 meter.
+        HOR_ACC_METER_1 = 12; // The horizontal accuracy is smaller than 1 meter
+    }
+
+    enum VerAcc {
+        VER_ACC_UNKNOWN = 0; // The vertical accuracy is unknown.
+        VER_ACC_METER_150 = 1; // The vertical accuracy is smaller than 150 meter.
+        VER_ACC_METER_45 = 2; // The vertical accuracy is smaller than 45 meter.
+        VER_ACC_METER_25 = 3; // The vertical accuracy is smaller than 25 meter.
+        VER_ACC_METER_10 = 4; // The vertical accuracy is smaller than 10 meter.
+        VER_ACC_METER_3 = 5; // The vertical accuracy is smaller than 3 meter.
+        VER_ACC_METER_1 = 6; // The vertical accuracy is smaller than 1 meter.
+    }
+
+    enum SpeedAcc {
+        SPEED_ACC_UNKNOWN = 0; // The speed accuracy is unknown.
+        SPEED_ACC_METERS_PER_SECOND_10 = 1; // The speed accuracy is smaller than 10 meters per second.
+        SPEED_ACC_METERS_PER_SECON_3 = 2; // The speed accuracy is smaller than 3 meters per second.
+        SPEED_ACC_METERS_PER_SECOND_1 = 3; // The speed accuracy is smaller than 1 meters per second.
+        SPEED_ACC_METERS_PER_SECOND_0_3 = 4; // The speed accuracy is smaller than 0.3 meters per second.
+    }
+
+    enum TimeAcc {
+        TIME_ACC_UNKNOWN= 0; // The timestamp accuracy is unknown.
+        TIME_ACC_SECOND_0_1= 1; // The timestamp accuracy is smaller than or equal to 0.1 second.
+        TIME_ACC_SECOND_0_2= 2; // The timestamp accuracy is smaller than or equal to 0.2 second.
+        TIME_ACC_SECOND_0_3= 3; // The timestamp accuracy is smaller than or equal to 0.3 second.
+        TIME_ACC_SECOND_0_4= 4; // The timestamp accuracy is smaller than or equal to 0.4 second.
+        TIME_ACC_SECOND_0_5= 5; // The timestamp accuracy is smaller than or equal to 0.5 second.
+        TIME_ACC_SECOND_0_6= 6; // The timestamp accuracy is smaller than or equal to 0.6 second.
+        TIME_ACC_SECOND_0_7= 7; // The timestamp accuracy is smaller than or equal to 0.7 second.
+        TIME_ACC_SECOND_0_8= 8; // The timestamp accuracy is smaller than or equal to 0.8 second.
+        TIME_ACC_SECOND_0_9= 9; // The timestamp accuracy is smaller than or equal to 0.9 second.
+        TIME_ACC_SECOND_1_0= 10; // The timestamp accuracy is smaller than or equal to 1.0 second.
+        TIME_ACC_SECOND_1_1= 11; // The timestamp accuracy is smaller than or equal to 1.1 second.
+        TIME_ACC_SECOND_1_2= 12; // The timestamp accuracy is smaller than or equal to 1.2 second.
+        TIME_ACC_SECOND_1_3= 13; // The timestamp accuracy is smaller than or equal to 1.3 second.
+        TIME_ACC_SECOND_1_4= 14; // The timestamp accuracy is smaller than or equal to 1.4 second.
+        TIME_ACC_SECOND_1_5= 15; // The timestamp accuracy is smaller than or equal to 1.5 second.
+    }
+
+    HorAcc horizontal_accuracy = 1; // The accuracy of the horizontal position.
+    VerAcc vertical_accuracy = 2; // The accuracy of the vertical position.
+    VerAcc barometer_accuracy = 3; // The accuracy of the barometric altitude.
+    SpeedAcc speed_accuracy = 4; // The accuracy of the horizontal and vertical speed.
+    TimeAcc timestamp_accuracy = 5; // The accuracy of the timestamps.
+}
+
+message SystemId {
+    enum OperatorLocationType {
+        OPERATOR_LOCATION_TYPE_TAKEOFF = 0; // The location/altitude of the operator is the same as the take-off location.
+        OPERATOR_LOCATION_TYPE_LIVE_GNSS = 1; // The location/altitude of the operator is dynamic. E.g. based on live GNSS data.
+        OPERATOR_LOCATION_TYPE_FIXED = 2; // The location/altitude of the operator are fixed values.
+    }
+
+    enum ClassificationType {
+        CLASSIFICATION_TYPE_UNDECLARED = 0; // The classification type for the UA is undeclared.
+        CLASSIFICATION_TYPE_EU = 1; // The classification type for the UA follows EU (European Union) specifications.
+    }
+
+    enum CategoryEu {
+        CATEGORY_EU_UNDECLARED = 0; // The category for the UA, according to the EU specification, is undeclared.
+        CATEGORY_EU_OPEN = 1; // The category for the UA, according to the EU specification, is the Open category.
+        CATEGORY_EU_SPECIFIC = 2; // The category for the UA, according to the EU specification, is the Specific category.
+        CATEGORY_EU_CERTIFIED = 3; // The category for the UA, according to the EU specification, is the Certified category.
+    }
+
+    enum ClassEu {
+        CLASS_EU_UNDECLARED = 0; // The class for the UA, according to the EU specification, is undeclared.
+        CLASS_EU_CLASS_0 = 1; // The class for the UA, according to the EU specification, is Class 0.
+        CLASS_EU_CLASS_1 = 2; // The class for the UA, according to the EU specification, is Class 1.
+        CLASS_EU_CLASS_2 = 3; // The class for the UA, according to the EU specification, is Class 2.
+        CLASS_EU_CLASS_3 = 4; // The class for the UA, according to the EU specification, is Class 3.
+        CLASS_EU_CLASS_4 = 5; // The class for the UA, according to the EU specification, is Class 4.
+        CLASS_EU_CLASS_5 = 6; // The class for the UA, according to the EU specification, is Class 5.
+        CLASS_EU_CLASS_6 = 7; // The class for the UA, according to the EU specification, is Class 6.
+}
+
+    OperatorLocationType operator_location_type = 1; // Specifies the operator location type.
+    ClassificationType classification_type = 2; // Specifies the classification type of the UA.
+    double operator_latitude_deg = 3; // Latitude of the operator.
+    double operator_longitude_deg = 4; // Longitude of the operator.
+    uint32 area_count = 5; // Number of aircraft in the area.
+    uint32 area_radius_m = 6; // Radius of the cylindrical area of the group or formation.
+    float area_ceiling_m = 7; // Area Operations Ceiling relative to WGS84.
+    float area_floor_m = 8; // Area Operations Floor relative to WGS84.
+    CategoryEu category_eu = 9; // When classification_type is MAV_ODID_CLASSIFICATION_TYPE_EU, specifies the category of the UA.
+    ClassEu class_eu = 10; // When classification_type is MAV_ODID_CLASSIFICATION_TYPE_EU, specifies the class of the UA.
+    float operator_altitude_geo_m = 11; // Geodetic altitude of the operator relative to WGS84. If unknown: -1000 m.
+    uint64 time_utc_us = 12; // Timestamp in UTC (since UNIX epoch) in microseconds
+}
+
+message OperatorId {
+    enum OperatorIdType {
+        OPERATOR_ID_TYPE_CAA = 0; // CAA (Civil Aviation Authority) registered operator ID.
+    }
+
+    OperatorIdType operator_id_type = 1; // Indicates the type of the description field.
+    string operator_id = 2; // Text description or numeric value expressed as ASCII characters.
+}
+
+message SelfId {
+    enum DescType {
+        DESC_TYPE_TEXT = 0; // Optional free-form text description of the purpose of the flight.
+        DESC_TYPE_EMERGENCY = 1; // Optional additional clarification when status == MAV_ODID_STATUS_EMERGENCY.
+        DESC_TYPE_EXTENDED_STATUS = 2; // Optional additional clarification when status != MAV_ODID_STATUS_EMERGENCY.
+    }
+
+    DescType description_type = 1; // Indicates the type of the operator_id field.
+    string description = 2; // Text description or numeric value expressed as ASCII characters.
+}
+
+message ArmStatus {
+    enum Status {
+        STATUS_GOOD_TO_ARM = 0; // Passing arming checks.
+        STATUS_PRE_ARM_FAIL_GENERIC = 1; // Generic arming failure, see error string for details.
+    }
+
+    Status status = 1; // Status level indicating if arming is allowed.
+    string error = 2;  // Text error message, should be empty if status is good to arm. Fill with nulls in unused portion.
+}
+
+// Result type.
+message RemoteIdResult {
+    // Possible results returned for camera commands
+    enum Result {
+        RESULT_UNKNOWN = 0; // Unknown result
+        RESULT_SUCCESS = 1; // Command executed successfully
+        RESULT_ERROR = 2; // An error has occurred while executing the command
+    }
+
+    Result result = 1; // Result enum value
+    string result_str = 2; // Human-readable English string describing the result
+}

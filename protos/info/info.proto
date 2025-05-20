@@ -10,7 +10,7 @@ option java_outer_classname = "InfoProto";
 // Provide information about the hardware and/or software of a system.
 service InfoService {
     // Get flight information of the system.
-    rpc GetFlightInformation(GetFlightInformationRequest) returns(GetFlightInformationResponse) { option (mavsdk.options.async_type) = SYNC; }
+    rpc GetFlightInformationSync(GetFlightInformationSyncRequest) returns(GetFlightInformationSyncResponse) { option (mavsdk.options.async_type) = SYNC; }
     // Get the identification of the system.
     rpc GetIdentification(GetIdentificationRequest) returns(GetIdentificationResponse) { option (mavsdk.options.async_type) = SYNC; }
     // Get product information of the system.
@@ -24,8 +24,8 @@ service InfoService {
     rpc SubscribeFlightInformation(SubscribeFlightInformationRequest) returns(stream FlightInformationResponse) { option (mavsdk.options.async_type) = ASYNC; }
 }
 
-message GetFlightInformationRequest {}
-message GetFlightInformationResponse {
+message GetFlightInformationSyncRequest {}
+message GetFlightInformationSyncResponse {
     InfoResult info_result = 1;
     FlightInfo flight_info = 2; // Flight information of the system
 }

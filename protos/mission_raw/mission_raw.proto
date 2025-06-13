@@ -103,6 +103,12 @@ service MissionRawService {
      * - Structure Scan
      */
     rpc ImportQgroundcontrolMissionFromString(ImportQgroundcontrolMissionFromStringRequest) returns(ImportQgroundcontrolMissionFromStringResponse) { option (mavsdk.options.async_type) = SYNC; }
+    /*
+     * Check if the mission is finished.
+     *
+     * Returns true if the mission is finished, false otherwise.
+     */
+    rpc IsMissionFinished(IsMissionFinishedRequest) returns(IsMissionFinishedResponse) { option (mavsdk.options.async_type) = SYNC; }
 }
 
 message UploadMissionRequest {
@@ -200,6 +206,12 @@ message ImportQgroundcontrolMissionFromStringRequest {
 message ImportQgroundcontrolMissionFromStringResponse {
     MissionRawResult mission_raw_result = 1;
     MissionImportData mission_import_data = 2; // The imported mission data
+}
+
+message IsMissionFinishedRequest {}
+message IsMissionFinishedResponse {
+    MissionRawResult mission_raw_result = 1;
+    bool is_finished = 2; // True if the mission is finished, false otherwise
 }
 
 // Mission progress type.

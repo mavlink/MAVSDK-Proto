@@ -104,6 +104,22 @@ service MissionRawService {
      */
     rpc ImportQgroundcontrolMissionFromString(ImportQgroundcontrolMissionFromStringRequest) returns(ImportQgroundcontrolMissionFromStringResponse) { option (mavsdk.options.async_type) = SYNC; }
     /*
+     * Import a Mission Planner mission in QGC WPL 110 format, from a file.
+     *
+     * Supported:
+     * - Waypoints
+     * - ArduPilot home position handling
+     */
+    rpc ImportMissionPlannerMission(ImportMissionPlannerMissionRequest) returns(ImportMissionPlannerMissionResponse) { option (mavsdk.options.async_type) = SYNC; }
+    /*
+     * Import a Mission Planner mission in QGC WPL 110 format, from a string.
+     *
+     * Supported:
+     * - Waypoints
+     * - ArduPilot home position handling
+     */
+    rpc ImportMissionPlannerMissionFromString(ImportMissionPlannerMissionFromStringRequest) returns(ImportMissionPlannerMissionFromStringResponse) { option (mavsdk.options.async_type) = SYNC; }
+    /*
      * Check if the mission is finished.
      *
      * Returns true if the mission is finished, false otherwise.
@@ -208,6 +224,22 @@ message ImportQgroundcontrolMissionFromStringResponse {
     MissionImportData mission_import_data = 2; // The imported mission data
 }
 
+message ImportMissionPlannerMissionRequest {
+    string mission_planner_path = 1; // File path of the Mission Planner mission file
+}
+message ImportMissionPlannerMissionResponse {
+    MissionRawResult mission_raw_result = 1;
+    MissionImportData mission_import_data = 2; // The imported mission data
+}
+
+message ImportMissionPlannerMissionFromStringRequest {
+    string mission_planner_mission = 1; // Mission Planner mission as string
+}
+message ImportMissionPlannerMissionFromStringResponse {
+    MissionRawResult mission_raw_result = 1;
+    MissionImportData mission_import_data = 2; // The imported mission data
+}
+
 message IsMissionFinishedRequest {}
 message IsMissionFinishedResponse {
     MissionRawResult mission_raw_result = 1;
@@ -267,6 +299,8 @@ message MissionRawResult {
         RESULT_CURRENT_INVALID = 16; // The current item is not set correctly
         RESULT_PROTOCOL_ERROR = 17; // There was a protocol error
         RESULT_INT_MESSAGES_NOT_SUPPORTED = 18; // The system does not support the MISSION_INT protocol
+        RESULT_FAILED_TO_OPEN_MISSION_PLANNER_PLAN = 19; // Failed to open the Mission Planner plan
+        RESULT_FAILED_TO_PARSE_MISSION_PLANNER_PLAN = 20; // Failed to parse the Mission Planner plan
     }
 
     Result result = 1; // Result enum value

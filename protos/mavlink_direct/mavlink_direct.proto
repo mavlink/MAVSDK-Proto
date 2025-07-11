@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package mavsdk.rpc.mavlink_direct;
+
+import "mavsdk_options.proto";
+
+option java_package = "io.mavsdk.mavlink_direct";
+option java_outer_classname = "MavlinkDirectProto";
+
+// Enable direct MAVLink communication using libmav.
+service MavlinkDirectService {
+    /*
+     * Send a MAVLink message directly to the system.
+     *
+     * This allows sending any MAVLink message with full control over the message content.
+     */
+    rpc SendMessage(SendMessageRequest) returns(SendMessageResponse) { option (mavsdk.options.async_type) = SYNC; }
+    
+    /*
+     * Subscribe to incoming MAVLink messages.
+     *
+     * This provides direct access to all incoming MAVLink messages without any filtering or processing.
+     */
+    rpc SubscribeMessage(SubscribeMessageRequest) returns(stream MessageResponse) { option (mavsdk.options.async_type) = ASYNC; }
+    
+    /*
+     * Subscribe to incoming MAVLink messages of a specific type.
+     *
+     * This provides filtered access to incoming MAVLink messages of a specific message name.
+     */
+    rpc SubscribeMessageType(SubscribeMessageTypeRequest) returns(stream MessageResponse) { option (mavsdk.options.async_type) = ASYNC; }
+}
+
+message SendMessageRequest {
+    MavlinkMessage message = 1; // The MAVLink message to send
+}
+message SendMessageResponse {
+    MavlinkDirectResult mavlink_direct_result = 1;
+}
+
+message SubscribeMessageRequest {}
+message MessageResponse {
+    MavlinkMessage message = 1; // The received MAVLink message
+}
+
+message SubscribeMessageTypeRequest {
+    string message_name = 1; // The MAVLink message name to filter for (e.g., "HEARTBEAT")
+}
+
+// A complete MAVLink message with all header information and fields
+message MavlinkMessage {
+    string message_name = 1;      // MAVLink message name (e.g., "HEARTBEAT", "GLOBAL_POSITION_INT")
+    uint32 system_id = 2;         // System ID of the sender (for received messages)
+    uint32 component_id = 3;      // Component ID of the sender (for received messages)
+    uint32 target_system = 4;     // Target system ID (for sending, 0 for broadcast)
+    uint32 target_component = 5;  // Target component ID (for sending, 0 for broadcast)
+    string fields_json = 6;       // All message fields as single JSON object
+}
+
+// Result type.
+message MavlinkDirectResult {
+    // Possible results returned for action requests.
+    enum Result {
+        RESULT_UNKNOWN = 0; // Unknown result
+        RESULT_SUCCESS = 1; // Request succeeded
+        RESULT_ERROR = 2; // Error
+        RESULT_INVALID_MESSAGE = 3; // Invalid MAVLink message
+        RESULT_INVALID_FIELD = 4; // Invalid field name or value
+        RESULT_CONNECTION_ERROR = 5; // Connection error
+        RESULT_NO_SYSTEM = 6; // No system connected
+        RESULT_TIMEOUT = 7; // Request timed out
+    }
+
+    Result result = 1; // Result enum value
+    string result_str = 2; // Human-readable English string describing the result
+}

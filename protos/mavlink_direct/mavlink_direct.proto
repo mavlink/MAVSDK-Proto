@@ -15,7 +15,7 @@ service MavlinkDirectService {
      * This allows sending any MAVLink message with full control over the message content.
      */
     rpc SendMessage(SendMessageRequest) returns(SendMessageResponse) { option (mavsdk.options.async_type) = SYNC; }
-    
+
     /*
      * Subscribe to incoming MAVLink messages.
      *
@@ -24,6 +24,14 @@ service MavlinkDirectService {
      * (e.g., "HEARTBEAT") to filter for specific message types.
      */
     rpc SubscribeMessage(SubscribeMessageRequest) returns(stream MessageResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    /*
+     * Load custom MAVLink message definitions from XML.
+     *
+     * This allows loading custom MAVLink message definitions at runtime,
+     * extending the available message types beyond the built-in definitions.
+     */
+    rpc LoadCustomXml(LoadCustomXmlRequest) returns(LoadCustomXmlResponse) { option (mavsdk.options.async_type) = SYNC; }
 }
 
 message SendMessageRequest {
@@ -38,6 +46,13 @@ message SubscribeMessageRequest {
 }
 message MessageResponse {
     MavlinkMessage message = 1; // The received MAVLink message
+}
+
+message LoadCustomXmlRequest {
+    string xml_content = 1; // The custom MAVLink XML definition content
+}
+message LoadCustomXmlResponse {
+    MavlinkDirectResult mavlink_direct_result = 1;
 }
 
 // A complete MAVLink message with all header information and fields

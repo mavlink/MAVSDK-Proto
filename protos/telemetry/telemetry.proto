@@ -62,7 +62,7 @@ service TelemetryService {
     rpc SubscribeImu(SubscribeImuRequest) returns(stream ImuResponse) {}
     // Subscribe to 'Scaled IMU' updates.
     rpc SubscribeScaledImu(SubscribeScaledImuRequest) returns(stream ScaledImuResponse) {}
-    // Subscribe to 'Raw IMU' updates.
+    // Subscribe to 'Raw IMU' updates (note that units are are incorrect and "raw" as provided by the sensor)
     rpc SubscribeRawImu(SubscribeRawImuRequest) returns(stream RawImuResponse) {}
     // Subscribe to 'HealthAllOk' updates.
     rpc SubscribeHealthAllOk(SubscribeHealthAllOkRequest) returns(stream HealthAllOkResponse) {}

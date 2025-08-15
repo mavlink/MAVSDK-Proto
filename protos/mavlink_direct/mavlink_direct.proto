@@ -57,12 +57,12 @@ message LoadCustomXmlResponse {
 
 // A complete MAVLink message with all header information and fields
 message MavlinkMessage {
-    string message_name = 1;      // MAVLink message name (e.g., "HEARTBEAT", "GLOBAL_POSITION_INT")
-    uint32 system_id = 2;         // System ID of the sender (for received messages)
-    uint32 component_id = 3;      // Component ID of the sender (for received messages)
-    uint32 target_system = 4;     // Target system ID (for sending, 0 for broadcast)
-    uint32 target_component = 5;  // Target component ID (for sending, 0 for broadcast)
-    string fields_json = 6;       // All message fields as single JSON object
+    string message_name = 1; // MAVLink message name (e.g., "HEARTBEAT", "GLOBAL_POSITION_INT")
+    uint32 system_id = 2; // System ID of the sender (for received messages)
+    uint32 component_id = 3; // Component ID of the sender (for received messages)
+    uint32 target_system_id = 4; // Target system ID (for sending, 0 for broadcast)
+    uint32 target_component_id = 5; // Target component ID (for sending, 0 for broadcast)
+    string fields_json = 6; // All message fields as single JSON object
 }
 
 // Result type.

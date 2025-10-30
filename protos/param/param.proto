@@ -173,6 +173,14 @@ message ParamResult {
         RESULT_NO_SYSTEM = 6; // No system connected
         RESULT_PARAM_VALUE_TOO_LONG = 7; // Param value too long (> 128)
         RESULT_FAILED = 8; // Operation failed.
+        RESULT_DOES_NOT_EXIST = 9; // Parameter does not exist
+        RESULT_VALUE_OUT_OF_RANGE = 10; // Parameter value does not fit within accepted range
+        RESULT_PERMISSION_DENIED = 11; // Caller is not permitted to set the value of this parameter
+        RESULT_COMPONENT_NOT_FOUND = 12; // Unknown component specified
+        RESULT_READ_ONLY = 13; // Parameter is read-only
+        RESULT_TYPE_UNSUPPORTED = 14; // Parameter data type is not supported by flight stack
+        RESULT_TYPE_MISMATCH = 15; // Parameter type does not match expected type
+        RESULT_READ_FAIL = 16; // Parameter exists but reading failed
     }
 
     Result result = 1; // Result enum value

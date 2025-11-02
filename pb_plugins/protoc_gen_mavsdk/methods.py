@@ -121,6 +121,22 @@ class Method(object):
         return self._is_server
 
     @property
+    def is_async(self):
+        return self._is_async
+
+    @property
+    def is_sync(self):
+        return self._is_sync
+
+    @property
+    def is_finite(self):
+        return self._is_finite
+
+    @property
+    def has_result(self):
+        return self._has_result
+
+    @property
     def name(self):
         return self._name
 

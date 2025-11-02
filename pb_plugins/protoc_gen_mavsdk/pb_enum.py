@@ -53,6 +53,10 @@ class Enum(object):
     def parent_struct(self):
         return self._parent_struct
 
+    @property
+    def enum_description(self):
+        return self._enum_description
+
     def __repr__(self):
         return self._template.render(plugin_name=self._plugin_name,
                                      package=self._package,

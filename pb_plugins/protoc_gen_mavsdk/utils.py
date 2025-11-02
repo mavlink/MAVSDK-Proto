@@ -5,7 +5,7 @@ from protoc_gen_mavsdk.type_info import TypeInfoFactory
 
 
 name_parser_factory = NameParserFactory()
-type_info_factory = TypeInfoFactory()
+type_info_factory = TypeInfoFactory(name_parser_factory)
 
 
 class Param:

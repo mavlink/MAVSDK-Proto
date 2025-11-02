@@ -4,8 +4,11 @@ import json
 class TypeInfoFactory:
     _conversion_dict = {}
 
+    def __init__(self, name_parser_factory):
+        self._name_parser_factory = name_parser_factory
+
     def create(self, field):
-        return TypeInfo(field, self._conversion_dict)
+        return TypeInfo(field, self._conversion_dict, self._name_parser_factory)
 
     def set_conversion_path(self, conversions_path):
         self._conversion_dict = self._load_conversions_dict(conversions_path)
@@ -32,9 +35,10 @@ class TypeInfo:
         "repeated": {"prefix": "std::vector<", "suffix": ">"}
     }
 
-    def __init__(self, field, conversion_dict):
+    def __init__(self, field, conversion_dict, name_parser_factory):
         self._field = field
         self._conversion_dict = conversion_dict
+        self._name_parser_factory = name_parser_factory
 
     @property
     def name(self):
@@ -61,7 +65,7 @@ class TypeInfo:
         type_id = self._field.type
 
         if not self.is_primitive:
-            return str(self._field.type_name.split(".")[-1])
+            return self._name_parser_factory.create(str(self._field.type_name.split(".")[-1]))
         elif type_id not in self._default_types:
             raise ValueError("UNKNOWN_TYPE")
         elif self._default_types[type_id] in self._conversion_dict:
@@ -85,12 +89,12 @@ class TypeInfo:
         if len(type_tree) <= 5:
             return None
 
-        return str(type_tree[-2])
+        return self._name_parser_factory.create(str(type_tree[-2]))
 
     @property
     def is_result(self):
         """ Check if the field is a *Result """
-        return self.name.endswith("Result")
+        return not self.is_primitive and self.name.upper_camel_case.endswith("Result")
 
     @property
     def is_primitive(self):

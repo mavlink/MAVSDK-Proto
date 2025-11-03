@@ -26,11 +26,11 @@ def parse_requirements(filename):
 
 setup(
     name="protoc-gen-mavsdk",
-    version="1.2.2",
+    version="1.3.0",
     description="Protoc plugin used to generate MAVSDK bindings",
     url="https://github.com/mavlink/MAVSDK-Proto",
     maintainer="Jonas Vautherin, Julian Oes",
-    maintainer_email="jonas.vautherin@gmail.com, julian@oes.ch",
+    maintainer_email="dev@jonas.vautherin.ch, julian@oes.ch",
 
     classifiers=[
         "Development Status :: 5 - Production/Stable",

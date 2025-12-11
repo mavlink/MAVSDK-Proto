@@ -17,10 +17,6 @@ service RemoteIdService {
      */
     rpc SetLocation(SetLocationRequest) returns(SetLocationResponse) { option (mavsdk.options.async_type) = SYNC; }
     /*
-     * Update the LocationAccuracy structure sent with the location_accuracy packet
-     */
-    rpc SetLocationAccuracy(SetLocationAccuracyRequest) returns(SetLocationAccuracyResponse) { option (mavsdk.options.async_type) = SYNC; }
-    /*
      * Update the System structure sent with the system packet
      */
     rpc SetSystem(SetSystemRequest) returns(SetSystemResponse) { option (mavsdk.options.async_type) = SYNC; }
@@ -49,13 +45,6 @@ message SetLocationRequest {
     Location location = 1; // Desired location
 }
 message SetLocationResponse {
-    RemoteIdResult remote_id_result = 1;
-}
-
-message SetLocationAccuracyRequest {
-    LocationAccuracy location_accuracy = 1; // Desidered location
-}
-message SetLocationAccuracyResponse {
     RemoteIdResult remote_id_result = 1;
 }
 
@@ -132,20 +121,6 @@ message Location {
         HEIGHT_REF_OVER_GROUND = 1; // The height field is relative to ground.
     }
 
-    Status status = 1; // Indicates whether the unmanned aircraft is on the ground or in the air.
-    uint32 direction_deg = 2; // Direction over ground measured clockwise from true North: 0 - 359 deg.
-    float speed_horizontal_m_s = 3; // Ground speed in meters per second. Positive only.
-    float speed_vertical_m_s = 4; // The vertical speed in meters per second. Up is positive.
-    double latitude_deg = 5; // Current latitude of the unmanned aircraft
-    double longitude_deg = 6; // Current longitude of the unmanned aircraft
-    float altitude_barometric_m = 7; // The altitude calculated from the barometric pressure.
-    float altitude_geodetic_m = 8; // The geodetic altitude as defined by WGS84.
-    HeightRef height_reference = 9; // Indicates the reference point for the height field.
-    float height_m = 10; // The current height of the unmanned aircraft. As indicated by height_reference.
-    uint64 time_utc_us = 11; // Timestamp in UTC (since UNIX epoch) in microseconds
-}
-
-message LocationAccuracy {
     enum HorAcc {
         HOR_ACC_UNKNOWN = 0; // The horizontal accuracy is unknown.
         HOR_ACC_NM_10 = 1; // The horizontal accuracy is smaller than 10 Nautical Miles. 18.52 km.
@@ -159,7 +134,7 @@ message LocationAccuracy {
         HOR_ACC_METER_30 = 9; // The horizontal accuracy is smaller than 30 meter.
         HOR_ACC_METER_10 = 10; // The horizontal accuracy is smaller than 10 meter.
         HOR_ACC_METER_3 = 11; // The horizontal accuracy is smaller than 3 meter.
-        HOR_ACC_METER_1 = 12; // The horizontal accuracy is smaller than 1 meter
+        HOR_ACC_METER_1 = 12; // The horizontal accuracy is smaller than 1 meter.
     }
 
     enum VerAcc {
@@ -175,35 +150,46 @@ message LocationAccuracy {
     enum SpeedAcc {
         SPEED_ACC_UNKNOWN = 0; // The speed accuracy is unknown.
         SPEED_ACC_METERS_PER_SECOND_10 = 1; // The speed accuracy is smaller than 10 meters per second.
-        SPEED_ACC_METERS_PER_SECON_3 = 2; // The speed accuracy is smaller than 3 meters per second.
+        SPEED_ACC_METERS_PER_SECOND_3 = 2; // The speed accuracy is smaller than 3 meters per second.
         SPEED_ACC_METERS_PER_SECOND_1 = 3; // The speed accuracy is smaller than 1 meters per second.
         SPEED_ACC_METERS_PER_SECOND_0_3 = 4; // The speed accuracy is smaller than 0.3 meters per second.
     }
 
     enum TimeAcc {
-        TIME_ACC_UNKNOWN= 0; // The timestamp accuracy is unknown.
-        TIME_ACC_SECOND_0_1= 1; // The timestamp accuracy is smaller than or equal to 0.1 second.
-        TIME_ACC_SECOND_0_2= 2; // The timestamp accuracy is smaller than or equal to 0.2 second.
-        TIME_ACC_SECOND_0_3= 3; // The timestamp accuracy is smaller than or equal to 0.3 second.
-        TIME_ACC_SECOND_0_4= 4; // The timestamp accuracy is smaller than or equal to 0.4 second.
-        TIME_ACC_SECOND_0_5= 5; // The timestamp accuracy is smaller than or equal to 0.5 second.
-        TIME_ACC_SECOND_0_6= 6; // The timestamp accuracy is smaller than or equal to 0.6 second.
-        TIME_ACC_SECOND_0_7= 7; // The timestamp accuracy is smaller than or equal to 0.7 second.
-        TIME_ACC_SECOND_0_8= 8; // The timestamp accuracy is smaller than or equal to 0.8 second.
-        TIME_ACC_SECOND_0_9= 9; // The timestamp accuracy is smaller than or equal to 0.9 second.
-        TIME_ACC_SECOND_1_0= 10; // The timestamp accuracy is smaller than or equal to 1.0 second.
-        TIME_ACC_SECOND_1_1= 11; // The timestamp accuracy is smaller than or equal to 1.1 second.
-        TIME_ACC_SECOND_1_2= 12; // The timestamp accuracy is smaller than or equal to 1.2 second.
-        TIME_ACC_SECOND_1_3= 13; // The timestamp accuracy is smaller than or equal to 1.3 second.
-        TIME_ACC_SECOND_1_4= 14; // The timestamp accuracy is smaller than or equal to 1.4 second.
-        TIME_ACC_SECOND_1_5= 15; // The timestamp accuracy is smaller than or equal to 1.5 second.
+        TIME_ACC_UNKNOWN = 0; // The timestamp accuracy is unknown.
+        TIME_ACC_SECOND_0_1 = 1; // The timestamp accuracy is smaller than or equal to 0.1 second.
+        TIME_ACC_SECOND_0_2 = 2; // The timestamp accuracy is smaller than or equal to 0.2 second.
+        TIME_ACC_SECOND_0_3 = 3; // The timestamp accuracy is smaller than or equal to 0.3 second.
+        TIME_ACC_SECOND_0_4 = 4; // The timestamp accuracy is smaller than or equal to 0.4 second.
+        TIME_ACC_SECOND_0_5 = 5; // The timestamp accuracy is smaller than or equal to 0.5 second.
+        TIME_ACC_SECOND_0_6 = 6; // The timestamp accuracy is smaller than or equal to 0.6 second.
+        TIME_ACC_SECOND_0_7 = 7; // The timestamp accuracy is smaller than or equal to 0.7 second.
+        TIME_ACC_SECOND_0_8 = 8; // The timestamp accuracy is smaller than or equal to 0.8 second.
+        TIME_ACC_SECOND_0_9 = 9; // The timestamp accuracy is smaller than or equal to 0.9 second.
+        TIME_ACC_SECOND_1_0 = 10; // The timestamp accuracy is smaller than or equal to 1.0 second.
+        TIME_ACC_SECOND_1_1 = 11; // The timestamp accuracy is smaller than or equal to 1.1 second.
+        TIME_ACC_SECOND_1_2 = 12; // The timestamp accuracy is smaller than or equal to 1.2 second.
+        TIME_ACC_SECOND_1_3 = 13; // The timestamp accuracy is smaller than or equal to 1.3 second.
+        TIME_ACC_SECOND_1_4 = 14; // The timestamp accuracy is smaller than or equal to 1.4 second.
+        TIME_ACC_SECOND_1_5 = 15; // The timestamp accuracy is smaller than or equal to 1.5 second.
     }
 
-    HorAcc horizontal_accuracy = 1; // The accuracy of the horizontal position.
-    VerAcc vertical_accuracy = 2; // The accuracy of the vertical position.
-    VerAcc barometer_accuracy = 3; // The accuracy of the barometric altitude.
-    SpeedAcc speed_accuracy = 4; // The accuracy of the horizontal and vertical speed.
-    TimeAcc timestamp_accuracy = 5; // The accuracy of the timestamps.
+    Status status = 1; // Indicates whether the unmanned aircraft is on the ground or in the air.
+    uint32 direction_deg = 2; // Direction over ground measured clockwise from true North: 0 - 359 deg.
+    float speed_horizontal_m_s = 3; // Ground speed in meters per second. Positive only.
+    float speed_vertical_m_s = 4; // The vertical speed in meters per second. Up is positive.
+    double latitude_deg = 5; // Current latitude of the unmanned aircraft.
+    double longitude_deg = 6; // Current longitude of the unmanned aircraft.
+    float altitude_barometric_m = 7; // The altitude calculated from the barometric pressure.
+    float altitude_geodetic_m = 8; // The geodetic altitude as defined by WGS84.
+    HeightRef height_reference = 9; // Indicates the reference point for the height field.
+    float height_m = 10; // The current height of the unmanned aircraft. As indicated by height_reference.
+    uint64 time_utc_us = 11; // Timestamp in UTC (since UNIX epoch) in microseconds.
+    HorAcc horizontal_accuracy = 12; // The accuracy of the horizontal position.
+    VerAcc vertical_accuracy = 13; // The accuracy of the vertical position.
+    VerAcc barometer_accuracy = 14; // The accuracy of the barometric altitude.
+    SpeedAcc speed_accuracy = 15; // The accuracy of the horizontal and vertical speed.
+    TimeAcc timestamp_accuracy = 16; // The accuracy of the timestamps.
 }
 
 message SystemId {
@@ -282,11 +268,12 @@ message ArmStatus {
 
 // Result type.
 message RemoteIdResult {
-    // Possible results returned for camera commands
+    // Possible results returned for remote_id commands
     enum Result {
         RESULT_UNKNOWN = 0; // Unknown result
         RESULT_SUCCESS = 1; // Command executed successfully
-        RESULT_ERROR = 2; // An error has occurred while executing the command
+        RESULT_NO_SYSTEM = 2; // No system is connected
+        RESULT_ERROR = 3; // An error has occurred while executing the command
     }
 
     Result result = 1; // Result enum value

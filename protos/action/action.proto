@@ -152,6 +152,12 @@ service ActionService {
      * It is ephemeral, so not stored on the drone and does not survive a reboot.
      */
      rpc SetCurrentSpeed(SetCurrentSpeedRequest) returns(SetCurrentSpeedResponse) {}
+     /*
+     * Set GPS Global Origin.
+     *
+     * Sets the GPS coordinates of the vehicle local origin (0,0,0) position.
+     */
+     rpc SetGpsGlobalOrigin(SetGpsGlobalOriginRequest) returns(SetGpsGlobalOriginResponse) { option (mavsdk.options.async_type) = SYNC; }
 }
 
 message ArmRequest {}
@@ -288,6 +294,15 @@ message SetCurrentSpeedRequest {
     float speed_m_s = 1; // Speed in meters/second
 }
 message SetCurrentSpeedResponse {
+    ActionResult action_result = 1;
+}
+
+message SetGpsGlobalOriginRequest {
+    double latitude_deg = 1; // Latitude (in degrees)
+    double longitude_deg = 2; // Longitude (in degrees)
+    float absolute_altitude_m = 3; // Altitude AMSL (in meters)
+}
+message SetGpsGlobalOriginResponse {
     ActionResult action_result = 1;
 }
 

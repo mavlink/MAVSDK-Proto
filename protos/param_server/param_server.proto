@@ -27,12 +27,21 @@ service ParamServerService {
      * Provide an int parameter.
      *
      * If the type is wrong, the result will be `WRONG_TYPE`.
+     *
+     * Note that all params need to be provided upfront. Once a client has
+     * requested a param list, the indices are locked and no more params
+     * can be added.
+     *
      */
     rpc ProvideParamInt(ProvideParamIntRequest) returns(ProvideParamIntResponse) { option (mavsdk.options.async_type) = SYNC; }
     /*
      * Retrieve a float parameter.
      *
      * If the type is wrong, the result will be `WRONG_TYPE`.
+     *
+     * Note that all params need to be provided upfront. Once a client has
+     * requested a param list, the indices are locked and no more params
+     * can be added.
      */
     rpc RetrieveParamFloat(RetrieveParamFloatRequest) returns(RetrieveParamFloatResponse) { option (mavsdk.options.async_type) = SYNC; }
     /*
@@ -45,6 +54,10 @@ service ParamServerService {
      * Retrieve a custom parameter.
      *
      * If the type is wrong, the result will be `WRONG_TYPE`.
+     *
+     * Note that all params need to be provided upfront. Once a client has
+     * requested a param list, the indices are locked and no more params
+     * can be added.
      */
     rpc RetrieveParamCustom(RetrieveParamCustomRequest) returns(RetrieveParamCustomResponse) { option (mavsdk.options.async_type) = SYNC; }
     /*
@@ -191,6 +204,7 @@ message ParamServerResult {
         RESULT_PARAM_NAME_TOO_LONG = 4; // Parameter name too long (> 16)
         RESULT_NO_SYSTEM = 5; // No system available
         RESULT_PARAM_VALUE_TOO_LONG = 6; // Parameter name too long (> 128)
+        RESULT_PARAM_PROVIDED_TOO_LATE = 7; // All parameters have to be provided upfront
     }
 
     Result result = 1; // Result enum value

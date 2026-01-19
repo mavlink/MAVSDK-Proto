@@ -114,6 +114,13 @@ service ActionService {
      */
     rpc SetActuator(SetActuatorRequest) returns(SetActuatorResponse) {}
     /*
+     * Send command to set the value of a relay.
+     *
+     * The index of the relay starts at 0.
+     * For the relay value, 1=on, 0=off, others possible depending on system hardware
+     */
+    rpc SetRelay(SetRelayRequest) returns(SetRelayResponse) {}
+    /*
      * Send command to transition the drone to fixedwing.
      *
      * The associated action will only be executed for VTOL vehicles (on other vehicle types the
@@ -251,6 +258,19 @@ message SetActuatorRequest {
     float value = 2; // Value to set the actuator to (normalized from [-1..1])
 }
 message SetActuatorResponse {
+    ActionResult action_result = 1;
+}
+
+// Commanded values for relays
+enum RelayCommand {
+    RELAY_COMMAND_ON = 0; // Turn the relay off
+    RELAY_COMMAND_OFF = 1; // Turn the relay on.
+}
+message SetRelayRequest {
+    int32 index = 1; // Index of relay (starting with 0)
+    RelayCommand setting = 2; // Value to set the relay to
+}
+message SetRelayResponse {
     ActionResult action_result = 1;
 }
 

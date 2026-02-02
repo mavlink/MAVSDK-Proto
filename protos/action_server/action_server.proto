@@ -38,6 +38,8 @@ service ActionServerService {
     rpc SetArmedState(SetArmedStateRequest) returns(SetArmedStateResponse) { option (mavsdk.options.async_type) = SYNC; }
     // Set/override the flight mode of the vehicle directly, and notify subscribers
     rpc SetFlightMode(SetFlightModeRequest) returns(SetFlightModeResponse) { option (mavsdk.options.async_type) = SYNC; }
+    // Set/override the flight mode of the vehicle directly, and *do not* notify subscribers
+    rpc SetFlightModeInternal(SetFlightModeRequest) returns(SetFlightModeResponse) { option (mavsdk.options.async_type) = SYNC; }
 }
 
 message SetAllowTakeoffRequest {
@@ -152,6 +154,10 @@ message AllowableFlightModes {
     bool can_auto_mode = 1; // Auto/mission mode 
     bool can_guided_mode = 2; // Guided mode
     bool can_stabilize_mode = 3; // Stabilize mode
+    bool can_auto_rtl_mode = 4; // Auto RTL mode 
+    bool can_auto_takeoff_mode = 5; // Auto takeoff mode 
+    bool can_auto_land_mode = 6; // Auto land mode 
+    bool can_auto_loiter_mode = 7; // Auto hold/loiter mode 
 }
 
 // Arming message type

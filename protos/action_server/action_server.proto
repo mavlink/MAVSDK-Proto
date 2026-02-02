@@ -39,7 +39,7 @@ service ActionServerService {
     // Set/override the flight mode of the vehicle directly, and notify subscribers
     rpc SetFlightMode(SetFlightModeRequest) returns(SetFlightModeResponse) { option (mavsdk.options.async_type) = SYNC; }
     // Set/override the flight mode of the vehicle directly, and *do not* notify subscribers
-    rpc SetFlightModeInternal(SetFlightModeRequest) returns(SetFlightModeResponse) { option (mavsdk.options.async_type) = SYNC; }
+    rpc SetFlightModeInternal(SetFlightModeInternalRequest) returns(SetFlightModeInternalResponse) { option (mavsdk.options.async_type) = SYNC; }
 }
 
 message SetAllowTakeoffRequest {
@@ -66,6 +66,10 @@ message SetArmedStateRequest {
 }
 
 message SetFlightModeRequest {
+    FlightMode flight_mode = 1; // Current vehicle flight mode, e.g. Takeoff/Mission/Land/etc.
+}
+
+message SetFlightModeInternalRequest {
     FlightMode flight_mode = 1; // Current vehicle flight mode, e.g. Takeoff/Mission/Land/etc.
 }
 
@@ -145,6 +149,10 @@ message SetArmedStateResponse {
 }
 
 message SetFlightModeResponse {
+    ActionServerResult action_server_result = 1;
+}
+
+message SetFlightModeInternalResponse {
     ActionServerResult action_server_result = 1;
 }
 

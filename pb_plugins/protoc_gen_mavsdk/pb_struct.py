@@ -63,7 +63,8 @@ class Struct(object):
                                      name=self.name,
                                      fields=self._fields,
                                      nested_enums=self._nested_enums,
-                                     nested_structs=self._nested_structs)
+                                     nested_structs=self._nested_structs,
+                                     is_pod=self.is_pod)
 
     @property
     def name(self):
@@ -84,6 +85,18 @@ class Struct(object):
     @property
     def struct_description(self):
         return self._struct_description
+    
+    @property
+    def is_pod(self):
+        for field in self._fields:
+            if not field.type_info.is_pod:
+                return False
+
+        for nested_struct in self._nested_structs.values():
+            if not nested_struct.is_pod:
+                return False
+
+        return True
 
     @staticmethod
     def collect_structs(plugin_name, package, structs, template_env, docs):
@@ -98,6 +111,10 @@ class Struct(object):
             struct_id += 1
 
         return _structs
+    
+    @staticmethod
+    def collect_pod_structs(structs_dict):
+        return {name: s for name, s in structs_dict.items() if s.is_pod}
 
     @staticmethod
     def collect_requests(package, structs, docs):

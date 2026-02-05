@@ -113,3 +113,10 @@ class TypeInfo:
     def is_string(self):
         """ Check if the field is a string type"""
         return self._field.type == 9
+    
+    @property
+    def is_pod(self):
+        """ Check if the field is a plain old data type (POD)"""
+        pod_types = {1, 2, 3, 4, 5, 8, 13}  # double, float, int64_t, uint64_t, int32_t, bool, uint32_t
+        return self._field.type in pod_types and not self.is_repeated
+    

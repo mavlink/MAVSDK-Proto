@@ -66,6 +66,8 @@ class AutoGen(object):
                                              proto_file.message_type,
                                              template_env,
                                              docs)
+            
+            Struct.collect_pod_structs(structs)
 
             requests = Struct.collect_requests(package,
                                                proto_file.message_type,

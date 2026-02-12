@@ -7,7 +7,10 @@ import "mavsdk_options.proto";
 option java_package = "io.mavsdk.gimbal";
 option java_outer_classname = "GimbalProto";
 
-// Provide control over a gimbal.
+/*
+ * Provide control over a gimbal within the MAVLink
+ * Gimbal Protocol: https://mavlink.io/en/services/gimbal_v2.html
+ */
 service GimbalService {
 
     /*

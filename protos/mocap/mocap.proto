@@ -115,10 +115,12 @@ message AttitudePositionMocap {
 
 // Odometry message to communicate odometry information with an external interface.
 message Odometry {
-    // Mavlink frame id
+    // Mavlink frame id, values match MAVLink MAV_FRAME enum.
     enum MavFrame {
-        MAV_FRAME_MOCAP_NED = 0; // MAVLink number: 14. Odometry local coordinate frame of data given by a motion capture system, Z-down (x: north, y: east, z: down).
-        MAV_FRAME_LOCAL_FRD = 1; // MAVLink number: 20. Forward, Right, Down coordinate frame. This is a local frame with Z-down and arbitrary F/R alignment (i.e. not aligned with NED/earth frame). Replacement for MAV_FRAME_MOCAP_NED, MAV_FRAME_VISION_NED, MAV_FRAME_ESTIM_NED.
+        MAV_FRAME_UNDEF = 0; // Undefined frame.
+        MAV_FRAME_MOCAP_NED = 14; // Odometry local coordinate frame of data given by a motion capture system, Z-down (x: north, y: east, z: down).
+        MAV_FRAME_VISION_NED = 16; // Odometry local coordinate frame of data given by a vision estimation system, Z-down (x: north, y: east, z: down).
+        MAV_FRAME_LOCAL_FRD = 20; // Forward, Right, Down coordinate frame. This is a local frame with Z-down and arbitrary F/R alignment (i.e. not aligned with NED/earth frame).
     }
 
     uint64 time_usec = 1; // Timestamp (0 to use Backend timestamp).

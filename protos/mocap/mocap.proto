@@ -145,7 +145,7 @@ message Odometry {
     Covariance velocity_covariance = 8; // Velocity cross-covariance matrix.
     uint32 reset_counter = 9; // Estimate reset counter, for PX4 EKF2 fusion reset detection.
     MavEstimatorType estimator_type = 10; // Type of estimator (defaults to UNKNOWN, C++ impl falls back to MOCAP).
-    int32 quality = 11; // Estimate quality in percent (0-100), -1 for invalid/unknown.
+    int32 quality_percent = 11; // Estimate quality in percent (0-100), -1 for invalid/unknown.
 }
 
 // Result type.

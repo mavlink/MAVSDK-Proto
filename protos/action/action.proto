@@ -165,6 +165,12 @@ service ActionService {
      * Sets the GPS coordinates of the vehicle local origin (0,0,0) position.
      */
      rpc SetGpsGlobalOrigin(SetGpsGlobalOriginRequest) returns(SetGpsGlobalOriginResponse) { option (mavsdk.options.async_type) = SYNC; }
+     /*
+     * Set home.
+     *
+     * Sets the home position.
+     */
+     rpc SetHome(SetHomeRequest) returns(SetHomeResponse) { option (mavsdk.options.async_type) = SYNC; }
 }
 
 message ArmRequest {}
@@ -323,6 +329,16 @@ message SetGpsGlobalOriginRequest {
     float absolute_altitude_m = 3; // Altitude AMSL (in meters)
 }
 message SetGpsGlobalOriginResponse {
+    ActionResult action_result = 1;
+}
+
+message SetHomeRequest {
+    bool use_current_location = 1; // Use current location
+    double latitude_deg = 2; // Latitude (in degrees)
+    double longitude_deg = 3; // Longitude (in degrees)
+    float absolute_altitude_m = 4; // Altitude AMSL (in meters)
+}
+message SetHomeResponse {
     ActionResult action_result = 1;
 }
 

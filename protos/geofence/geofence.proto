@@ -17,6 +17,12 @@ service GeofenceService {
      */
     rpc UploadGeofence(UploadGeofenceRequest) returns(UploadGeofenceResponse) {}
     /*
+     * Download geofences from the vehicle.
+     *
+     * Downloads polygon and circular geofences from the vehicle.
+     */
+    rpc DownloadGeofence(DownloadGeofenceRequest) returns(DownloadGeofenceResponse) {}
+    /*
      * Clear all geofences saved on the vehicle.
      */
     rpc ClearGeofence(ClearGeofenceRequest) returns(ClearGeofenceResponse) {}
@@ -59,6 +65,12 @@ message UploadGeofenceRequest {
 
 message UploadGeofenceResponse {
     GeofenceResult geofence_result = 1;
+}
+
+message DownloadGeofenceRequest {}
+message DownloadGeofenceResponse {
+    GeofenceResult geofence_result = 1;
+    GeofenceData geofence_data = 2; // Downloaded geofence data
 }
 
 message ClearGeofenceRequest {}

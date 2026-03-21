@@ -451,6 +451,7 @@ message GroundTruth {
     double latitude_deg = 1 [(mavsdk.options.default_value)="NaN"]; // Latitude in degrees (range: -90 to +90)
     double longitude_deg = 2 [(mavsdk.options.default_value)="NaN"]; // Longitude in degrees (range: -180 to 180)
     float absolute_altitude_m = 3 [(mavsdk.options.default_value)="NaN"]; // Altitude AMSL (above mean sea level) in metres
+    uint64 timestamp_us = 4; // Timestamp in microseconds (since system boot)
 }
 
 // FixedwingMetrics message type.

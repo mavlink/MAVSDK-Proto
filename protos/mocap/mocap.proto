@@ -119,6 +119,7 @@ message VisionPositionEstimate {
     PositionBody position_body = 2; // Global position (m)
     AngleBody angle_body = 3; // Body angle (rad).
     Covariance pose_covariance = 4; // Pose cross-covariance matrix.
+    uint32 reset_counter = 5; // Estimate reset counter, for PX4 EKF2 fusion reset detection.
 }
 
 // Global speed estimate from a vision source.
@@ -144,6 +145,19 @@ message Odometry {
         MAV_FRAME_LOCAL_FRD = 1; // MAVLink number: 20. Forward, Right, Down coordinate frame. This is a local frame with Z-down and arbitrary F/R alignment (i.e. not aligned with NED/earth frame). Replacement for MAV_FRAME_MOCAP_NED, MAV_FRAME_VISION_NED, MAV_FRAME_ESTIM_NED.
     }
 
+    // Estimator type, matching MAVLink MAV_ESTIMATOR_TYPE.
+    enum MavEstimatorType {
+        MAV_ESTIMATOR_TYPE_UNKNOWN = 0; // Unknown estimator type.
+        MAV_ESTIMATOR_TYPE_NAIVE = 1; // Naive estimator.
+        MAV_ESTIMATOR_TYPE_VISION = 2; // Computer vision-based estimate.
+        MAV_ESTIMATOR_TYPE_VIO = 3; // Visual-inertial estimate.
+        MAV_ESTIMATOR_TYPE_GPS = 4; // Plain GPS estimate.
+        MAV_ESTIMATOR_TYPE_GPS_INS = 5; // GPS and inertial navigation estimate.
+        MAV_ESTIMATOR_TYPE_MOCAP = 6; // Motion capture estimate.
+        MAV_ESTIMATOR_TYPE_LIDAR = 7; // Lidar estimate.
+        MAV_ESTIMATOR_TYPE_AUTOPILOT = 8; // Autopilot estimate.
+    }
+
     uint64 time_usec = 1; // Timestamp (0 to use Backend timestamp).
     MavFrame frame_id = 2; // Coordinate frame of reference for the pose data.
     PositionBody position_body = 3; // Body Position.
@@ -152,6 +166,9 @@ message Odometry {
     AngularVelocityBody angular_velocity_body = 6; // Angular speed (rad/s).
     Covariance pose_covariance = 7; // Pose cross-covariance matrix.
     Covariance velocity_covariance = 8; // Velocity cross-covariance matrix.
+    uint32 reset_counter = 9; // Estimate reset counter, for PX4 EKF2 fusion reset detection.
+    MavEstimatorType estimator_type = 10; // Type of estimator (defaults to UNKNOWN, C++ impl falls back to MOCAP).
+    int32 quality_percent = 11; // Estimate quality in percent (0-100), -1 for invalid/unknown.
 }
 
 // Result type.

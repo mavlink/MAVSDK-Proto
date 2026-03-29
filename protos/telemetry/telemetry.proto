@@ -779,6 +779,7 @@ message GroundTruth {
     double latitude_deg = 1 [(mavsdk.options.default_value)="NaN"]; // Latitude in degrees (range: -90 to +90)
     double longitude_deg = 2 [(mavsdk.options.default_value)="NaN"]; // Longitude in degrees (range: -180 to 180)
     float absolute_altitude_m = 3 [(mavsdk.options.default_value)="NaN"]; // Altitude AMSL (above mean sea level) in metres
+    uint64 timestamp_us = 4; // Timestamp in microseconds (since system boot)
 }
 
 // FixedwingMetrics message type.
@@ -836,6 +837,7 @@ message Altitude {
     float altitude_relative_m = 4 [(mavsdk.options.default_value)="NaN"]; // Altitude above home position in meters
     float altitude_terrain_m = 5 [(mavsdk.options.default_value)="NaN"]; // Altitude above terrain in meters
     float bottom_clearance_m = 6 [(mavsdk.options.default_value)="NaN"]; // This is not the altitude, but the clear space below the system according to the fused clearance estimate in meters.
+    uint64 timestamp_us = 7; // Timestamp in microseconds (since system boot)
 }
 
 // Wind message type

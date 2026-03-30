@@ -119,7 +119,7 @@ message VisionPositionEstimate {
     PositionBody position_body = 2; // Global position (m)
     AngleBody angle_body = 3; // Body angle (rad).
     Covariance pose_covariance = 4; // Pose cross-covariance matrix.
-    uint32 reset_counter = 5; // Estimate reset counter, for PX4 EKF2 fusion reset detection.
+    uint32 reset_counter = 5; // Estimate reset counter. Increment when the estimate resets or jumps.
 }
 
 // Global speed estimate from a vision source.
@@ -127,7 +127,7 @@ message VisionSpeedEstimate {
     uint64 time_usec = 1; // Timestamp UNIX Epoch time (0 to use Backend timestamp)
     SpeedNed speed_ned = 2; // Global speed (m/s)
     Covariance speed_covariance = 3; // Linear velocity cross-covariance matrix.
-    uint32 reset_counter = 4; // Estimate reset counter, for PX4 EKF2 fusion reset detection.
+    uint32 reset_counter = 4; // Estimate reset counter. Increment when the estimate resets or jumps.
 }
 
 // Motion capture attitude and position
@@ -142,8 +142,8 @@ message AttitudePositionMocap {
 message Odometry {
     // Mavlink frame id
     enum MavFrame {
-        MAV_FRAME_MOCAP_NED = 0; // Legacy mocap frame. MAVSDK maps this deprecated MAVLink frame to the appropriate MAVLink odometry frame when packing messages.
-        MAV_FRAME_LOCAL_FRD = 1; // Forward, Right, Down coordinate frame. This is the preferred MAVLink frame for external pose and odometry data.
+        MAV_FRAME_MOCAP_NED = 0; // Legacy mocap NED frame. Deprecated in MAVLink and replaced by MAV_FRAME_LOCAL_FRD.
+        MAV_FRAME_LOCAL_FRD = 1; // Local FRD frame (x: forward, y: right, z: down).
     }
 
     // Estimator type, matching MAVLink MAV_ESTIMATOR_TYPE.
@@ -167,9 +167,9 @@ message Odometry {
     AngularVelocityBody angular_velocity_body = 6; // Angular speed (rad/s).
     Covariance pose_covariance = 7; // Pose cross-covariance matrix.
     Covariance velocity_covariance = 8; // Velocity cross-covariance matrix.
-    uint32 reset_counter = 9; // Estimate reset counter, for PX4 EKF2 fusion reset detection.
-    MavEstimatorType estimator_type = 10; // Type of estimator (defaults to UNKNOWN, C++ impl falls back to MOCAP).
-    int32 quality_percent = 11; // Estimate quality in percent (0-100), -1 for invalid/unknown.
+    uint32 reset_counter = 9; // Estimate reset counter. Increment when the estimate resets or jumps.
+    MavEstimatorType estimator_type = 10; // Type of estimator that is providing the odometry.
+    int32 quality_percent = 11; // Optional odometry quality in percent. -1 = failed, 0 = unknown/unset, 1 = worst, 100 = best.
 }
 
 // Result type.

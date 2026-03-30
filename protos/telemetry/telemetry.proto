@@ -99,6 +99,8 @@ service TelemetryService {
     rpc SetRateVelocityNed(SetRateVelocityNedRequest) returns(SetRateVelocityNedResponse) {}
     // Set rate to 'GPS info' updates.
     rpc SetRateGpsInfo(SetRateGpsInfoRequest) returns(SetRateGpsInfoResponse) {}
+    // Set rate to 'Raw GPS' updates.
+    rpc SetRateRawGps(SetRateRawGpsRequest) returns(SetRateRawGpsResponse) {}
     // Set rate to 'battery' updates.
     rpc SetRateBattery(SetRateBatteryRequest) returns(SetRateBatteryResponse) {}
     // Set rate to 'RC status' updates.
@@ -373,6 +375,9 @@ message SetRateGpsInfoResponse {
 
 message SetRateRawGpsRequest {
     double rate_hz = 1; // The requested rate (in Hertz)
+}
+message SetRateRawGpsResponse {
+    TelemetryResult telemetry_result = 1;
 }
 
 message SetRateBatteryRequest {

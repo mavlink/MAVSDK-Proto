@@ -515,9 +515,9 @@ message HomePosition {
     float local_east_m = 7 [(mavsdk.options.default_value)="NaN"]; // Local East position in NED frame (m)
     float local_down_m = 8 [(mavsdk.options.default_value)="NaN"]; // Local Down position in NED frame (m, positive down)
     Quaternion q = 9; // Surface quaternion (world-to-surface-normal and heading)
-    float approach_x_m = 10 [(mavsdk.options.default_value)="NaN"]; // Local X position of the approach vector end (m)
-    float approach_y_m = 11 [(mavsdk.options.default_value)="NaN"]; // Local Y position of the approach vector end (m)
-    float approach_z_m = 12 [(mavsdk.options.default_value)="NaN"]; // Local Z position of the approach vector end (m)
+    float approach_north_m = 10 [(mavsdk.options.default_value)="NaN"]; // Local North position of the approach vector end in NED frame (m)
+    float approach_east_m = 11 [(mavsdk.options.default_value)="NaN"]; // Local East position of the approach vector end in NED frame (m)
+    float approach_down_m = 12 [(mavsdk.options.default_value)="NaN"]; // Local Down position of the approach vector end in NED frame (m)
 }
 
 // Heading type used for global position

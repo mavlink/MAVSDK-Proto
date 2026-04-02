@@ -506,18 +506,18 @@ message Position {
  * and approach vector from the MAVLink HOME_POSITION message.
  */
 message HomePosition {
-    double latitude_deg = 1 [(mavsdk.options.default_value)="NaN"]; // Latitude in degrees (range: -90 to +90)
-    double longitude_deg = 2 [(mavsdk.options.default_value)="NaN"]; // Longitude in degrees (range: -180 to +180)
-    float absolute_altitude_m = 3 [(mavsdk.options.default_value)="NaN"]; // Altitude AMSL (above mean sea level) in metres
-    float relative_altitude_m = 4 [(mavsdk.options.default_value)="NaN"]; // Altitude relative to takeoff altitude in metres
-    float local_x_m = 5 [(mavsdk.options.default_value)="NaN"]; // Local X position in NED frame (m)
-    float local_y_m = 6 [(mavsdk.options.default_value)="NaN"]; // Local Y position in NED frame (m)
-    float local_z_m = 7 [(mavsdk.options.default_value)="NaN"]; // Local Z position in NED frame (m, positive down)
-    Quaternion q = 8; // Surface quaternion (world-to-surface-normal and heading)
-    float approach_x_m = 9 [(mavsdk.options.default_value)="NaN"]; // Local X position of the approach vector end (m)
-    float approach_y_m = 10 [(mavsdk.options.default_value)="NaN"]; // Local Y position of the approach vector end (m)
-    float approach_z_m = 11 [(mavsdk.options.default_value)="NaN"]; // Local Z position of the approach vector end (m)
-    uint64 timestamp_us = 12; // Timestamp (UNIX Epoch or since system boot) in microseconds
+    uint64 timestamp_us = 1; // Timestamp (UNIX Epoch or since system boot) in microseconds
+    double latitude_deg = 2 [(mavsdk.options.default_value)="NaN"]; // Latitude in degrees (range: -90 to +90)
+    double longitude_deg = 3 [(mavsdk.options.default_value)="NaN"]; // Longitude in degrees (range: -180 to +180)
+    float absolute_altitude_m = 4 [(mavsdk.options.default_value)="NaN"]; // Altitude AMSL (above mean sea level) in metres
+    float relative_altitude_m = 5 [(mavsdk.options.default_value)="NaN"]; // Altitude relative to takeoff altitude in metres
+    float local_north_m = 6 [(mavsdk.options.default_value)="NaN"]; // Local North position in NED frame (m)
+    float local_east_m = 7 [(mavsdk.options.default_value)="NaN"]; // Local East position in NED frame (m)
+    float local_down_m = 8 [(mavsdk.options.default_value)="NaN"]; // Local Down position in NED frame (m, positive down)
+    Quaternion q = 9; // Surface quaternion (world-to-surface-normal and heading)
+    float approach_x_m = 10 [(mavsdk.options.default_value)="NaN"]; // Local X position of the approach vector end (m)
+    float approach_y_m = 11 [(mavsdk.options.default_value)="NaN"]; // Local Y position of the approach vector end (m)
+    float approach_z_m = 12 [(mavsdk.options.default_value)="NaN"]; // Local Z position of the approach vector end (m)
 }
 
 // Heading type used for global position

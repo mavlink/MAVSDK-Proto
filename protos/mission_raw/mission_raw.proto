@@ -17,6 +17,13 @@ service MissionRawService {
      */
     rpc UploadMission(UploadMissionRequest) returns(UploadMissionResponse) {}
     /*
+     * Upload a list of raw mission items and report upload progress.
+     */
+    rpc SubscribeUploadMissionWithProgress(SubscribeUploadMissionWithProgressRequest) returns(stream UploadMissionWithProgressResponse) {
+        option (mavsdk.options.async_type) = ASYNC;
+        option (mavsdk.options.is_finite) = true;
+    }
+    /*
      * Upload a list of geofence items to the system.
      */
     rpc UploadGeofence(UploadGeofenceRequest) returns(UploadGeofenceResponse) {}
@@ -132,6 +139,14 @@ message UploadMissionRequest {
 }
 message UploadMissionResponse {
     MissionRawResult mission_raw_result = 1;
+}
+
+message SubscribeUploadMissionWithProgressRequest {
+    MissionPlan mission_plan = 1; // The mission plan
+}
+message UploadMissionWithProgressResponse {
+    MissionRawResult mission_raw_result = 1;
+    ProgressData progress_data = 2; // The progress data
 }
 
 message UploadGeofenceRequest {
@@ -252,6 +267,11 @@ message MissionProgress {
     int32 total = 2; // Total number of mission items
 }
 
+// Mission plan type
+message MissionPlan {
+    repeated MissionItem mission_items = 1; // The mission items
+}
+
 // Mission item exactly identical to MAVLink MISSION_ITEM_INT.
 message MissionItem {
     uint32 seq = 1; // Sequence (uint16_t)
@@ -301,8 +321,14 @@ message MissionRawResult {
         RESULT_INT_MESSAGES_NOT_SUPPORTED = 18; // The system does not support the MISSION_INT protocol
         RESULT_FAILED_TO_OPEN_MISSION_PLANNER_PLAN = 19; // Failed to open the Mission Planner plan
         RESULT_FAILED_TO_PARSE_MISSION_PLANNER_PLAN = 20; // Failed to parse the Mission Planner plan
+        RESULT_NEXT = 21; // Intermediate message showing progress
     }
 
     Result result = 1; // Result enum value
     string result_str = 2; // Human-readable English string describing the result
+}
+
+// Progress data coming from mission upload.
+message ProgressData {
+    float progress = 1 [(mavsdk.options.default_value)="NaN"]; // Progress (0..1.0)
 }

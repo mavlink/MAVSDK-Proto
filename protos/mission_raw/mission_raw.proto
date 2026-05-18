@@ -261,17 +261,6 @@ message IsMissionFinishedResponse {
     bool is_finished = 2; // True if the mission is finished, false otherwise
 }
 
-// Mission progress type.
-message MissionProgress {
-    int32 current = 1; // Current mission item index (0-based), if equal to total, the mission is finished
-    int32 total = 2; // Total number of mission items
-}
-
-// Mission plan type
-message MissionPlan {
-    repeated MissionItem mission_items = 1; // The mission items
-}
-
 // Mission item exactly identical to MAVLink MISSION_ITEM_INT.
 message MissionItem {
     uint32 seq = 1; // Sequence (uint16_t)
@@ -287,6 +276,17 @@ message MissionItem {
     int32 y = 11; // PARAM6 / y position: local: x position in meters * 1e4, global: longitude in degrees *10^7
     float z = 12; // PARAM7 / local: Z coordinate, global: altitude (relative or absolute, depending on frame)
     uint32 mission_type = 13; // Mission type (actually uint8_t)
+}
+
+// Mission plan type
+message MissionPlan {
+    repeated MissionItem mission_items = 1; // The mission items
+}
+
+// Mission progress type.
+message MissionProgress {
+    int32 current = 1; // Current mission item index (0-based), if equal to total, the mission is finished
+    int32 total = 2; // Total number of mission items
 }
 
 // Mission import data

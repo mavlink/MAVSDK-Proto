@@ -31,28 +31,28 @@ service AutonomyServerService {
 }
 
 message SetStateRequest {
-    AutonomyServerState state = 1; // The state to set
+    AutonomyServerState autonomy_server_state = 1; // The state to set
 }
 message SetStateResponse {
-    AutonomyServerResult result = 1;
+    AutonomyServerResult autonomy_server_result = 1;
 }
 
 message SubscribeDemandRequest {}
 message DemandResponse {
-    AutonomyServerDemand demand = 1; // The autonomy demand
+    AutonomyServerDemand autonomy_server_demand = 1; // The autonomy demand
 }
 
 message SetDemandAnswerRequest {
-    AutonomyServerDemandAnswer answer = 1; // The answer
-    AutonomyServerState state = 2; // The new state
+    AutonomyServerDemandAnswer autonomy_server_demand_answer = 1; // The answer
+    AutonomyServerState autonomy_server_state = 2; // The new state
 }
 message SetDemandAnswerResponse {}
 
 message SetComponentHealthRequest {
-    repeated AutonomyServerComponentHealth component_health = 2; // The components' health
+    repeated AutonomyServerComponentHealth autonomy_server_component_health = 2; // The components' health
 }
 message SetComponentHealthResponse {
-    AutonomyServerResult result = 1;
+    AutonomyServerResult autonomy_server_result = 1;
 }
 
 // Current state of the autonomy system
@@ -99,7 +99,7 @@ enum AutonomyServerComponent {
 
 //  Type to describe one component of an autonomy system
 message AutonomyServerComponentHealth {
-    AutonomyServerComponent component = 1; // component described
+    AutonomyServerComponent autonomy_server_component = 1; // component described
     bool present = 2; // whether component is present
     bool enabled = 3; // whether component is enabled
     bool healthy = 4; // whether component is healthy
@@ -107,8 +107,8 @@ message AutonomyServerComponentHealth {
 
 // Type describing the system state and enumerating component health
 message AutonomyServerStatus {
-    AutonomyServerState system_state = 1; // The system state
-    repeated AutonomyServerComponentHealth component_health = 2; // The components' health
+    AutonomyServerState autonomy_server_state = 1; // The system state
+    repeated AutonomyServerComponentHealth autonomy_server_component_health = 2; // The components' health
 }
 
 // Result type.
@@ -117,8 +117,8 @@ message AutonomyServerResult {
     enum Result {
         RESULT_UNKNOWN = 0; // Unknown result
         RESULT_SUCCESS = 1; // Request succeeded
-        CONNECTION_ERROR = 2; // Connection error
-        ID_NOT_FOUND = 3; // ID not found
+        RESULT_CONNECTION_ERROR = 2; // Connection error
+        RESULT_ID_NOT_FOUND = 3; // ID not found
     }
 
     Result result = 1; // Result enum value

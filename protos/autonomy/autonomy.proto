@@ -21,17 +21,17 @@ service AutonomyService {
 message GetAutonomyStatusRequest {}
 
 message GetAutonomyStatusResponse {
-    AutonomyResult result = 1;
-    AutonomyStatus status = 2; // The status received
+    AutonomyResult autonomy_result = 1;
+    AutonomyStatus autonomy_status = 2; // The status received
 }
 
 message SendAutonomyDemandRequest {
-    AutonomyDemand demand = 1; // The demanded autonomy event
+    AutonomyDemand autonomy_demand = 1; // The demanded autonomy event
 }
 
 message SendAutonomyDemandResponse {
-    AutonomyResult result = 1;
-    AutonomyStatus status = 2; // The status received
+    AutonomyResult autonomy_result = 1;
+    AutonomyStatus autonomy_status = 2; // The status received
 }
 
 // Current state of the autonomy system
@@ -71,7 +71,7 @@ enum AutonomyComponent {
 
 //  Type to describe one component of an autonomy system
 message AutonomyComponentHealth {
-    AutonomyComponent component = 1; // component described
+    AutonomyComponent autonomy_component = 1; // component described
     bool present = 2; // whether component is present
     bool enabled = 3; // whether component is enabled
     bool healthy = 4; // whether component is healthy
@@ -79,7 +79,7 @@ message AutonomyComponentHealth {
 
 // Type describing the system state and enumerating component health
 message AutonomyStatus {
-    AutonomyState system_state = 1; // The system state
+    AutonomyState autonomy_state = 1; // The system state
     repeated AutonomyComponentHealth component_health = 2; // All components to list
 }
 
@@ -89,14 +89,14 @@ message AutonomyResult {
     enum Result {
         RESULT_UNKNOWN = 0; // Unknown result
         RESULT_SUCCESS = 1; // Request succeeded
-        CONNECTION_ERROR = 2; // Connection error
-        NO_SYSTEM = 3; // No system available
-        TIMEOUT = 4; // Timeout happened
-        BUSY = 6; // Action already in progress
-        DENIED = 7; // Request has been denied
-        FAILED = 8; // Request has failed
-        UNSUPPORTED = 9; // Request is unsupported
-        TEMPORARILY_REJECTED = 10; // Request has temporarily been rejected
+        RESULT_CONNECTION_ERROR = 2; // Connection error
+        RESULT_NO_SYSTEM = 3; // No system available
+        RESULT_TIMEOUT = 4; // Timeout happened
+        RESULT_BUSY = 6; // Action already in progress
+        RESULT_DENIED = 7; // Request has been denied
+        RESULT_FAILED = 8; // Request has failed
+        RESULT_UNSUPPORTED = 9; // Request is unsupported
+        RESULT_TEMPORARILY_REJECTED = 10; // Request has temporarily been rejected
     }
 
     Result result = 1; // Result enum value

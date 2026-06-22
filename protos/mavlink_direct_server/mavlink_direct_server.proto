@@ -22,6 +22,17 @@ service MavlinkDirectServerService {
     rpc SendMessage(SendMessageRequest) returns(SendMessageResponse) { option (mavsdk.options.async_type) = SYNC; }
 
     /*
+     * Subscribe to incoming MAVLink messages.
+     *
+     * This provides direct access to incoming MAVLink messages. Use an empty string
+     * in message_name to subscribe to all messages, or specify a message name
+     * (e.g., "HEARTBEAT") to filter for specific message types. Unlike the
+     * MavlinkDirect (client) plugin, this is not scoped to a single system: it
+     * receives matching messages from all systems.
+     */
+    rpc SubscribeMessage(SubscribeMessageRequest) returns(stream MessageResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    /*
      * Load custom MAVLink message definitions from XML.
      *
      * This allows loading custom MAVLink message definitions at runtime,
@@ -35,6 +46,13 @@ message SendMessageRequest {
 }
 message SendMessageResponse {
     MavlinkDirectServerResult mavlink_direct_server_result = 1;
+}
+
+message SubscribeMessageRequest {
+    string message_name = 1; // MAVLink message name to filter for (e.g., "HEARTBEAT"), empty string = all messages
+}
+message MessageResponse {
+    MavlinkMessage message = 1; // The received MAVLink message
 }
 
 message LoadCustomXmlRequest {

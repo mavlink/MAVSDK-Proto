@@ -102,6 +102,42 @@ service CameraServerService {
     // Respond to zoom range.
     rpc RespondZoomRange(RespondZoomRangeRequest) returns(RespondZoomRangeResponse) { option (mavsdk.options.async_type) = SYNC; }
 
+    // Subscribe to focus in step command.
+    rpc SubscribeFocusInStep(SubscribeFocusInStepRequest) returns(stream FocusInStepResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    // Respond to focus in step.
+    rpc RespondFocusInStep(RespondFocusInStepRequest) returns(RespondFocusInStepResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    // Subscribe to focus out step command.
+    rpc SubscribeFocusOutStep(SubscribeFocusOutStepRequest) returns(stream FocusOutStepResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    // Respond to focus out step.
+    rpc RespondFocusOutStep(RespondFocusOutStepRequest) returns(RespondFocusOutStepResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    // Subscribe to focus in start command.
+    rpc SubscribeFocusInStart(SubscribeFocusInStartRequest) returns(stream FocusInStartResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    // Respond to focus in start.
+    rpc RespondFocusInStart(RespondFocusInStartRequest) returns(RespondFocusInStartResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    // Subscribe to focus out start command.
+    rpc SubscribeFocusOutStart(SubscribeFocusOutStartRequest) returns(stream FocusOutStartResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    // Respond to focus out start.
+    rpc RespondFocusOutStart(RespondFocusOutStartRequest) returns(RespondFocusOutStartResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    // Subscribe to focus stop command.
+    rpc SubscribeFocusStop(SubscribeFocusStopRequest) returns(stream FocusStopResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    // Respond to focus stop.
+    rpc RespondFocusStop(RespondFocusStopRequest) returns(RespondFocusStopResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    // Subscribe to focus range command.
+    rpc SubscribeFocusRange(SubscribeFocusRangeRequest) returns(stream FocusRangeResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    // Respond to focus range.
+    rpc RespondFocusRange(RespondFocusRangeRequest) returns(RespondFocusRangeResponse) { option (mavsdk.options.async_type) = SYNC; }
+
     // Set/update the current rectangle tracking status.
     rpc SetTrackingRectangleStatus(SetTrackingRectangleStatusRequest) returns(SetTrackingRectangleStatusResponse) { option (mavsdk.options.async_type) = SYNC; }
 
@@ -332,6 +368,78 @@ message RespondZoomRangeRequest {
     CameraFeedback zoom_range_feedback = 1; // the feedback
 }
 message RespondZoomRangeResponse {
+    CameraServerResult camera_server_result = 1;
+}
+
+message SubscribeFocusInStepRequest {}
+message FocusInStepResponse {
+    int32 reserved = 1;    // reserved, just make protoc-gen-mavsdk working
+}
+
+message RespondFocusInStepRequest {
+    CameraFeedback focus_in_step_feedback = 1; // the feedback
+}
+message RespondFocusInStepResponse {
+    CameraServerResult camera_server_result = 1;
+}
+
+message SubscribeFocusOutStepRequest {}
+message FocusOutStepResponse {
+    int32 reserved = 1;    // reserved, just make protoc-gen-mavsdk working
+}
+
+message RespondFocusOutStepRequest {
+    CameraFeedback focus_out_step_feedback = 1; // the feedback
+}
+message RespondFocusOutStepResponse {
+    CameraServerResult camera_server_result = 1;
+}
+
+message SubscribeFocusInStartRequest {}
+message FocusInStartResponse {
+    int32 reserved = 1;    // reserved, just make protoc-gen-mavsdk working
+}
+
+message RespondFocusInStartRequest {
+    CameraFeedback focus_in_start_feedback = 1; // the feedback
+}
+message RespondFocusInStartResponse {
+    CameraServerResult camera_server_result = 1;
+}
+
+message SubscribeFocusOutStartRequest {}
+message FocusOutStartResponse {
+    int32 reserved = 1;    // reserved, just make protoc-gen-mavsdk working
+}
+
+message RespondFocusOutStartRequest {
+    CameraFeedback focus_out_start_feedback = 1; // the feedback
+}
+message RespondFocusOutStartResponse {
+    CameraServerResult camera_server_result = 1;
+}
+
+message SubscribeFocusStopRequest {}
+message FocusStopResponse {
+    int32 reserved = 1;    // reserved, just make protoc-gen-mavsdk working
+}
+
+message RespondFocusStopRequest {
+    CameraFeedback focus_stop_feedback = 1; // the feedback
+}
+message RespondFocusStopResponse {
+    CameraServerResult camera_server_result = 1;
+}
+
+message SubscribeFocusRangeRequest {}
+message FocusRangeResponse {
+    float focus_distance_m = 1; // The focus distance in meters.
+}
+
+message RespondFocusRangeRequest {
+    CameraFeedback focus_range_feedback = 1; // the feedback
+}
+message RespondFocusRangeResponse {
     CameraServerResult camera_server_result = 1;
 }
 

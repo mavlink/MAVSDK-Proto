@@ -82,7 +82,9 @@ service OffboardService {
     rpc SetAccelerationNed(SetAccelerationNedRequest) returns(SetAccelerationNedResponse) { option (mavsdk.options.async_type) = SYNC; }
 }
 
-message StartRequest {}
+message StartRequest {
+    uint32 mode = 1; // Custom mode to set the vehicle to before starting offboard control. 0 keeps the default behavior (GUIDED on ArduPilot).
+}
 message StartResponse {
     OffboardResult offboard_result = 1;
 }

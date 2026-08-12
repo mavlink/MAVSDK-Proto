@@ -184,6 +184,25 @@ service CameraService {
      * Focus with range value of full range (value between 0.0 and 100.0).
      */
     rpc FocusRange(FocusRangeRequest) returns(FocusRangeResponse) {}
+    /*
+     * Focus at a distance in meters.
+     *
+     * Note that there is no message to get the valid focus range of the camera,
+     * so this can only be used for cameras where the range is known.
+     */
+    rpc FocusMeters(FocusMetersRequest) returns(FocusMetersResponse) {}
+    /*
+     * Focus automatically.
+     */
+    rpc FocusAuto(FocusAutoRequest) returns(FocusAutoResponse) {}
+    /*
+     * Single auto focus. Mainly used for still pictures. Usually abbreviated as AF-S.
+     */
+    rpc FocusAutoSingle(FocusAutoSingleRequest) returns(FocusAutoSingleResponse) {}
+    /*
+     * Continuous auto focus. Mainly used for dynamic scenes. Abbreviated as AF-C.
+     */
+    rpc FocusAutoContinuous(FocusAutoContinuousRequest) returns(FocusAutoContinuousResponse) {}
 }
 
 // Type to represent a setting option.
@@ -582,6 +601,35 @@ message FocusRangeRequest {
     float range = 2; // Range must be between 0.0 - 100.0
 }
 message FocusRangeResponse {
+    CameraResult camera_result = 1;
+}
+
+message FocusMetersRequest {
+    int32 component_id = 1; // Component ID
+    float distance_m = 2; // Focus distance in meters
+}
+message FocusMetersResponse {
+    CameraResult camera_result = 1;
+}
+
+message FocusAutoRequest {
+    int32 component_id = 1; // Component ID
+}
+message FocusAutoResponse {
+    CameraResult camera_result = 1;
+}
+
+message FocusAutoSingleRequest {
+    int32 component_id = 1; // Component ID
+}
+message FocusAutoSingleResponse {
+    CameraResult camera_result = 1;
+}
+
+message FocusAutoContinuousRequest {
+    int32 component_id = 1; // Component ID
+}
+message FocusAutoContinuousResponse {
     CameraResult camera_result = 1;
 }
 

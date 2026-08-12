@@ -138,6 +138,30 @@ service CameraServerService {
     // Respond to focus range.
     rpc RespondFocusRange(RespondFocusRangeRequest) returns(RespondFocusRangeResponse) { option (mavsdk.options.async_type) = SYNC; }
 
+    // Subscribe to focus meters command.
+    rpc SubscribeFocusMeters(SubscribeFocusMetersRequest) returns(stream FocusMetersResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    // Respond to focus meters.
+    rpc RespondFocusMeters(RespondFocusMetersRequest) returns(RespondFocusMetersResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    // Subscribe to focus auto command.
+    rpc SubscribeFocusAuto(SubscribeFocusAutoRequest) returns(stream FocusAutoResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    // Respond to focus auto.
+    rpc RespondFocusAuto(RespondFocusAutoRequest) returns(RespondFocusAutoResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    // Subscribe to focus auto single command.
+    rpc SubscribeFocusAutoSingle(SubscribeFocusAutoSingleRequest) returns(stream FocusAutoSingleResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    // Respond to focus auto single.
+    rpc RespondFocusAutoSingle(RespondFocusAutoSingleRequest) returns(RespondFocusAutoSingleResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    // Subscribe to focus auto continuous command.
+    rpc SubscribeFocusAutoContinuous(SubscribeFocusAutoContinuousRequest) returns(stream FocusAutoContinuousResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    // Respond to focus auto continuous.
+    rpc RespondFocusAutoContinuous(RespondFocusAutoContinuousRequest) returns(RespondFocusAutoContinuousResponse) { option (mavsdk.options.async_type) = SYNC; }
+
     // Set/update the current rectangle tracking status.
     rpc SetTrackingRectangleStatus(SetTrackingRectangleStatusRequest) returns(SetTrackingRectangleStatusResponse) { option (mavsdk.options.async_type) = SYNC; }
 
@@ -440,6 +464,54 @@ message RespondFocusRangeRequest {
     CameraFeedback focus_range_feedback = 1; // the feedback
 }
 message RespondFocusRangeResponse {
+    CameraServerResult camera_server_result = 1;
+}
+
+message SubscribeFocusMetersRequest {}
+message FocusMetersResponse {
+    float focus_distance_m = 1; // The focus distance in meters.
+}
+
+message RespondFocusMetersRequest {
+    CameraFeedback focus_meters_feedback = 1; // the feedback
+}
+message RespondFocusMetersResponse {
+    CameraServerResult camera_server_result = 1;
+}
+
+message SubscribeFocusAutoRequest {}
+message FocusAutoResponse {
+    int32 reserved = 1;    // reserved, just make protoc-gen-mavsdk working
+}
+
+message RespondFocusAutoRequest {
+    CameraFeedback focus_auto_feedback = 1; // the feedback
+}
+message RespondFocusAutoResponse {
+    CameraServerResult camera_server_result = 1;
+}
+
+message SubscribeFocusAutoSingleRequest {}
+message FocusAutoSingleResponse {
+    int32 reserved = 1;    // reserved, just make protoc-gen-mavsdk working
+}
+
+message RespondFocusAutoSingleRequest {
+    CameraFeedback focus_auto_single_feedback = 1; // the feedback
+}
+message RespondFocusAutoSingleResponse {
+    CameraServerResult camera_server_result = 1;
+}
+
+message SubscribeFocusAutoContinuousRequest {}
+message FocusAutoContinuousResponse {
+    int32 reserved = 1;    // reserved, just make protoc-gen-mavsdk working
+}
+
+message RespondFocusAutoContinuousRequest {
+    CameraFeedback focus_auto_continuous_feedback = 1; // the feedback
+}
+message RespondFocusAutoContinuousResponse {
     CameraServerResult camera_server_result = 1;
 }
 

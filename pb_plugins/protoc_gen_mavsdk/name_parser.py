@@ -26,6 +26,8 @@ class NameParser:
             unless the word is fully capitalized.
         """
 
+        self._name = name
+
         if '_' in name:
             self._words = name.split('_')
         elif name.isupper():
@@ -34,6 +36,12 @@ class NameParser:
             self._words = re.findall('[a-zA-Z][^A-Z]*', name)
 
         self._initialisms = initialisms
+
+    def __str__(self):
+        """ The name as it was given, so that a NameParser can be
+            used directly in a template where the raw name is wanted.
+        """
+        return self._name
 
     @property
     def uppercase(self):

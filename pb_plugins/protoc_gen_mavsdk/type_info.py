@@ -94,7 +94,7 @@ class TypeInfo:
     @property
     def is_result(self):
         """ Check if the field is a *Result """
-        return not self.is_primitive and self.name.upper_camel_case.endswith("Result")
+        return not self.is_primitive and not self.is_repeated and self.inner_name.upper_camel_case.endswith("Result")
 
     @property
     def is_primitive(self):

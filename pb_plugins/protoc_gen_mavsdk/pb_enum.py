@@ -38,7 +38,7 @@ class Enum(object):
                 value_name = tmp_value_name
                 has_prefix = False
 
-            self._values.append({'name': value_name, 'description': enum_docs['params'][value_id], 'has_prefix': has_prefix})
+            self._values.append({'name': value_name, 'number': value.number, 'description': enum_docs['params'][value_id], 'has_prefix': has_prefix})
             value_id += 1
 
     @property

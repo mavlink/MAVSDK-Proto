@@ -9,6 +9,11 @@ option java_outer_classname = "ShellProto";
 
 /*
  * Allow to communicate with the vehicle's system shell.
+ *
+ * Under the hood this uses MAVLink SERIAL_CONTROL. The default device is
+ * SERIAL_CONTROL_DEV_SHELL. Callers can pass another SERIAL_CONTROL_DEV on
+ * Send (and observe the device on Receive) when the same framing is used for
+ * non-nsh serial bridges (for example TELEM2).
  */
 service ShellService {
     /*
@@ -23,16 +28,42 @@ service ShellService {
     rpc SubscribeReceive(SubscribeReceiveRequest) returns(stream ReceiveResponse) { option (mavsdk.options.async_type) = ASYNC; }
 }
 
+// MAVLink SERIAL_CONTROL_DEV values used by the shell plugin.
+enum Device {
+    DEVICE_TELEM1 = 0; // SERIAL_CONTROL_DEV_TELEM1
+    DEVICE_TELEM2 = 1; // SERIAL_CONTROL_DEV_TELEM2
+    DEVICE_GPS1 = 2; // SERIAL_CONTROL_DEV_GPS1
+    DEVICE_GPS2 = 3; // SERIAL_CONTROL_DEV_GPS2
+    DEVICE_SHELL = 10; // SERIAL_CONTROL_DEV_SHELL (default)
+    DEVICE_SERIAL0 = 100; // SERIAL_CONTROL_SERIAL0
+    DEVICE_SERIAL1 = 101; // SERIAL_CONTROL_SERIAL1
+    DEVICE_SERIAL2 = 102; // SERIAL_CONTROL_SERIAL2
+    DEVICE_SERIAL3 = 103; // SERIAL_CONTROL_SERIAL3
+    DEVICE_SERIAL4 = 104; // SERIAL_CONTROL_SERIAL4
+    DEVICE_SERIAL5 = 105; // SERIAL_CONTROL_SERIAL5
+    DEVICE_SERIAL6 = 106; // SERIAL_CONTROL_SERIAL6
+    DEVICE_SERIAL7 = 107; // SERIAL_CONTROL_SERIAL7
+    DEVICE_SERIAL8 = 108; // SERIAL_CONTROL_SERIAL8
+    DEVICE_SERIAL9 = 109; // SERIAL_CONTROL_SERIAL9
+}
+
 message SendRequest {
     string command = 1; // The command line to send
+    // SERIAL_CONTROL device to target. Unset/default is DEVICE_SHELL.
+    Device device = 2;
 }
 message SendResponse {
     ShellResult shell_result = 1;
 }
 
 message SubscribeReceiveRequest {}
-message ReceiveResponse {
+// Received shell data and source device.
+message Receive {
     string data = 1; // Received data.
+    Device device = 2; // SERIAL_CONTROL device the data came from.
+}
+message ReceiveResponse {
+    Receive receive = 1; // Received data.
 }
 
 // Result type.
@@ -45,6 +76,7 @@ message ShellResult {
         RESULT_CONNECTION_ERROR = 3; // Connection error
         RESULT_NO_RESPONSE = 4; // Response was not received
         RESULT_BUSY = 5; // Shell busy (transfer in progress)
+        RESULT_INVALID_ARGUMENT = 6; // Invalid device / argument
     }
 
     Result result = 1; // Result enum value

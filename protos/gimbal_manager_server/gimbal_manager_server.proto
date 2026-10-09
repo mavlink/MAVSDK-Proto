@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+package mavsdk.rpc.gimbal_manager_server;
+
+import "mavsdk_options.proto";
+
+option java_package = "io.mavsdk.gimbal_manager_server";
+option java_outer_classname = "GimbalManagerServerProto";
+
+/*
+ * Be the gimbal manager of one gimbal, within the MAVLink
+ * Gimbal Protocol: https://mavlink.io/en/services/gimbal_v2.html
+ *
+ * A gimbal manager sits between those who want to point a gimbal (ground
+ * stations, the gimbal plugin) and the gimbal itself (a "gimbal device", e.g.
+ * the gimbal server plugin). It keeps track of who is in control, takes the
+ * setpoints of whoever that is, and passes them on to the gimbal.
+ *
+ * An autopilot usually is the gimbal manager already (e.g. PX4), so this is
+ * for a vehicle where it is not, or for one without an autopilot.
+ *
+ * The plugin does all of this by itself once it knows which gimbal to manage.
+ */
+service GimbalManagerServerService {
+    /*
+     * Set the gimbal to manage, by the MAVLink component id of the gimbal device.
+     *
+     * The manager shows up once the gimbal has answered with its information.
+     */
+    rpc SetGimbalDevice(SetGimbalDeviceRequest) returns(SetGimbalDeviceResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    /*
+     * Subscribe to control status updates.
+     *
+     * This tells which components have taken primary and secondary control of
+     * the gimbal, if any.
+     */
+    rpc SubscribeControlStatus(SubscribeControlStatusRequest) returns(stream ControlStatusResponse) { option (mavsdk.options.async_type) = ASYNC; }
+}
+
+message SetGimbalDeviceRequest {
+    uint32 gimbal_device_component_id = 1; // MAVLink component id of the gimbal device (154 for the first gimbal)
+}
+message SetGimbalDeviceResponse {
+    GimbalManagerServerResult gimbal_manager_server_result = 1;
+}
+
+message SubscribeControlStatusRequest {}
+message ControlStatusResponse {
+    ControlStatus control_status = 1; // Control status
+}
+
+// Control status
+message ControlStatus {
+    uint32 sysid_primary_control = 1; // Sysid of the component that has primary control over the gimbal (0 if no one is in control)
+    uint32 compid_primary_control = 2; // Compid of the component that has primary control over the gimbal (0 if no one is in control)
+    uint32 sysid_secondary_control = 3; // Sysid of the component that has secondary control over the gimbal (0 if no one is in control)
+    uint32 compid_secondary_control = 4; // Compid of the component that has secondary control over the gimbal (0 if no one is in control)
+}
+
+// Result type.
+message GimbalManagerServerResult {
+    // Possible results returned for gimbal manager server requests.
+    enum Result {
+        RESULT_UNKNOWN = 0; // Unknown result
+        RESULT_SUCCESS = 1; // Request succeeded
+        RESULT_ERROR = 2; // An error has occurred
+        RESULT_INVALID_ARGUMENT = 3; // Invalid argument
+    }
+
+    Result result = 1; // Result enum value
+    string result_str = 2; // Human-readable English string describing the result
+}

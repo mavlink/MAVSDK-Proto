@@ -1,0 +1,175 @@
+syntax = "proto3";
+
+package mavsdk.rpc.gimbal_server;
+
+import "mavsdk_options.proto";
+
+option java_package = "io.mavsdk.gimbal_server";
+option java_outer_classname = "GimbalServerProto";
+
+/*
+ * Be a gimbal, that is the "gimbal device" of the MAVLink
+ * Gimbal Protocol: https://mavlink.io/en/services/gimbal_v2.html
+ *
+ * A gimbal device is not controlled by a ground station or by the gimbal
+ * plugin directly. It takes its setpoints from one gimbal manager, which is
+ * what ground stations and the gimbal plugin talk to. The manager is usually
+ * the autopilot (e.g. PX4 with MNT_MODE_OUT set to the MAVLink gimbal
+ * protocol v2), and otherwise the gimbal manager server plugin. Without a
+ * gimbal manager on the MAVLink network, this gimbal is not found and never
+ * receives a setpoint.
+ *
+ * The plugin does not move anything. It hands out the setpoints as they
+ * arrive, and reports the attitude that it is given.
+ */
+service GimbalServerService {
+    // Set the gimbal information. The gimbal only answers and reports its attitude once this is set.
+    rpc SetInformation(SetInformationRequest) returns(SetInformationResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    /*
+     * Set the attitude that the gimbal has right now.
+     *
+     * The last attitude set is what gets reported, at the rate expected by
+     * the protocol, so this only needs to be called when the attitude changes.
+     */
+    rpc SetAttitude(SetAttitudeRequest) returns(SetAttitudeResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    /*
+     * Subscribe to the attitude setpoints sent by the gimbal manager.
+     *
+     * A manager streams these continuously, not only when they change.
+     */
+    rpc SubscribeAttitudeSetpoint(SubscribeAttitudeSetpointRequest) returns(stream AttitudeSetpointResponse) { option (mavsdk.options.async_type) = ASYNC; }
+}
+
+message SetInformationRequest {
+    Information information = 1; // Information about the gimbal
+}
+message SetInformationResponse {
+    GimbalServerResult gimbal_server_result = 1;
+}
+
+message SetAttitudeRequest {
+    Attitude attitude = 1; // The attitude of the gimbal
+}
+message SetAttitudeResponse {
+    GimbalServerResult gimbal_server_result = 1;
+}
+
+message SubscribeAttitudeSetpointRequest {}
+message AttitudeSetpointResponse {
+    AttitudeSetpoint attitude_setpoint = 1; // The attitude setpoint
+}
+
+/*
+ * What a gimbal can do.
+ *
+ * For each axis, "follow" means that the axis moves with the vehicle and
+ * "lock" that it is held against the horizon or, for yaw, against North.
+ */
+message Capabilities {
+    bool has_retract = 1; // Has a retracted position
+    bool has_neutral = 2; // Has a neutral position
+    bool has_roll_axis = 3; // Can move around the roll axis
+    bool has_roll_follow = 4; // Roll can follow the vehicle
+    bool has_roll_lock = 5; // Roll can be held against the horizon
+    bool has_pitch_axis = 6; // Can move around the pitch axis
+    bool has_pitch_follow = 7; // Pitch can follow the vehicle
+    bool has_pitch_lock = 8; // Pitch can be held against the horizon
+    bool has_yaw_axis = 9; // Can move around the yaw axis
+    bool has_yaw_follow = 10; // Yaw can follow the vehicle
+    bool has_yaw_lock = 11; // Yaw can be held against North
+    bool has_infinite_yaw = 12; // Can turn around the yaw axis without limit
+}
+
+// What a gimbal says about itself.
+message Information {
+    string vendor_name = 1; // Vendor name
+    string model_name = 2; // Model name
+    string custom_name = 3; // Custom name, e.g. given by the user
+    string firmware_version = 4; // Firmware version as major.minor.patch.dev, e.g. 1.2.0.0
+    string hardware_version = 5; // Hardware version as major.minor.patch.dev, e.g. 1.0.0.0
+    uint64 uid = 6; // Unique id of the hardware (0 if unknown)
+    Capabilities capabilities = 7; // What the gimbal can do
+    float roll_min_deg = 8 [(mavsdk.options.default_value)="NaN"]; // Lowest roll angle (NaN if unknown)
+    float roll_max_deg = 9 [(mavsdk.options.default_value)="NaN"]; // Highest roll angle (NaN if unknown)
+    float pitch_min_deg = 10 [(mavsdk.options.default_value)="NaN"]; // Lowest pitch angle, negative points down (NaN if unknown)
+    float pitch_max_deg = 11 [(mavsdk.options.default_value)="NaN"]; // Highest pitch angle, negative points down (NaN if unknown)
+    float yaw_min_deg = 12 [(mavsdk.options.default_value)="NaN"]; // Lowest yaw angle relative to forward (NaN if unknown)
+    float yaw_max_deg = 13 [(mavsdk.options.default_value)="NaN"]; // Highest yaw angle relative to forward (NaN if unknown)
+}
+
+// The frame that a yaw angle is given in.
+enum YawFrame {
+    YAW_FRAME_VEHICLE = 0; // Relative to the heading of the vehicle
+    YAW_FRAME_EARTH = 1; // Relative to North
+}
+
+/*
+ * Quaternion type.
+ *
+ * All rotations and axis systems follow the right-hand rule.
+ * The Hamilton quaternion product definition is used.
+ * A zero-rotation quaternion is represented by (1,0,0,0).
+ * The quaternion could also be written as w + xi + yj + zk.
+ *
+ * For more info see: https://en.wikipedia.org/wiki/Quaternion
+ */
+message Quaternion {
+    float w = 1 [(mavsdk.options.default_value)="NaN"]; // Quaternion entry 0, also denoted as a
+    float x = 2 [(mavsdk.options.default_value)="NaN"]; // Quaternion entry 1, also denoted as b
+    float y = 3 [(mavsdk.options.default_value)="NaN"]; // Quaternion entry 2, also denoted as c
+    float z = 4 [(mavsdk.options.default_value)="NaN"]; // Quaternion entry 3, also denoted as d
+}
+
+// Gimbal angular rate type
+message AngularVelocityBody {
+    float roll_rad_s = 1 [(mavsdk.options.default_value)="NaN"]; // Roll angular velocity
+    float pitch_rad_s = 2 [(mavsdk.options.default_value)="NaN"]; // Pitch angular velocity
+    float yaw_rad_s = 3 [(mavsdk.options.default_value)="NaN"]; // Yaw angular velocity
+}
+
+/*
+ * Where the gimbal manager wants the gimbal to point.
+ *
+ * A setpoint can ask for an attitude, for angular rates, or for both, in
+ * which case the rates are the feed-forward of the attitude.
+ */
+message AttitudeSetpoint {
+    Quaternion quaternion = 1; // Attitude to reach, with yaw in the given frame (all NaN to only use the angular velocity)
+    AngularVelocityBody angular_velocity = 2; // Angular velocity (NaN for the axes to leave alone)
+    YawFrame yaw_frame = 3; // Frame of the yaw angle of the quaternion
+    bool roll_lock = 4; // Hold roll against the horizon instead of following the vehicle
+    bool pitch_lock = 5; // Hold pitch against the horizon instead of following the vehicle
+    bool yaw_lock = 6; // Hold yaw against North instead of following the vehicle
+    bool retract = 7; // Go to the retracted position, whatever the rest says
+    bool neutral = 8; // Go to the neutral position, whatever the rest says except for retract
+    uint32 gimbal_manager_system_id = 9; // System id of the gimbal manager that sent the setpoint
+    uint32 gimbal_manager_component_id = 10; // Component id of the gimbal manager that sent the setpoint
+}
+
+// Where the gimbal points.
+message Attitude {
+    Quaternion quaternion = 1; // Attitude, with yaw in the given frame
+    AngularVelocityBody angular_velocity = 2; // Angular velocity (NaN if unknown)
+    YawFrame yaw_frame = 3; // Frame of the yaw angle of the quaternion
+    bool roll_lock = 4; // Roll is held against the horizon
+    bool pitch_lock = 5; // Pitch is held against the horizon
+    bool yaw_lock = 6; // Yaw is held against North
+    bool retracted = 7; // In the retracted position
+    bool neutral = 8; // In the neutral position
+}
+
+// Result type.
+message GimbalServerResult {
+    // Possible results returned for gimbal server requests.
+    enum Result {
+        RESULT_UNKNOWN = 0; // Unknown result
+        RESULT_SUCCESS = 1; // Request succeeded
+        RESULT_ERROR = 2; // An error has occurred
+        RESULT_INVALID_ARGUMENT = 3; // Invalid argument
+    }
+
+    Result result = 1; // Result enum value
+    string result_str = 2; // Human-readable English string describing the result
+}

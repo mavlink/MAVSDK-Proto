@@ -32,6 +32,24 @@ service MavlinkDirectService {
      * extending the available message types beyond the built-in definitions.
      */
     rpc LoadCustomXml(LoadCustomXmlRequest) returns(LoadCustomXmlResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    /*
+     * Send a command and wait for its final COMMAND_ACK.
+     *
+     * The command is a COMMAND_LONG or COMMAND_INT message with its fields as JSON,
+     * e.g. message_name "COMMAND_LONG" and fields_json
+     * {"target_system":1,"target_component":1,"command":400,"param1":1,...}.
+     *
+     * The command is retransmitted if no ack arrives. MAV_RESULT_IN_PROGRESS acks
+     * are handled internally: the command is not retransmitted after one, and the
+     * call keeps waiting for the final ack.
+     *
+     * RESULT_SUCCESS only means that a final COMMAND_ACK was received. Whether the
+     * command was accepted is in the "result" field of the returned ack (MAV_RESULT,
+     * e.g. 0 for MAV_RESULT_ACCEPTED, 2 for MAV_RESULT_DENIED). Any other result means
+     * no final ack was received and the returned ack is empty.
+     */
+    rpc SendCommand(SendCommandRequest) returns(SendCommandResponse) {}
 }
 
 message SendMessageRequest {
@@ -53,6 +71,14 @@ message LoadCustomXmlRequest {
 }
 message LoadCustomXmlResponse {
     MavlinkDirectResult mavlink_direct_result = 1;
+}
+
+message SendCommandRequest {
+    MavlinkMessage command = 1; // COMMAND_LONG or COMMAND_INT message to send
+}
+message SendCommandResponse {
+    MavlinkDirectResult mavlink_direct_result = 1;
+    MavlinkMessage ack = 2; // The final COMMAND_ACK, check its "result" field (MAV_RESULT); only set on RESULT_SUCCESS
 }
 
 // A complete MAVLink message with all header information and fields

@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package mavsdk.rpc.modes_server;
+
+import "mavsdk_options.proto";
+
+option java_package = "io.mavsdk.modes_server";
+option java_outer_classname = "ModesServerProto";
+
+/*
+ * Announce the flight modes of an autopilot, the counterpart of the Modes plugin.
+ *
+ * The modes are announced using the MAVLink standard modes protocol
+ * (AVAILABLE_MODES, AVAILABLE_MODES_MONITOR, CURRENT_MODE). The current mode
+ * is the custom mode of the server component.
+ *
+ * This plugin doesn't change modes itself: MAV_CMD_DO_SET_STANDARD_MODE is
+ * answered as unsupported, so clients fall back to MAV_CMD_DO_SET_MODE, which
+ * the ActionServer plugin handles.
+ */
+service ModesServerService {
+    /*
+     * Set the modes the vehicle provides.
+     *
+     * Ground stations are told that the list changed so they download it again.
+     */
+    rpc SetAvailableModes(SetAvailableModesRequest) returns(SetAvailableModesResponse) { option (mavsdk.options.async_type) = SYNC; }
+}
+
+message SetAvailableModesRequest {
+    repeated Mode modes = 1; // The available modes
+}
+message SetAvailableModesResponse {
+    ModesServerResult modes_server_result = 1;
+}
+
+// Mode type.
+message Mode {
+    string name = 1; // Name of the mode, for a standard mode one of the standard names, e.g. "Position" or "Mission"
+    uint32 custom_mode = 2; // Autopilot specific custom mode, needs to be unique
+    bool is_standard = 3; // True if this is a MAVLink standard mode
+    bool is_user_selectable = 4; // True if the mode can be set by the user
+    bool is_advanced = 5; // True if the mode is for advanced users only
+    bool is_auto_mode = 6; // True if the mode runs autonomously, e.g. Mission or Land
+}
+
+// Result type.
+message ModesServerResult {
+    // Possible results returned for mode requests.
+    enum Result {
+        RESULT_UNKNOWN = 0; // Unknown result
+        RESULT_SUCCESS = 1; // Request was successful
+        RESULT_INVALID_MODES = 2; // Modes are invalid, e.g. a name or custom mode is used twice, or a standard mode name is unknown
+    }
+
+    Result result = 1; // Result enum value
+    string result_str = 2; // Human-readable English string describing the result
+}

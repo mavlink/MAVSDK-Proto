@@ -8,29 +8,53 @@ option java_package = "io.mavsdk.modes_server";
 option java_outer_classname = "ModesServerProto";
 
 /*
- * Announce the flight modes of an autopilot, the counterpart of the Modes plugin.
+ * Provide the flight modes of an autopilot, the counterpart of the Modes plugin.
  *
  * The modes are announced using the MAVLink standard modes protocol
- * (AVAILABLE_MODES, AVAILABLE_MODES_MONITOR, CURRENT_MODE). The current mode
- * is the custom mode of the server component.
+ * (AVAILABLE_MODES, AVAILABLE_MODES_MONITOR, CURRENT_MODE).
  *
- * This plugin doesn't change modes itself: MAV_CMD_DO_SET_STANDARD_MODE is
- * answered as unsupported, so clients fall back to MAV_CMD_DO_SET_MODE, which
- * the ActionServer plugin handles.
+ * Once modes are set, this plugin also handles mode change requests
+ * (MAV_CMD_DO_SET_STANDARD_MODE, MAV_CMD_DO_SET_MODE and SET_MODE) for those
+ * modes, instead of the deprecated flight mode API of the ActionServer plugin.
  */
 service ModesServerService {
     /*
      * Set the modes the vehicle provides.
      *
      * Ground stations are told that the list changed so they download it again.
+     * From then on, mode change requests are handled by this plugin.
      */
     rpc SetAvailableModes(SetAvailableModesRequest) returns(SetAvailableModesResponse) { option (mavsdk.options.async_type) = SYNC; }
+    /*
+     * Subscribe to mode change requests.
+     *
+     * Requests for a mode in the list are accepted and reported here. The
+     * vehicle should then switch and call SetCurrentMode, or call
+     * SetCurrentMode with the mode it stays in if it can't switch.
+     */
+    rpc SubscribeModeRequested(SubscribeModeRequestedRequest) returns(stream ModeRequestedResponse) { option (mavsdk.options.async_type) = ASYNC; }
+    /*
+     * Set the mode the vehicle is in.
+     */
+    rpc SetCurrentMode(SetCurrentModeRequest) returns(SetCurrentModeResponse) { option (mavsdk.options.async_type) = SYNC; }
 }
 
 message SetAvailableModesRequest {
     repeated Mode modes = 1; // The available modes
 }
 message SetAvailableModesResponse {
+    ModesServerResult modes_server_result = 1;
+}
+
+message SubscribeModeRequestedRequest {}
+message ModeRequestedResponse {
+    Mode mode = 1; // The requested mode
+}
+
+message SetCurrentModeRequest {
+    string name = 1; // Name of the mode, one of the available modes
+}
+message SetCurrentModeResponse {
     ModesServerResult modes_server_result = 1;
 }
 
@@ -50,7 +74,8 @@ message ModesServerResult {
     enum Result {
         RESULT_UNKNOWN = 0; // Unknown result
         RESULT_SUCCESS = 1; // Request was successful
-        RESULT_INVALID_MODES = 2; // Modes are invalid, e.g. a name or custom mode is used twice, or a standard mode name is unknown
+        RESULT_INVALID_MODES = 2; // Modes are invalid, e.g. none are given, a name or custom mode is used twice, or a standard mode name is unknown
+        RESULT_MODE_NOT_FOUND = 3; // No available mode with this name
     }
 
     Result result = 1; // Result enum value

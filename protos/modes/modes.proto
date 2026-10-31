@@ -1,0 +1,85 @@
+syntax = "proto3";
+
+package mavsdk.rpc.modes;
+
+option java_package = "io.mavsdk.modes";
+option java_outer_classname = "ModesProto";
+
+/*
+ * Discover and set flight modes at runtime.
+ *
+ * The modes are queried from the vehicle using the MAVLink standard modes
+ * protocol (AVAILABLE_MODES, CURRENT_MODE). For autopilots that don't
+ * implement it, a list of known modes is used as a fallback.
+ *
+ * Modes are identified by name. Standard modes have a fixed name, e.g.
+ * "Position" or "Mission", other modes use the name reported by the vehicle.
+ * Setting a mode works the same way for both.
+ */
+service ModesService {
+    /*
+     * Subscribe to the list of available modes.
+     *
+     * The list is updated whenever the vehicle reports that its modes have changed.
+     */
+    rpc SubscribeAvailableModes(SubscribeAvailableModesRequest) returns(stream AvailableModesResponse) {}
+    /*
+     * Subscribe to the current mode.
+     */
+    rpc SubscribeCurrentMode(SubscribeCurrentModeRequest) returns(stream CurrentModeResponse) {}
+    /*
+     * Set mode by name.
+     *
+     * The name needs to match exactly (case-sensitive) the name of one of the available modes.
+     */
+    rpc SetMode(SetModeRequest) returns(SetModeResponse) {}
+}
+
+message SubscribeAvailableModesRequest {}
+message AvailableModesResponse {
+    repeated Mode modes = 1; // The available modes
+}
+
+message SubscribeCurrentModeRequest {}
+message CurrentModeResponse {
+    Mode mode = 1; // The current mode
+}
+
+message SetModeRequest {
+    string name = 1; // Name of the mode to set
+}
+message SetModeResponse {
+    ModesResult modes_result = 1;
+}
+
+
+// Mode type.
+message Mode {
+    string name = 1; // Name of the mode, e.g. "Position" or "Stabilize"
+    uint32 custom_mode = 2; // Autopilot specific custom mode
+    bool is_standard = 3; // True if this is a MAVLink standard mode, e.g. "Position" or "Mission"
+    bool is_user_selectable = 4; // True if the mode can be set by the user
+    bool is_advanced = 5; // True if the mode is for advanced users only
+    bool is_auto_mode = 6; // True if the mode runs autonomously, e.g. Mission or Land
+}
+
+// Result type.
+message ModesResult {
+    // Possible results returned for mode requests.
+    enum Result {
+        RESULT_UNKNOWN = 0; // Unknown result
+        RESULT_SUCCESS = 1; // Request was successful
+        RESULT_NO_SYSTEM = 2; // No system is connected
+        RESULT_CONNECTION_ERROR = 3; // Connection error
+        RESULT_BUSY = 4; // Vehicle is busy
+        RESULT_DENIED = 5; // Request was denied, e.g. because the mode can't be entered right now
+        RESULT_UNSUPPORTED = 6; // Mode or command is not supported
+        RESULT_TIMEOUT = 7; // Request timed out
+        RESULT_FAILED = 8; // Request failed
+        RESULT_MODE_NOT_FOUND = 9; // No available mode with this name
+        RESULT_MODES_NOT_KNOWN_YET = 10; // The available modes have not been received yet
+    }
+
+    Result result = 1; // Result enum value
+    string result_str = 2; // Human-readable English string describing the result
+}

@@ -39,4 +39,7 @@ class File(object):
                                      structs=self._structs.values(),
                                      methods=self._methods.values(),
                                      has_result=self._has_result,
-                                     is_server=self._is_server)
+                                     is_server=self._is_server,
+                                     has_deprecated=any(
+                                         method.is_deprecated
+                                         for method in self._methods.values()))

@@ -32,6 +32,7 @@ class Method(object):
         self.extract_return_type_and_name(pb_method, responses)
         self.extract_async_type(pb_method)
         self.extract_is_finite(pb_method)
+        self._is_deprecated = pb_method.options.deprecated
 
     def extract_params(self, pb_method, requests):
         method_input = pb_method.input_type.split(".")[-1]
@@ -131,6 +132,10 @@ class Method(object):
     @property
     def is_finite(self):
         return self._is_finite
+
+    @property
+    def is_deprecated(self):
+        return self._is_deprecated
 
     @property
     def has_result(self):
@@ -252,7 +257,8 @@ class Call(Method):
                                      method_description=self._method_description,
                                      has_result=self._has_result,
                                      is_async=self._is_async,
-                                     is_sync=self._is_sync)
+                                     is_sync=self._is_sync,
+                                     is_deprecated=self._is_deprecated)
 
 
 class Request(Method):
@@ -312,7 +318,8 @@ class Request(Method):
             method_description=self._method_description,
             has_result=self._has_result,
             is_async=self._is_async,
-            is_sync=self._is_sync)
+            is_sync=self._is_sync,
+            is_deprecated=self._is_deprecated)
 
 
 class Stream(Method):
@@ -377,4 +384,5 @@ class Stream(Method):
             has_result=self._has_result,
             is_async=self._is_async,
             is_sync=self._is_sync,
-            is_finite=self._is_finite)
+            is_finite=self._is_finite,
+            is_deprecated=self._is_deprecated)

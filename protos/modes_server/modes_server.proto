@@ -28,11 +28,19 @@ service ModesServerService {
     /*
      * Subscribe to mode change requests.
      *
-     * Requests for a mode in the list are accepted and reported here. The
-     * vehicle should then switch and call SetCurrentMode, or call
-     * SetCurrentMode with the mode it stays in if it can't switch.
+     * Requests for a mode in the list are reported here and need to be
+     * answered with RespondModeRequested. Until then, the ground station is
+     * told that the request is in progress.
      */
     rpc SubscribeModeRequested(SubscribeModeRequestedRequest) returns(stream ModeRequestedResponse) { option (mavsdk.options.async_type) = ASYNC; }
+    /*
+     * Respond to the last mode change request.
+     *
+     * If the request is accepted, the requested mode becomes the current mode.
+     * Otherwise the vehicle stays in its current mode, e.g. if it can't switch
+     * to Position without GPS.
+     */
+    rpc RespondModeRequested(RespondModeRequestedRequest) returns(RespondModeRequestedResponse) { option (mavsdk.options.async_type) = SYNC; }
     /*
      * Set the mode the vehicle is in.
      */
@@ -49,6 +57,13 @@ message SetAvailableModesResponse {
 message SubscribeModeRequestedRequest {}
 message ModeRequestedResponse {
     Mode mode = 1; // The requested mode
+}
+
+message RespondModeRequestedRequest {
+    ModeFeedback mode_feedback = 1; // The answer to the request
+}
+message RespondModeRequestedResponse {
+    ModesServerResult modes_server_result = 1;
 }
 
 message SetCurrentModeRequest {
@@ -68,6 +83,15 @@ message Mode {
     bool is_auto_mode = 6; // True if the mode runs autonomously, e.g. Mission or Land
 }
 
+// Possible answers to a mode change request.
+enum ModeFeedback {
+    MODE_FEEDBACK_UNKNOWN = 0; // Unknown
+    MODE_FEEDBACK_ACCEPTED = 1; // The vehicle switches to the mode
+    MODE_FEEDBACK_BUSY = 2; // The vehicle can't switch to the mode right now, e.g. it has no GPS
+    MODE_FEEDBACK_DENIED = 3; // The vehicle doesn't allow switching to the mode
+    MODE_FEEDBACK_FAILED = 4; // Switching to the mode failed
+}
+
 // Result type.
 message ModesServerResult {
     // Possible results returned for mode requests.
@@ -76,6 +100,8 @@ message ModesServerResult {
         RESULT_SUCCESS = 1; // Request was successful
         RESULT_INVALID_MODES = 2; // Modes are invalid, e.g. none are given, a name or custom mode is used twice, or a standard mode name is unknown
         RESULT_MODE_NOT_FOUND = 3; // No available mode with this name
+        RESULT_NO_REQUEST = 4; // There is no mode change request to respond to
+        RESULT_INVALID_FEEDBACK = 5; // The feedback is unknown
     }
 
     Result result = 1; // Result enum value

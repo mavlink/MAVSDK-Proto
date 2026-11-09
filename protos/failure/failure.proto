@@ -30,6 +30,13 @@ enum FailureUnit {
     FAILURE_UNIT_SYSTEM_AVOIDANCE = 103; // Avoidance
     FAILURE_UNIT_SYSTEM_RC_SIGNAL = 104; // RC signal
     FAILURE_UNIT_SYSTEM_MAVLINK_SIGNAL = 105; // MAVLink signal
+    FAILURE_UNIT_SYSTEM_ESC = 106; // ESC telemetry
+    FAILURE_UNIT_SYSTEM_TRAFFIC_AVOIDANCE = 107; // Traffic avoidance system like ADS-B or FLARM
+    FAILURE_UNIT_DATALINK_LTE = 150; // Data link over a cellular (LTE) connection
+    FAILURE_UNIT_DATALINK_WIFI = 151; // Data link over a Wi-Fi connection
+    FAILURE_UNIT_DATALINK_TELEM_RADIO = 152; // Data link over a telemetry radio, e.g. a SiK radio
+    FAILURE_UNIT_BUS_CAN = 200; // CAN bus, instance is the bus number, e.g. 1 for CAN1
+    FAILURE_UNIT_BUS_I2C = 201; // I2C bus, instance is the bus number, e.g. 1 for I2C1
 }
 
 // A failure type
@@ -42,6 +49,7 @@ enum FailureType {
     FAILURE_TYPE_SLOW = 5; // Unit is slow, so e.g. reporting at slower than expected rate
     FAILURE_TYPE_DELAYED = 6; // Data of unit is delayed in time
     FAILURE_TYPE_INTERMITTENT = 7; // Unit is sometimes working, sometimes not
+    FAILURE_TYPE_DRIFT = 8; // Unit is publishing plausible values but drifting away from true values
 }
 
 message InjectRequest {

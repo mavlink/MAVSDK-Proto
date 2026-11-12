@@ -53,6 +53,16 @@ service FtpService {
      * Set target component ID. By default it is the autopilot.
      */
     rpc SetTargetCompid(SetTargetCompidRequest) returns(SetTargetCompidResponse) { option (mavsdk.options.async_type) = SYNC; }
+    /*
+     * Configure additional DirectoryNotEmpty interpretation for an FTP server component.
+     *
+     * DirectoryNotEmpty interpretation is enabled only for an explicitly configured component.
+     * Other FTP result handling is unchanged.
+     * Select LinuxGeneric only for a peer known to use Linux asm-generic or NuttX errno
+     * numbering. Unspecified clears the configuration; Unknown is invalid.
+     * An operation keeps the convention selected when it starts.
+     */
+    rpc SetServerErrnoConvention(SetServerErrnoConventionRequest) returns(SetServerErrnoConventionResponse) { option (mavsdk.options.async_type) = SYNC; }
 }
 
 message SubscribeDownloadRequest {
@@ -148,6 +158,21 @@ message SetTargetCompidResponse {
     FtpResult ftp_result = 1;
 }
 
+message SetServerErrnoConventionRequest {
+    uint32 component_id = 1; // The FTP server component ID, from 1 to 255.
+    ServerErrnoConvention convention = 2; // The convention to set; Unknown is invalid.
+}
+message SetServerErrnoConventionResponse {
+    FtpResult ftp_result = 1;
+}
+
+// Errno numbering used by a particular FTP server component.
+enum ServerErrnoConvention {
+    SERVER_ERRNO_CONVENTION_UNKNOWN = 0; // Unknown convention; invalid configuration.
+    SERVER_ERRNO_CONVENTION_UNSPECIFIED = 1; // No additional errno interpretation; preserve existing results.
+    SERVER_ERRNO_CONVENTION_LINUX_GENERIC = 2; // Linux asm-generic and NuttX numbering, where ENOTEMPTY is 39.
+}
+
 // Progress data type for file transfer.
 message ProgressData {
     uint32 bytes_transferred = 1; // The number of bytes already transferred.
@@ -171,6 +196,7 @@ message FtpResult {
         RESULT_UNSUPPORTED = 10; // Unsupported command
         RESULT_PROTOCOL_ERROR = 11; // General protocol error
         RESULT_NO_SYSTEM = 12; // No system connected
+        RESULT_DIRECTORY_NOT_EMPTY = 13; // Directory is not empty
     }
 
     Result result = 1; // Result enum value

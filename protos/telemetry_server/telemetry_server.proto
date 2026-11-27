@@ -278,10 +278,10 @@ message GpsInfo {
      double latitude_deg = 2; // Latitude in degrees (WGS84, EGM96 ellipsoid)
      double longitude_deg = 3; // Longitude in degrees (WGS84, EGM96 ellipsoid)
      float absolute_altitude_m = 4; // Altitude AMSL (above mean sea level) in metres
-     float hdop = 5; // GPS HDOP horizontal dilution of position (unitless). If unknown, set to NaN
-     float vdop = 6; // GPS VDOP vertical dilution of position (unitless). If unknown, set to NaN
+     float hdop = 5 [(mavsdk.options.default_value)="NaN"]; // GPS HDOP horizontal dilution of position (unitless). If unknown, set to NaN
+     float vdop = 6 [(mavsdk.options.default_value)="NaN"]; // GPS VDOP vertical dilution of position (unitless). If unknown, set to NaN
      float velocity_m_s = 7; // Ground velocity in metres per second
-     float cog_deg = 8; // Course over ground (NOT heading, but direction of movement) in degrees. If unknown, set to NaN
+     float cog_deg = 8 [(mavsdk.options.default_value)="NaN"]; // Course over ground (NOT heading, but direction of movement) in degrees. If unknown, set to NaN
      float altitude_ellipsoid_m = 9; // Altitude in metres (above WGS84, EGM96 ellipsoid)
      float horizontal_uncertainty_m = 10; // Position uncertainty in metres
      float vertical_uncertainty_m = 11; // Altitude uncertainty in metres
